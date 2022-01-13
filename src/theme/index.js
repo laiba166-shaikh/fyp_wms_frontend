@@ -4,12 +4,13 @@ import typography from "./typography";
 const theme=createTheme({
     palette:{
         primary:{
-            main:"#252b3b",
-            light:"#3b445e"
+            main:"#272d3e",
+            dark:"#252b3b",
+            light:"#2b3244"
         },
         secondary:{
-            main:"#2b3a53",
-            light:"#8b96a8"
+            main:"#1979a9",
+            light:"#1b7fb1"
         }
     },
     typography,
