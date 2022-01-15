@@ -9,7 +9,10 @@ const DataTable = ({entities,columns}) => {
             bootstrap4
             remote
             bordered={false}
-            classes="table table-head-custom table-vertical-center text-white"
+            classes="table table-head-custom table-vertical-center text-white-50 overflow-auto align-middle border-bottom-0"
+            rowStyle={{outline:"none",border:"none"}}
+            
+            headerClasses='text-white-50'
             keyField="id"
             data={entities}
             columns={columns}

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Typography,makeStyles,Grid,Paper,Box,Button } from '@material-ui/core';
 import DataTable from '../../components/DataTable';
-import { ActionColumnFormatter } from '../../utility/actionFormatters';
+import { ActionColumnFormatter, StatusFormatter } from '../../utility/actionFormatters';
 // import ContentContainer from '../../components/ContentContainer';
 
 const useStyles=makeStyles((theme)=>({
@@ -81,6 +81,7 @@ const Users = () => {
         {
           dataField: "isActive",
           text: "Status",
+          formatter:StatusFormatter,
           classes:"text-center",
           headerClasses:"text-center"
         },

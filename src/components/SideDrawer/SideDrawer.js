@@ -23,29 +23,24 @@ const useStyles=makeStyles((theme)=>({
         width:'inherit',
         backgroundColor:theme.palette.primary.light,
         color:"#fff",
-        overflow:"none",
         "& .MuiListItemIcon-root":{
             minWidth:"28px"
         },
-        "& .MuiDrawer-paper":{
-            overflow:"hidden",
-            /* width */
-            "& .MuiDrawer-paper::-webkit-scrollbar":{
-                width: "10px"
-            },
-            /* Track */
-            "& .MuiDrawer-paper::-webkit-scrollbar-track": {
-                background: "#f1f1f1"
-            },
-            /* Handle */
-            "& .MuiDrawer-paper::-webkit-scrollbar-thumb": {
-                background: "#888"
-            },
-            /* Handle on hover */
-            "& .MuiDrawer-paper::-webkit-scrollbar-thumb:hover": {
-                background: "#555" 
-            }
-        }
+        overflowY: "auto",
+        overflowX: "hidden",
+        "&::-webkit-scrollbar": {
+        width: 6,
+        },
+        "&::-webkit-scrollbar-track": {
+        boxShadow: "inset 0 0 6px rgba(0,0,0,0.08)",
+        webkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.08)",
+        },
+        "&::-webkit-scrollbar-thumb": {
+        backgroundColor: "rgba(0,0,0,.2)",
+        },
+        "&::-webkit-scrollbar-thumb:hover": {
+            backgroundColor: "rgba(0,0,0,.4)",
+        },
     },
     drawerHeader:{
         display:"flex",

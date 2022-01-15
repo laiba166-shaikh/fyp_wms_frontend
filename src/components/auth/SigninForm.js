@@ -5,16 +5,22 @@ import LoginImage from "../../assets/login-1.png"
 
 const useStyles=makeStyles((theme)=>({
     root:{
-        maxWidth:600,
+        maxWidth:620,
         borderRadius:'3px',
         boxShadow: "1px .5px 2px 3px rgba(0,0,0,.2)",
         "& .MuiTextField-root": {
-            margin:"12px",
-            width: "200px",
+            margin:"12px 6px",
+            width: "240px",
         },
         "& .MuiOutlinedInput-input":{
-            padding:"10px 12px",
+            // padding:"10px 12px",
         },
+        // "& .MuiInputLabel-outlined":{
+        //     transform: "translate(10px, 8px) scale(.9)"
+        // },
+        // "& ..MuiOutlinedInput-notchedOutline":{
+        //     borderColor:"#fff"
+        // },
         "& .MuiOutlinedInput-root":{
             borderRadius:"0px"
         },
@@ -118,7 +124,7 @@ const SigninForm = () => {
                         />
                     </Grid>
                     <Grid item md={12} xs={12} style={{marginLeft:"12px"}}>
-                        <FormControlLabel  control={<Checkbox onClick={handleShow} color='#fff'/>} label="Show Password" />
+                        <FormControlLabel  control={<Checkbox onClick={handleShow} />} style={{color:"rgba(255,255,255,0.5)"}} label="Show Password" />
                         <Button variant='contained' color="primary" className={classes.submitButton} onClick={handleSubmit}>
                                 Sign in
                         </Button>

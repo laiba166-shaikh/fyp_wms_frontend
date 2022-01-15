@@ -1,8 +1,8 @@
 import { Outlet, Route,Routes } from "react-router";
 import MainLayout from "../layout/MainLayout";
-import Login from "../pages/Auth/Login";
-import Users from "../pages/Administration/Users";
-import Company from "../pages/Administration/Company";
+import Login from "../modules/Auth/Login";
+import Users from "../modules/Administration/Users";
+import Company from "../modules/Administration/Company";
 
 const AppRoutes=()=>{
     return (
