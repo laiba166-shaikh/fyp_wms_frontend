@@ -26,8 +26,8 @@ export const AdministrationLinks={
             path: "/main/admin/brand"
         },
         {
-            label:"Units Of Measurements",
-            path:"/main/admin/units-of-measurement"
+            label:"UOM",
+            path:"/main/admin/uom"
         },
         {
             label:"Product Category",
