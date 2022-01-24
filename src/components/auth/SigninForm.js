@@ -9,27 +9,25 @@ const useStyles=makeStyles((theme)=>({
         borderRadius:'3px',
         boxShadow: "1px .5px 2px 3px rgba(0,0,0,.2)",
         "& .MuiTextField-root": {
-            margin:"12px 6px",
+            marginLeft:"6px",
+            marginRight:"6px",
             width: "240px",
-        },
-        "& .MuiOutlinedInput-input":{
-            // padding:"10px 12px",
-        },
-        // "& .MuiInputLabel-outlined":{
-        //     transform: "translate(10px, 8px) scale(.9)"
-        // },
-        // "& ..MuiOutlinedInput-notchedOutline":{
-        //     borderColor:"#fff"
-        // },
-        "& .MuiOutlinedInput-root":{
-            borderRadius:"0px"
         },
         "& .MuiFormLabel-root":{
             color:"#fff"
         },
-        // "& .MuiInputLabel-outlined":{
-        //     transform: "translate(14px, 12px) scale(1)",
-        // }
+        '& .MuiOutlinedInput-root': {
+            borderRadius:"0px",
+            '& fieldset': {
+              borderColor: 'rgba(255,255,255,0.5)',
+            },
+            '&:hover fieldset': {
+              borderColor: '#fff',
+            },
+            '&.Mui-focused fieldset': {
+              borderColor: '#fff',
+            },
+        },
     },
     imgContainer:{
         backgroundColor:theme.palette.primary.dark
@@ -100,8 +98,9 @@ const SigninForm = () => {
                             variant="outlined"
                             label="email"
                             placeholder="username/email"
+                            size="small"
                             // color="secondary"
-                            // margin="normal"
+                            margin="normal"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             fullWidth
@@ -114,8 +113,9 @@ const SigninForm = () => {
                             variant="outlined"
                             label="password"
                             placeholder="password"
+                            size="small"
                             // color="secondary"
-                            // margin='normal'
+                            margin="normal"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             type={showPassword?"text":"password"}

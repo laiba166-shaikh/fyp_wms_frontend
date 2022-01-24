@@ -1,30 +1,33 @@
 import {EditOutlined, DeleteOutlined} from "@material-ui/icons";
-import { FormControlLabel,Switch } from "@material-ui/core";
+import { FormControlLabel,makeStyles,Switch, useTheme } from "@material-ui/core";
 
-export function ActionColumnFormatter(cellContent,row,rowIndex){
+const useStyles=makeStyles((theme)=>({
+    icon:{
+        fontSize:22,
+        margin:"0 3px",
+        cursor:"pointer",
+    }
+}))
+
+export function ActionColumnFormatter(value,onEdit,onDelete){
+    const classes=useStyles()
     return (
         <>
-            <span
-                // title="Edit User"
-                // className='p-1 mx-2'
-            >
-               <EditOutlined style={{fontSize:22,margin:"0 3px",cursor:"pointer"}}/> 
+            <span onClick={onEdit}>
+               <EditOutlined style={{color:"#2e7d32"}} className={classes.icon}/> 
             </span>
-            <span
-                // title="Delete User"
-                // className='btn btn-light btn-sm btn-hover-primary mx-1'
-            >
-               <DeleteOutlined style={{fontSize:22,margin:"0 2px",cursor:"pointer"
-            }}/> 
+            <span onClick={onDelete}>
+               <DeleteOutlined style={{color:"#d32f2f"}} className={classes.icon} /> 
             </span>
         </>
     )
 }
 
-export function StatusFormatter(cellContent,row,rowIndex) {
+export function StatusFormatter(value) {
+    const theme=useTheme()
     return (
         <>
-        <FormControlLabel control={<Switch defaultChecked checked={row.status} size="small" color="secondary" />} label={null} />
+        <FormControlLabel control={<Switch defaultChecked checked={true} size="small" color={theme.palette.success.main} />} label="" />
         </>
     )
 }

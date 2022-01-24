@@ -54,7 +54,7 @@ const useStyles=makeStyles((theme)=>({
     }
 }))
 
-const drawerWidth = 220;
+const drawerWidth = 240;
 
 const DrawerLink=({icon,label,subLinks})=>{
     const classes=useStyles()
@@ -64,7 +64,6 @@ const DrawerLink=({icon,label,subLinks})=>{
     const [activeLink,setActiveLink]=useState("")
 
     useEffect(()=>{
-        console.log(pathname,pathname.split("/")[3])
         setActiveLink(pathname.split("/")[3])
     },[pathname])
 
@@ -82,7 +81,7 @@ const DrawerLink=({icon,label,subLinks})=>{
                 {
                     subLinks.map((link)=>{
                         return (
-                            <ListItem button  index={link.label} className={classes.sublink} onClick={()=>navigate(link.path)}>
+                            <ListItem button key={link.label} index={link.label} className={classes.sublink} onClick={()=>navigate(link.path)}>
                                 <ListItemText primary={link.label} style={{color:link.path.includes(activeLink)?"#fff":"#ccc"}} />
                             </ListItem>
                         )
@@ -96,7 +95,6 @@ const DrawerLink=({icon,label,subLinks})=>{
 
 const SideDrawer = ({open,closeDrawer}) => {
     const classes=useStyles()
-    console.log(isTablet,isMobile)
     isTablet && alert("Tablet Screen")
 
     useEffect(()=>{

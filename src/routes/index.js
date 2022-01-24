@@ -1,8 +1,8 @@
 import { Outlet, Route,Routes } from "react-router";
 import MainLayout from "../layout/MainLayout";
 import Login from "../modules/Auth/Login";
-import Users from "../modules/Administration/Users";
-import Company from "../modules/Administration/Company";
+import Users from "../modules/Administration/subpages/User/Users";
+import Company from "../modules/Administration/subpages/Company/Company";
 
 const AppRoutes=()=>{
     return (
@@ -10,9 +10,9 @@ const AppRoutes=()=>{
             <Route path="/" element={<Login/>} />
             <Route path="main">
                 <Route path="admin" element={<MainLayout/>} >
-                    <Route path="users" element={<Users/>} />
-                    <Route path="company" element={<Company />} />
-                    <Route path="customers" element={<div>customers</div>} />
+                    <Route path="users/*" element={<Users/>} />
+                    <Route path="company/*" element={<Company />} />
+                    <Route path="customers/*" element={<div>customers</div>} />
                     <Route path="warehouse" element={<div>warehouse</div>} />
                     <Route path="brand" element={<div>brand</div>} />
                     <Route path="units-of-measurement" element={<div>uom</div>} />
