@@ -43,7 +43,7 @@ const Users = (props) => {
         setOpen(false)
         navigate(`/main/admin/users`)
     }
-    const handelEditOpen=()=>setOpen(true)
+    // const handelEditOpen=(id)=>UserUiEvents.editUserClick(id)
     const handleDeleteClose=()=>setShowDelete(false)
     const handleDeleteOpen=()=>setShowDelete(true)
 
@@ -73,7 +73,7 @@ const Users = (props) => {
         { id: 'email',label:'Email',align: 'center'},
         { id: 'phone', label: 'Phone Number', align: 'center' },
         { id: "isActive", label: "Status", align: "center", format:(value)=><StatusFormatter value={value}/> },
-        { id: "action", label: "Action", align: "center", format:(value)=><ActionColumnFormatter value={value} onEdit={handelEditOpen} onDelete={handleDeleteOpen}/> },        
+        { id: "action", label: "Action", align: "center", format:(value)=><ActionColumnFormatter value={value} onEdit={UserUiEvents.editUserClick} onDelete={handleDeleteOpen}/> },        
     ];
     
     return (
@@ -86,9 +86,6 @@ const Users = (props) => {
                         </Typography>
                         <Button variant="outlined" color="secondary" onClick={()=>UserUiEvents.addNewUserClick()}>
                             Add new
-                        </Button>
-                        <Button variant="outlined" color="secondary" onClick={()=>handleDeleteOpen()}>
-                            Edit
                         </Button>
                     </Box>
                     <PaginatedTable

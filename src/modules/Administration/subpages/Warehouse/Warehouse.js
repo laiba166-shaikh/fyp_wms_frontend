@@ -38,11 +38,10 @@ const Warehouse = () => {
         setWarehouseEditOpen(false)
         navigate(`/main/admin/warehouse`)
     }
-    const handelWarehouseEditOpen=()=>setWarehouseEditOpen(true)
     const handleWarehouseDeleteClose=()=>setShowWarehouseDelete(false)
     const handleWarehouseDeleteOpen=()=>setShowWarehouseDelete(true)
 
-    const UserUiEvents={
+    const WarehouseUiEvents={
         addNewWarehouseClick:()=>{
             navigate(`/main/admin/warehouse/new`)
             setWarehouseEditOpen(true)
@@ -72,7 +71,7 @@ const Warehouse = () => {
         { id: 'businessWarehouseCode', label: 'Code', align: 'center' },
         { id: 'city', label: 'City', align: 'center' },
         { id: "isActive", label: "Status", align: "center", format:(value)=><StatusFormatter value={value}/> },
-        { id: "action", label: "Action", align: "center", format:(value)=><ActionColumnFormatter value={value} onEdit={handelWarehouseEditOpen} onDelete={handleWarehouseDeleteOpen}/> },        
+        { id: "action", label: "Action", align: "center", format:(value)=><ActionColumnFormatter value={value} onEdit={WarehouseUiEvents.editWarehouseClick} onDelete={handleWarehouseDeleteOpen}/> },        
     ];
 
     return (
@@ -83,11 +82,8 @@ const Warehouse = () => {
                         <Typography variant='h3'>
                             Warehouse
                         </Typography>
-                        <Button variant="outlined" color="secondary" onClick={()=>UserUiEvents.addNewWarehouseClick()}>
+                        <Button variant="outlined" color="secondary" onClick={()=>WarehouseUiEvents.addNewWarehouseClick()}>
                             Add new
-                        </Button>
-                        <Button variant="outlined" color="secondary" onClick={()=>handleWarehouseDeleteOpen()}>
-                            Edit
                         </Button>
                     </Box>
                     <PaginatedTable columns={columns} entities={data} />

@@ -7,18 +7,21 @@ const useStyes=makeStyles((theme)=>({
         '& .MuiOutlinedInput-root': {
             borderRadius:"5px",
             '& fieldset': {
-              borderColor: 'rgba(0,0,0,0.5)',
+              borderColor: 'rgba(255,255,255,0.5)',
             },
             '&:hover fieldset': {
-              borderColor: '#000',
+              borderColor: '#d9d9d9',
             },
             '&.Mui-focused fieldset': {
-              borderColor: '#000',
+              borderColor: '#d9d9d9',
             },
         },
         "& .MuiFormLabel-root":{
-            color:"#000"
+            color:"rgba(255,255,255,0.5)"
         },
+    },
+    input:{
+        color:"rgba(255,255,255,0.5)"
     }
 }))
 
@@ -34,8 +37,8 @@ const MyTextInput = (props) => {
             size="small"
             {...field}
             className={classes.root}
-            color="secondary"
             margin='normal'
+            inputProps={{className:classes.input}}
             error={meta.touched &&  Boolean(meta.error)}
             helperText={meta.touched && meta.error }
         />

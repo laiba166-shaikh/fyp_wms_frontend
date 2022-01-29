@@ -38,11 +38,10 @@ const ProductUpload = () => {
         setProductUploadEditOpen(false)
         navigate(`/main/admin/product-upload`)
     }
-    const handelProductUploadEditOpen=()=>setProductUploadEditOpen(true)
     const handleProductUploadDeleteClose=()=>setShowProductUploadDelete(false)
     const handleProductUploadDeleteOpen=()=>setShowProductUploadDelete(true)
 
-    const UserUiEvents={
+    const ProductUploadUiEvents={
         addNewProductUploadClick:()=>{
             navigate(`/main/admin/product-upload/new`)
             setProductUploadEditOpen(true)
@@ -75,7 +74,7 @@ const ProductUpload = () => {
         { id: 'brand', label: 'Brand', align: 'center' },
         { id: 'uom', label: 'UOM', align: 'center' },
         { id: "isActive", label: "Status", align: "center", format:(value)=><StatusFormatter value={value}/> },
-        { id: "action", label: "Action", align: "center", format:(value)=><ActionColumnFormatter value={value} onEdit={handelProductUploadEditOpen} onDelete={handleProductUploadDeleteOpen}/> },        
+        { id: "action", label: "Action", align: "center", format:(value)=><ActionColumnFormatter value={value} onEdit={ProductUploadUiEvents.editProductUploadClick} onDelete={handleProductUploadDeleteOpen}/> },        
     ];
 
     return (
@@ -86,11 +85,8 @@ const ProductUpload = () => {
                         <Typography variant='h3'>
                             Product Upload
                         </Typography>
-                        <Button variant="outlined" color="secondary" onClick={()=>UserUiEvents.addNewProductUploadClick()}>
+                        <Button variant="outlined" color="secondary" onClick={()=>ProductUploadUiEvents.addNewProductUploadClick()}>
                             Add new
-                        </Button>
-                        <Button variant="outlined" color="secondary" onClick={()=>handleProductUploadDeleteOpen()}>
-                            Edit
                         </Button>
                     </Box>
                     <PaginatedTable columns={columns} entities={data} />

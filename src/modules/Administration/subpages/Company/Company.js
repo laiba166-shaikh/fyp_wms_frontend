@@ -38,17 +38,16 @@ const Company = () => {
         setCompanyEditOpen(false)
         navigate(`/main/admin/company`)
     }
-    const handelCompanyEditOpen=()=>setCompanyEditOpen(true)
     const handleCompanyDeleteClose=()=>setShowCompanyDelete(false)
     const handleCompanyDeleteOpen=()=>setShowCompanyDelete(true)
 
-    const UserUiEvents={
+    const CompanyUiEvents={
         addNewCompanyClick:()=>{
             navigate(`/main/admin/company/new`)
             setCompanyEditOpen(true)
         },
         editCompanyClick:(id)=>{
-            navigate(`/main/admin/comapny/${id}/edit`) //id is the specific record id from api send when click on edit btn
+            navigate(`/main/admin/company/${id}/edit`) //id is the specific record id from api send when click on edit btn
             setCompanyEditOpen(true)
         }  
     }
@@ -72,7 +71,7 @@ const Company = () => {
         { id: 'phone', label: 'Phone Number', align: 'center' },
         { id: 'notes', label: 'Notes', align: 'center' },
         { id: "isActive", label: "Status", align: "center", format:(value)=><StatusFormatter value={value}/> },
-        { id: "action", label: "Action", align: "center", format:(value)=><ActionColumnFormatter value={value} onEdit={handelCompanyEditOpen} onDelete={handleCompanyDeleteOpen}/> },        
+        { id: "action", label: "Action", align: "center", format:(value)=><ActionColumnFormatter value={value} onEdit={CompanyUiEvents.editCompanyClick} onDelete={handleCompanyDeleteOpen}/> },        
     ];
 
     return (
@@ -83,11 +82,8 @@ const Company = () => {
                         <Typography variant='h3'>
                             Company
                         </Typography>
-                        <Button variant="outlined" color="secondary" onClick={()=>UserUiEvents.addNewCompanyClick()}>
+                        <Button variant="outlined" color="secondary" onClick={()=>CompanyUiEvents.addNewCompanyClick()}>
                             Add new
-                        </Button>
-                        <Button variant="outlined" color="secondary" onClick={()=>handleCompanyDeleteOpen()}>
-                            Edit
                         </Button>
                     </Box>
                     <PaginatedTable columns={columns} entities={data} />

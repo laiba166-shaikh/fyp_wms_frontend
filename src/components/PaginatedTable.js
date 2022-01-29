@@ -83,7 +83,7 @@ const PaginatedTable=({columns,entities}) => {
                       return (
                         <TableCell key={column.id} align={column.align}>
                           {column.format
-                            ? column.format(value)
+                            ? column.format(row)
                             : value}
                         </TableCell>
                       );

@@ -9,14 +9,15 @@ const useStyles=makeStyles((theme)=>({
     }
 }))
 
-export function ActionColumnFormatter(value,onEdit,onDelete){
+export function ActionColumnFormatter(rowData){
+    console.log("value ->",rowData)
     const classes=useStyles()
     return (
         <>
-            <span onClick={onEdit}>
+            <span onClick={()=>rowData.onEdit(rowData.value.id)}>
                <EditOutlined style={{color:"#2e7d32"}} className={classes.icon}/> 
             </span>
-            <span onClick={onDelete}>
+            <span onClick={()=>rowData.onDelete(rowData.value.id)}>
                <DeleteOutlined style={{color:"#d32f2f"}} className={classes.icon} /> 
             </span>
         </>
@@ -27,7 +28,7 @@ export function StatusFormatter(value) {
     const theme=useTheme()
     return (
         <>
-        <FormControlLabel control={<Switch defaultChecked checked={true} size="small" color={theme.palette.success.main} />} label="" />
+        <FormControlLabel control={<Switch checked={true} size="small" color="secondary" />} label="" />
         </>
     )
 }

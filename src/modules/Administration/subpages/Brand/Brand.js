@@ -38,11 +38,10 @@ const Brands = () => {
         setBrandEditOpen(false)
         navigate(`/main/admin/brand`)
     }
-    const handelBrandEditOpen=()=>setBrandEditOpen(true)
     const handleBrandDeleteClose=()=>setShowBrandDelete(false)
     const handleBrandDeleteOpen=()=>setShowBrandDelete(true)
 
-    const UserUiEvents={
+    const BrandUiEvents={
         addNewBrandClick:()=>{
             navigate(`/main/admin/brand/new`)
             setBrandEditOpen(true)
@@ -70,7 +69,7 @@ const Brands = () => {
         { id: 'name', label: 'Name', align:"center" },
         { id: 'manufacturerName', label: 'Manufacturer', align: 'center' },
         { id: "isActive", label: "Status", align: "center", format:(value)=><StatusFormatter value={value}/> },
-        { id: "action", label: "Action", align: "center", format:(value)=><ActionColumnFormatter value={value} onEdit={handelBrandEditOpen} onDelete={handleBrandDeleteOpen}/> },        
+        { id: "action", label: "Action", align: "center", format:(value)=><ActionColumnFormatter value={value} onEdit={BrandUiEvents.editBrandClick} onDelete={handleBrandDeleteOpen}/> },        
     ];
 
     return (
@@ -81,11 +80,8 @@ const Brands = () => {
                         <Typography variant='h3'>
                             Brand
                         </Typography>
-                        <Button variant="outlined" color="secondary" onClick={()=>UserUiEvents.addNewBrandClick()}>
+                        <Button variant="outlined" color="secondary" onClick={()=>BrandUiEvents.addNewBrandClick()}>
                             Add new
-                        </Button>
-                        <Button variant="outlined" color="secondary" onClick={()=>handleBrandDeleteOpen()}>
-                            Edit
                         </Button>
                     </Box>
                     <PaginatedTable columns={columns} entities={data} />

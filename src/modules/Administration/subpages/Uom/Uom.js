@@ -38,11 +38,10 @@ const Uom = () => {
         setUomEditOpen(false)
         navigate(`/main/admin/uom`)
     }
-    const handelUomEditOpen=()=>setUomEditOpen(true)
     const handleUomDeleteClose=()=>setShowUomDelete(false)
     const handleUomDeleteOpen=()=>setShowUomDelete(true)
 
-    const UserUiEvents={
+    const UomUiEvents={
         addNewUomClick:()=>{
             navigate(`/main/admin/uom/new`)
             setUomEditOpen(true)
@@ -69,7 +68,7 @@ const Uom = () => {
         { id: 'id', label: 'Id', align:"center"},
         { id: 'name', label: 'Name', align:"center" },
         { id: "isActive", label: "Status", align: "center", format:(value)=><StatusFormatter value={value}/> },
-        { id: "action", label: "Action", align: "center", format:(value)=><ActionColumnFormatter value={value} onEdit={handelUomEditOpen} onDelete={handleUomDeleteOpen}/> },        
+        { id: "action", label: "Action", align: "center", format:(value)=><ActionColumnFormatter value={value} onEdit={UomUiEvents.editUomClick} onDelete={handleUomDeleteOpen}/> },        
     ];
 
     return (
@@ -80,11 +79,8 @@ const Uom = () => {
                         <Typography variant='h3'>
                             Uom
                         </Typography>
-                        <Button variant="outlined" color="secondary" onClick={()=>UserUiEvents.addNewUomClick()}>
+                        <Button variant="outlined" color="secondary" onClick={()=>UomUiEvents.addNewUomClick()}>
                             Add new
-                        </Button>
-                        <Button variant="outlined" color="secondary" onClick={()=>handleUomDeleteOpen()}>
-                            Edit
                         </Button>
                     </Box>
                     <PaginatedTable columns={columns} entities={data} />

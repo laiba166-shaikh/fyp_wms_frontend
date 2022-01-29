@@ -38,11 +38,10 @@ const ProductCategory = () => {
         setProductCategoryEditOpen(false)
         navigate(`/main/admin/product-category`)
     }
-    const handelProductCategoryEditOpen=()=>setProductCategoryEditOpen(true)
     const handleProductCategoryDeleteClose=()=>setShowProductCategoryDelete(false)
     const handleProductCategoryDeleteOpen=()=>setShowProductCategoryDelete(true)
 
-    const UserUiEvents={
+    const ProductCategoryUiEvents={
         addNewProductCategoryClick:()=>{
             navigate(`/main/admin/product-category/new`)
             setProductCategoryEditOpen(true)
@@ -69,7 +68,7 @@ const ProductCategory = () => {
         { id: 'id', label: 'Id', align:"center"},
         { id: 'name', label: 'Name', align:"center" },
         { id: "isActive", label: "Status", align: "center", format:(value)=><StatusFormatter value={value}/> },
-        { id: "action", label: "Action", align: "center", format:(value)=><ActionColumnFormatter value={value} onEdit={handelProductCategoryEditOpen} onDelete={handleProductCategoryDeleteOpen}/> },        
+        { id: "action", label: "Action", align: "center", format:(value)=><ActionColumnFormatter value={value} onEdit={ProductCategoryUiEvents.editProductCategoryClick} onDelete={handleProductCategoryDeleteOpen}/> },        
     ];
 
     return (
@@ -80,11 +79,8 @@ const ProductCategory = () => {
                         <Typography variant='h3'>
                             Product Category
                         </Typography>
-                        <Button variant="outlined" color="secondary" onClick={()=>UserUiEvents.addNewProductCategoryClick()}>
+                        <Button variant="outlined" color="secondary" onClick={()=>ProductCategoryUiEvents.addNewProductCategoryClick()}>
                             Add new
-                        </Button>
-                        <Button variant="outlined" color="secondary" onClick={()=>handleProductCategoryDeleteOpen()}>
-                            Edit
                         </Button>
                     </Box>
                     <PaginatedTable columns={columns} entities={data} />

@@ -6,11 +6,11 @@ import AddProductUpload from '../../modals/AddProductUpload';
 const useStyles=makeStyles((theme)=>({
     root:{
         "& .MuiDialog-paper":{
-            backgroundColor:"#e6e6e6",
+            backgroundColor:theme.palette.primary.dark,
         },
     },
     formTitle:{
-        borderBottom:"1px solid rgba(0,0,0,0.5)"
+        borderBottom:"1px solid rgba(255,255,255,0.5)"
     }
 }))
 const ProductUploadEditDialog = ({show,onClose}) => {
@@ -34,7 +34,7 @@ const ProductUploadEditDialog = ({show,onClose}) => {
     return (
         <Dialog open={show} onClose={onClose} maxWidth="sm" className={classes.root}>
             <DialogTitle className={classes.formTitle}>
-                <Typography variant='h4'>
+                <Typography variant='h4' style={{color:"#fff"}}>
                 {params.id ? "Edit" : "Add"} Product
                 </Typography>
             </DialogTitle>
