@@ -1,46 +1,51 @@
-import React,{useState} from 'react'
-import { AppBar,Box,Toolbar, IconButton, Avatar,Menu,MenuItem, makeStyles} from '@material-ui/core';
-import {MenuOutlined} from "@material-ui/icons"
-import { Link,useNavigate } from "react-router-dom";
+import React, { useState } from 'react'
+import { AppBar, Box, Toolbar, IconButton, Avatar, Menu, MenuItem, makeStyles } from '@material-ui/core';
+import { MenuOutlined } from "@material-ui/icons"
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from 'react-redux';
+import { signout } from "../redux/Auth/AuthActions";
 
-const useStyles=makeStyles((theme)=>({
-    appBar:{
-        backgroundColor:theme.palette.primary.main,
-        padding:"0px 12px",
-        border:0
+const useStyles = makeStyles((theme) => ({
+    appBar: {
+        backgroundColor: theme.palette.primary.main,
+        padding: "0px 12px",
+        border: 0
     }
 }));
 
-const NavMenu = ({ anchorE1, setAnchorE1}) => {
-    const navigate=useNavigate();
+const NavMenu = ({ anchorE1, setAnchorE1 }) => {
+    const navigate = useNavigate();
+    const dispatch = useDispatch()
+
     const closeMenu = () => {
-      setAnchorE1(null);
+        setAnchorE1(null);
+        dispatch(signout())
     };
     return (
-      <Menu
-        id="simple-menu"
-        anchorEl={anchorE1}
-        keepMounted
-        open={Boolean(anchorE1)}
-        onClose={closeMenu}             
-      >
-        <Link to="#">
-          <MenuItem onClick={closeMenu}>Profile</MenuItem>
-        </Link>
-        <MenuItem onClick={()=>{
-            navigate("/")
-            closeMenu()
-        }}> Logout </MenuItem>
-      </Menu>
+        <Menu
+            id="simple-menu"
+            anchorEl={anchorE1}
+            keepMounted
+            open={Boolean(anchorE1)}
+            onClose={closeMenu}
+        >
+            <Link to="#">
+                <MenuItem onClick={closeMenu}>Profile</MenuItem>
+            </Link>
+            <MenuItem onClick={() => {
+                closeMenu()
+                navigate("/")
+            }}> Logout </MenuItem>
+        </Menu>
     );
 };
 
-const Navbar = ({open,showDrawer}) => {
-    const classes=useStyles();
-    const [anchorE1, setAnchorE1] = useState(false); 
+const Navbar = ({ open, showDrawer }) => {
+    const classes = useStyles();
+    const [anchorE1, setAnchorE1] = useState(false);
     return (
         <AppBar position="static" className={classes.appBar} sx={{ zIndex: (theme) => theme.zIndex.drawer - 1 }}>
-            <Toolbar style={{justifyContent:"space-between"}}>
+            <Toolbar style={{ justifyContent: "space-between" }}>
                 <IconButton
                     edge="start"
                     aria-label="menu"

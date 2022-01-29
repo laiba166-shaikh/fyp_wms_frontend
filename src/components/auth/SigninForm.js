@@ -1,13 +1,17 @@
-import React, {useState} from 'react';
+import React, {useState,useEffect} from 'react';
 import { Grid, Typography,makeStyles,TextField, Checkbox, FormControlLabel, Button} from '@material-ui/core';
 import { useNavigate } from 'react-router';
-import LoginImage from "../../assets/login-1.png"
+import LoginImage from "../../assets/login-1.png";
+import {signin} from "../../redux/Auth/AuthActions";
+import { connect,useSelector } from 'react-redux';
+import Loader from '../Loader';
 
 const useStyles=makeStyles((theme)=>({
     root:{
         maxWidth:620,
         borderRadius:'3px',
         boxShadow: "1px .5px 2px 3px rgba(0,0,0,.2)",
+        position:"relative",
         "& .MuiTextField-root": {
             marginLeft:"6px",
             marginRight:"6px",
@@ -64,7 +68,7 @@ const useStyles=makeStyles((theme)=>({
     }
 }))
 
-const SigninForm = () => {
+const SigninForm = ({signin}) => {
     const classes=useStyles();
     const navigate=useNavigate()
 
@@ -72,15 +76,28 @@ const SigninForm = () => {
     const [password,setPassword]=useState("");
     const [showPassword,setShowPassword]=useState(false);
 
+    const {authLoading,error,user}=useSelector((state)=>({
+        authLoading:state.auth.authLoading,
+        error:state.auth.error,
+        user:state.auth.userData
+    }))
+
+    useEffect(()=>{
+        if(user?.id) {
+            navigate("/main/admin/users")
+        }
+    },[user])
+
     const handleShow=()=>setShowPassword(!showPassword)
     
     const handleSubmit=()=>{
-        console.log(email,password)
-        alert(email,password)
-        navigate("/main/admin/users")
+        signin(email,password)
+        setEmail("")
+        setPassword("")
     }
     return (
        <Grid item container className={classes.root}>
+           {authLoading && <Loader/>}
            <Grid item md={6} xs={12} className={classes.imgContainer}>
                <img
                 src={LoginImage}
@@ -134,51 +151,7 @@ const SigninForm = () => {
        </Grid>
     )
 }
-
-export default SigninForm
-{/* <Grid item md={12} xs<Typography variant='h3' gutterBottom className={classes.title}>
-                    Sign in
-            </Typography>={12}>
-            <Typography variant='h3' gutterBottom className={classes.title}>
-                    Sign in
-            </Typography>
-           </Grid>
-           <Grid container>
-            <Grid item md={12} xs={12}> 
-                <TextField
-                    id="outlined-basic-1"
-                    variant="outlined"
-                    label="email"
-                    placeholder="abc@gmail.com"
-                    color="secondary"
-                    margin='normal'
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    fullWidth
-                    inputProps={{className:classes.textField}}
-                />
-            </Grid>
-            <Grid item md={12} xs={12}>
-                <TextField
-                    id="outlined-basic-2"
-                    variant="outlined"
-                    label="password"
-                    placeholder="password"
-                    color="secondary"
-                    margin='normal'
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    type={showPassword?"text":"password"}
-                    fullWidth
-                    inputProps={{className:classes.textField}}
-                />
-            </Grid>
-           </Grid>
-           <Grid item>
-            <FormControlLabel  control={<Checkbox onClick={handleShow}/>} label="Show Password" />
-           </Grid>
-           <Grid item md={12} xs={12}>
-               <Button fullWidth variant='contained' color="primary" className={classes.submitButton} onClick={handleSubmit}>
-                   Sign in
-               </Button>
-           </Grid> */}
+const actions = ({
+    signin
+})
+export default connect(null,actions)(SigninForm)
