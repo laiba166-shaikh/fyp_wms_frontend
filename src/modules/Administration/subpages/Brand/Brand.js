@@ -5,6 +5,8 @@ import { ActionColumnFormatter, StatusFormatter } from '../../../../utility/acti
 import PaginatedTable from '../../../../components/PaginatedTable';
 import BrandEditDialog from './BrandEditDialog';
 import DeleteModal from '../../modals/DeleteModal';
+import { getAllBrands } from '../../../../redux/Brand/BrandActions';
+import { connect } from 'react-redux';
 
 const useStyles=makeStyles((theme)=>({
     root:{
@@ -29,7 +31,7 @@ const useStyles=makeStyles((theme)=>({
     }
 }))
 
-const Brands = () => {
+const Brands = ({brands,totalCount,getAllBrands}) => {
     const navigate=useNavigate();
 
     const [brandEditOpen,setBrandEditOpen]=useState(true)
@@ -53,22 +55,12 @@ const Brands = () => {
     }
 
     const classes=useStyles();
-    const data=[
-        {id:1,name:"Brand A",manufacturerName:"Amigos",isActive:true},
-        {id:2,name:"Brand B",manufacturerName:"Amigos",isActive:false},
-        {id:3,name:"Brand C",manufacturerName:"Amigos",isActive:true},
-        {id:4,name:"Brand C",manufacturerName:"Amigos",isActive:true},
-        {id:5,name:"Brand C",manufacturerName:"Amigos",isActive:true},
-        {id:6,name:"Brand C",manufacturerName:"Amigos",isActive:true},
-        {id:7,name:"Brand C",manufacturerName:"Amigos",isActive:true},
-        {id:8,name:"Brand C",manufacturerName:"Amigos",isActive:true},
-    ]
-
+    
     const columns = [
-        { id: 'id', label: 'Id', align:"center"},
+        { id: '_id', label: 'Id', align:"center"},
         { id: 'name', label: 'Name', align:"center" },
         { id: 'manufacturerName', label: 'Manufacturer', align: 'center' },
-        { id: "isActive", label: "Status", align: "center", format:(value)=><StatusFormatter value={value}/> },
+        { id: "isActive", label: "Status", align: "center", format:(value)=><div>{value.isActive ? "Active" : "in Active"}</div> },
         { id: "action", label: "Action", align: "center", format:(value)=><ActionColumnFormatter value={value} onEdit={BrandUiEvents.editBrandClick} onDelete={handleBrandDeleteOpen}/> },        
     ];
 
@@ -84,7 +76,12 @@ const Brands = () => {
                             Add new
                         </Button>
                     </Box>
-                    <PaginatedTable columns={columns} entities={data} />
+                    <PaginatedTable
+                        columns={columns}
+                        totalCount={totalCount}
+                        data={brands}
+                        fetchData={getAllBrands}
+                    />
                     <Routes>
                         <Route path="new" element={<BrandEditDialog show={brandEditOpen} onClose={onBrandEditClose} />} />
                         <Route path=":id/edit" element={<BrandEditDialog show={brandEditOpen} onClose={onBrandEditClose} />} />  
@@ -100,4 +97,13 @@ const Brands = () => {
     )
 }
 
-export default Brands;
+const mapStateToProps=(state)=>({
+    brands:state.brands.brands,
+    totalCount:state.brands.totalCount
+})
+
+const actions = {
+    getAllBrands
+}
+
+export default connect(mapStateToProps,actions)(Brands);
