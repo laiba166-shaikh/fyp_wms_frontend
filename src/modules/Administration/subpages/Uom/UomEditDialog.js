@@ -1,7 +1,9 @@
 import React, {useState,useEffect} from 'react';
 import { useParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { Dialog,DialogTitle,makeStyles,Typography} from '@material-ui/core';
 import AddUom from '../../modals/AddUom';
+import { getUom, createUom, updateUom } from "../../../../redux/Uom/UomActions";
 
 const useStyles=makeStyles((theme)=>({
     root:{
@@ -16,20 +18,52 @@ const useStyles=makeStyles((theme)=>({
 const UomEditDialog = ({show,onClose}) => {
 
     let params = useParams();
-    console.log("params -> ",params,params.id);
 
     const classes=useStyles()
+    const dispatch=useDispatch()
 
     const initialValues = {
-        uomName: "",
-        uomType: "",
-        notes: "",
-        phone: "",
-        status: false
+        name: "",
     }
+
+    const [uom, setUom] = useState({})
+    const [loading, setLoading] = useState(false)
     //destructure redux state which is required
     //call fetchSingleRecord for data as initialValues
+    useEffect(() => {
+        if (params.id) {
+            setLoading(true)
+            dispatch(getUom(params.id)).then((res) => {
+                setUom({ ...res })
+                setLoading(false)
+            }).catch((err) => {
+                console.log("brand did not fetch")
+                setLoading(false)
+            })
+        }
+    }, [dispatch])
     //save Employee function if(id) { edit }else { create }  
+    const saveUom = (brand) => {
+        if (params.id) {
+            setLoading(true)
+            dispatch(updateUom(brand)).then((res) => {
+                setLoading(false)
+                onClose()
+            }).catch((err) => {
+                console.log("error updating brand")
+                setLoading(false)
+            })
+        } else {
+            setLoading(true)
+            dispatch(createUom(brand)).then((res) => {
+                setLoading(false)
+                onClose()
+            }).catch((err) => {
+                console.log("error creating brand")
+                setLoading(false)
+            })
+        }
+    }
 
     return (
         <Dialog open={show} onClose={onClose} maxWidth="sm" className={classes.root}>
@@ -39,9 +73,11 @@ const UomEditDialog = ({show,onClose}) => {
                 </Typography>
             </DialogTitle>
             <AddUom
-                initialValues={initialValues}
+                initialValues={uom || initialValues}
                 onClose={onClose}
                 id={params.id}
+                loading={loading}
+                onSave={saveUom}
             />
       </Dialog>
     )
