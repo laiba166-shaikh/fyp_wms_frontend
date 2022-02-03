@@ -5,6 +5,8 @@ import { ActionColumnFormatter, StatusFormatter } from '../../../../utility/acti
 import PaginatedTable from '../../../../components/PaginatedTable';
 import UomEditDialog from './UomEditDialog';
 import DeleteModal from '../../modals/DeleteModal';
+import { getAllUoms } from '../../../../redux/Uom/UomActions';
+import { connect } from 'react-redux';
 
 const useStyles=makeStyles((theme)=>({
     root:{
@@ -29,7 +31,7 @@ const useStyles=makeStyles((theme)=>({
     }
 }))
 
-const Uom = () => {
+const Uom = ({uoms,totalCount,getAllUoms}) => {
     const navigate=useNavigate();
 
     const [uomEditOpen,setUomEditOpen]=useState(true)
@@ -53,21 +55,21 @@ const Uom = () => {
     }
 
     const classes=useStyles();
-    const data=[
-        {id:1,name:"Uom A",isActive:true},
-        {id:2,name:"Uom B",isActive:false},
-        {id:3,name:"Uom C",isActive:true},
-        {id:4,name:"Uom C",isActive:true},
-        {id:5,name:"Uom C",isActive:true},
-        {id:6,name:"Uom C",isActive:true},
-        {id:7,name:"Uom C",isActive:true},
-        {id:8,name:"Uom C",isActive:true},
-    ]
+    // const data=[
+    //     {id:1,name:"Uom A",isActive:true},
+    //     {id:2,name:"Uom B",isActive:false},
+    //     {id:3,name:"Uom C",isActive:true},
+    //     {id:4,name:"Uom C",isActive:true},
+    //     {id:5,name:"Uom C",isActive:true},
+    //     {id:6,name:"Uom C",isActive:true},
+    //     {id:7,name:"Uom C",isActive:true},
+    //     {id:8,name:"Uom C",isActive:true},
+    // ]
 
     const columns = [
-        { id: 'id', label: 'Id', align:"center"},
+        { id: '_id', label: 'Id', align:"center"},
         { id: 'name', label: 'Name', align:"center" },
-        { id: "isActive", label: "Status", align: "center", format:(value)=><StatusFormatter value={value}/> },
+        { id: "isActive", label: "Status", align: "center", format:(value)=><div>{value.isActive ? "Active" : "in Active"}</div> },
         { id: "action", label: "Action", align: "center", format:(value)=><ActionColumnFormatter value={value} onEdit={UomUiEvents.editUomClick} onDelete={handleUomDeleteOpen}/> },        
     ];
 
@@ -83,7 +85,12 @@ const Uom = () => {
                             Add new
                         </Button>
                     </Box>
-                    <PaginatedTable columns={columns} entities={data} />
+                    <PaginatedTable
+                        columns={columns}
+                        totalCount={totalCount}
+                        data={uoms}
+                        fetchData={getAllUoms}
+                    />
                     <Routes>
                         <Route path="new" element={<UomEditDialog show={uomEditOpen} onClose={onUomEditClose} />} />
                         <Route path=":id/edit" element={<UomEditDialog show={uomEditOpen} onClose={onUomEditClose} />} />  
@@ -99,4 +106,13 @@ const Uom = () => {
     )
 }
 
-export default Uom;
+const mapStateToProps=(state)=>({
+    uoms:state.uoms.uoms,
+    totalCount:state.uoms.totalCount
+})
+
+const actions = {
+    getAllUoms
+}
+
+export default connect(mapStateToProps,actions)(Uom);

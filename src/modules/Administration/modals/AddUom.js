@@ -1,98 +1,77 @@
-import React from 'react'
-import { TextInput, Select } from '../../../controls';
-import { MenuItem, DialogContent, DialogActions, Button, Grid } from "@material-ui/core"
+import React, {useState,useEffect} from 'react'
+import { TextInput} from '../../../controls';
+import { DialogContent, DialogActions, Button, Grid, FormControlLabel, Checkbox } from "@material-ui/core"
 import { Formik, Form } from 'formik';
+import Loader from "../../../components/Loader";
 import * as yup from "yup";
 
 const validationSchema = yup.object({
-    uomName: yup
+    name: yup
         .string()
-        .min(5, 'Uom name should be greater than equal to 3 characters')
+        .min(3, 'Uom name should be greater than equal to 3 characters')
         .required('Uom Name is required'),
-    uomType: yup
-        .string()
-        .min(5, 'Uom type should be greater than equal to 3 characters')
-        .required('Uom type is required'),
-    notes: yup
-        .string()
-        .min(5, 'Notes should be gretaer than equal to 5 characters'),
-    phone: yup.string()
-        .min(3, "Minimum 3 symbols")
-        .max(50, "Maximum 50 symbols")
-        .required("Phone Number is required"),
-    status: yup.boolean().required("status is required")
 });
 
 
-const AddUom = ({ initialValues, onClose, id }) => {
+const AddUom = ({ initialValues, onClose, id, loading, onSave }) => {
 
+    const [status, setStatus] = useState(false)
+
+    useEffect(() => {
+        if (id) {
+            setStatus(initialValues.isActive)
+        }
+    }, [initialValues])
     return (
         <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
+            enableReinitialize={true}
             onSubmit={(values) => {
                 console.log("values -> ", values)
+                if (!id) {
+                    onSave(values)
+                } else {
+                    const formValues={...values,isActive:status}
+                    onSave(formValues)
+                }
             }}
         >
             {({ handleSubmit, errors, values, touched }) => (
                 <>
+                    {loading && <Loader/>}
                     <DialogContent>
                         <Form>
                             <Grid container>
                                 <Grid item md={12} sm={12}>
                                     <TextInput
                                         label="Uom Name"
-                                        name="uomName"
-                                        id="uomName"
+                                        name="name"
+                                        id="uom-name"
                                         fullWidth={true}
+                                        defaultValue=" "
                                         type="text"
                                         placeholder="Uom name"
                                     />
                                 </Grid>
-                                <Grid item md={12} sm={12}>
-                                    <TextInput
-                                        label="Uom Type"
-                                        name="uomType"
-                                        fullWidth={true}
-                                        type="text"
-                                        id="uomType"
-                                        placeholder="Uom Type"
-                                    />
-                                </Grid>
-                                <Grid item md={12} sm={12}>
-                                    <TextInput
-                                        label="Notes"
-                                        fullWidth={true}
-                                        name="notes"
-                                        type="text"
-                                        id="notes"
-                                        placeholder="Add Notes"
-                                    />
-                                </Grid>
-                                <Grid item md={12} sm={12}>
-                                    <TextInput
-                                        label="Phone Number"
-                                        fullWidth={true}
-                                        name="phone"
-                                        type="text"
-                                        id="phone"
-                                        placeholder="+92 1342 122"
-                                    />
-                                </Grid>
-                                <Grid item md={12} sm={12}>
-                                    <Select
-                                        label="Select Status"
-                                        fullWidth={true}
-                                        name="status"
-                                        id="select-status"
-                                    >
-                                        <MenuItem value="">
-                                            <em>None</em>
-                                        </MenuItem>
-                                        <MenuItem value={true}>Active</MenuItem>
-                                        <MenuItem value={false}>Not Active</MenuItem>
-                                    </Select>
-                                </Grid>
+                                {
+                                    id && <Grid item md={12} sm={12}>
+                                        <FormControlLabel
+                                            label="Active"
+                                            style={{ color: "rgba(255,255,255,0.5)" }}
+                                            control={
+                                                <Checkbox
+                                                    checked={status}
+                                                    size="small"
+                                                    color="secondary"
+                                                    onChange={(ev) => {
+                                                        setStatus(ev.target.checked)
+                                                    }}
+                                                />
+                                            }
+                                        />
+                                    </Grid>
+                                }
                             </Grid>
                         </Form>
                     </DialogContent>
