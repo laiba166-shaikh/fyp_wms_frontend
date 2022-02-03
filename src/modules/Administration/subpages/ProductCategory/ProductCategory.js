@@ -5,6 +5,9 @@ import { ActionColumnFormatter, StatusFormatter } from '../../../../utility/acti
 import PaginatedTable from '../../../../components/PaginatedTable';
 import ProductCategoryEditDialog from './ProductCategoryEditDialog';
 import DeleteModal from '../../modals/DeleteModal';
+import { getAllCategory } from '../../../../redux/Category/CategoryActions';
+import { connect } from 'react-redux';
+
 
 const useStyles=makeStyles((theme)=>({
     root:{
@@ -29,7 +32,7 @@ const useStyles=makeStyles((theme)=>({
     }
 }))
 
-const ProductCategory = () => {
+const ProductCategory = ({categories,totalCount,getAllCategory}) => {
     const navigate=useNavigate();
 
     const [productCategoryEditOpen,setProductCategoryEditOpen]=useState(true)
@@ -53,21 +56,21 @@ const ProductCategory = () => {
     }
 
     const classes=useStyles();
-    const data=[
-        {id:1,name:"ProductCategory A",isActive:true},
-        {id:2,name:"ProductCategory B",isActive:false},
-        {id:3,name:"ProductCategory C",isActive:true},
-        {id:4,name:"ProductCategory C",isActive:true},
-        {id:5,name:"ProductCategory C",isActive:true},
-        {id:6,name:"ProductCategory C",isActive:true},
-        {id:7,name:"ProductCategory C",isActive:true},
-        {id:8,name:"ProductCategory C",isActive:true},
-    ]
+    // const data=[
+    //     {id:1,name:"ProductCategory A",isActive:true},
+    //     {id:2,name:"ProductCategory B",isActive:false},
+    //     {id:3,name:"ProductCategory C",isActive:true},
+    //     {id:4,name:"ProductCategory C",isActive:true},
+    //     {id:5,name:"ProductCategory C",isActive:true},
+    //     {id:6,name:"ProductCategory C",isActive:true},
+    //     {id:7,name:"ProductCategory C",isActive:true},
+    //     {id:8,name:"ProductCategory C",isActive:true},
+    // ]
 
     const columns = [
-        { id: 'id', label: 'Id', align:"center"},
+        { id: '_id', label: 'Id', align:"center"},
         { id: 'name', label: 'Name', align:"center" },
-        { id: "isActive", label: "Status", align: "center", format:(value)=><StatusFormatter value={value}/> },
+        { id: "isActive", label: "Status", align: "center", format:(value)=><div>{value.isActive ? "Active" : "in Active"}</div> },
         { id: "action", label: "Action", align: "center", format:(value)=><ActionColumnFormatter value={value} onEdit={ProductCategoryUiEvents.editProductCategoryClick} onDelete={handleProductCategoryDeleteOpen}/> },        
     ];
 
@@ -83,7 +86,12 @@ const ProductCategory = () => {
                             Add new
                         </Button>
                     </Box>
-                    <PaginatedTable columns={columns} entities={data} />
+                    <PaginatedTable
+                        columns={columns}
+                        totalCount={totalCount}
+                        data={categories}
+                        fetchData={getAllCategory}
+                    />
                     <Routes>
                         <Route path="new" element={<ProductCategoryEditDialog show={productCategoryEditOpen} onClose={onProductCategoryEditClose} />} />
                         <Route path=":id/edit" element={<ProductCategoryEditDialog show={productCategoryEditOpen} onClose={onProductCategoryEditClose} />} />  
@@ -99,4 +107,14 @@ const ProductCategory = () => {
     )
 }
 
-export default ProductCategory;
+
+const mapStateToProps=(state)=>({
+    categories:state.categories.category,
+    totalCount:state.categories.totalCount
+})
+
+const actions = {
+    getAllCategory
+}
+
+export default connect(mapStateToProps,actions)(ProductCategory);
