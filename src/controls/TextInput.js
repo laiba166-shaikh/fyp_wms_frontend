@@ -33,7 +33,7 @@ const MyTextInput = (props) => {
     return (
         <TextField
             {...props}
-            variant="outlined"
+            variant="filled"
             size="small"
             {...field}
             className={classes.root}

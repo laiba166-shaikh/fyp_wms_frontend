@@ -20,7 +20,7 @@ const useStyes=makeStyles((theme)=>({
             },
         },
         "& .MuiFormLabel-root":{
-            color:"#fff"
+            color:"rgba(255,255,255,0.5)"
         },
     },
     input:{
@@ -36,7 +36,7 @@ const Select = (props) => {
     return (
         <TextField
             {...props}
-            variant="outlined"
+            variant="filled"
             select={true}
             size="small"
             {...field}

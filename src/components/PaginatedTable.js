@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Table,
     TableBody,
@@ -8,7 +8,8 @@ import {
     TablePagination,
     TableRow,
     makeStyles
-} from "@material-ui/core"
+} from "@material-ui/core";
+import Loader from "./Loader";
 
 const useStyles=makeStyles((theme)=>({
   root:{
@@ -42,9 +43,28 @@ const useStyles=makeStyles((theme)=>({
   },
 }))
 
-const PaginatedTable=({columns,entities}) => {
+const PaginatedTable=({columns,fetchData,data,totalCount}) => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [loading,setLoading]=useState(false);
+  const [currentData,setCurrentData]=useState([]);
+  const [totalSize,setTotalSize]=useState(0);
+  
+  useEffect(() => {
+    setLoading(true);
+    console.log("fetching params", page, rowsPerPage);
+    fetchData(page, rowsPerPage)
+      .then((res) => {
+        console.log("get res")
+        setLoading(false);
+      }) 
+      .catch((err) => setLoading(false));
+  }, [page, rowsPerPage]);
+
+  useEffect(() => {
+    setCurrentData([...data]);
+    setTotalSize(totalCount);
+  }, [data]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -54,10 +74,12 @@ const PaginatedTable=({columns,entities}) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+
   const classes=useStyles()
   return (
     <>
       <TableContainer className={classes.root}>
+        {loading && <Loader/>}
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
@@ -73,11 +95,11 @@ const PaginatedTable=({columns,entities}) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {entities
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            {currentData
+              // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => {
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                  <TableRow hover role="checkbox" tabIndex={-1} key={row.label}>
                     {columns.map((column) => {
                       const value = row[column.id];
                       return (
@@ -97,7 +119,7 @@ const PaginatedTable=({columns,entities}) => {
       <TablePagination
         rowsPerPageOptions={[5, 7, 10]}
         component="div"
-        count={entities.length}
+        count={totalSize}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
