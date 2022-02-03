@@ -5,6 +5,8 @@ import { ActionColumnFormatter, StatusFormatter } from '../../../../utility/acti
 import PaginatedTable from '../../../../components/PaginatedTable';
 import CompanyEditDialog from './CompanyEditDialog';
 import DeleteModal from '../../modals/DeleteModal';
+import { getAllCompanies } from '../../../../redux/Company/CompanyActions';
+import { connect } from 'react-redux';
 
 const useStyles=makeStyles((theme)=>({
     root:{
@@ -29,11 +31,12 @@ const useStyles=makeStyles((theme)=>({
     }
 }))
 
-const Company = () => {
+const Company = ({companies,totalCount,getAllCompanies}) => {
     const navigate=useNavigate();
-
+    
     const [companyEditOpen,setCompanyEditOpen]=useState(true)
     const [showCompanyDelete,setShowCompanyDelete]=useState(false)
+
     const onCompanyEditClose=()=>{
         setCompanyEditOpen(false)
         navigate(`/main/admin/company`)
@@ -53,24 +56,24 @@ const Company = () => {
     }
 
     const classes=useStyles();
-    const data=[
-        {id:1,type:"Exporter",name:"Company A",notes:"lorem ipsum dolor sit amet,consectetur",phone:"+1 123 4567",isActive:true},
-        {id:2,type:"Manufacturer",name:"Company B",notes:"lorem ipsum dolor sit amet,consectetur",phone:"+1 123 4567",isActive:false},
-        {id:3,type:"Importer",name:"Company C",notes:"lorem ipsum dolor sit amet,consectetur",phone:"+1 123 4567",isActive:true},
-        {id:4,type:"Importer",name:"Company C",notes:"lorem ipsum dolor sit amet,consectetur",phone:"+1 123 4567",isActive:true},
-        {id:5,type:"Importer",name:"Company C",notes:"lorem ipsum dolor sit amet,consectetur",phone:"+1 123 4567",isActive:true},
-        {id:6,type:"Importer",name:"Company C",notes:"lorem ipsum dolor sit amet,consectetur",phone:"+1 123 4567",isActive:true},
-        {id:7,type:"Importer",name:"Company C",notes:"lorem ipsum dolor sit amet,consectetur",phone:"+1 123 4567",isActive:true},
-        {id:8,type:"Importer",name:"Company C",notes:"lorem ipsum dolor sit amet,consectetur",phone:"+1 123 4567",isActive:true},
-    ]
+    // const data=[
+    //     {id:1,type:"Exporter",name:"Company A",notes:"lorem ipsum dolor sit amet,consectetur",phone:"+1 123 4567",isActive:true},
+    //     {id:2,type:"Manufacturer",name:"Company B",notes:"lorem ipsum dolor sit amet,consectetur",phone:"+1 123 4567",isActive:false},
+    //     {id:3,type:"Importer",name:"Company C",notes:"lorem ipsum dolor sit amet,consectetur",phone:"+1 123 4567",isActive:true},
+    //     {id:4,type:"Importer",name:"Company C",notes:"lorem ipsum dolor sit amet,consectetur",phone:"+1 123 4567",isActive:true},
+    //     {id:5,type:"Importer",name:"Company C",notes:"lorem ipsum dolor sit amet,consectetur",phone:"+1 123 4567",isActive:true},
+    //     {id:6,type:"Importer",name:"Company C",notes:"lorem ipsum dolor sit amet,consectetur",phone:"+1 123 4567",isActive:true},
+    //     {id:7,type:"Importer",name:"Company C",notes:"lorem ipsum dolor sit amet,consectetur",phone:"+1 123 4567",isActive:true},
+    //     {id:8,type:"Importer",name:"Company C",notes:"lorem ipsum dolor sit amet,consectetur",phone:"+1 123 4567",isActive:true},
+    // ]
 
     const columns = [
-        { id: 'id', label: 'Id', align:"center"},
+        { id: 'internalIdForBusiness', label: 'Id', align:"center"},
         { id: 'name', label: 'Name', align:"center" },
         { id: 'type', label: 'Type', align: 'center' },
         { id: 'phone', label: 'Phone Number', align: 'center' },
         { id: 'notes', label: 'Notes', align: 'center' },
-        { id: "isActive", label: "Status", align: "center", format:(value)=><StatusFormatter value={value}/> },
+        { id: "isActive", label: "Status", align: "center", format:(value)=><div>{value.isActive ? "Active" : "in Active"}</div> },
         { id: "action", label: "Action", align: "center", format:(value)=><ActionColumnFormatter value={value} onEdit={CompanyUiEvents.editCompanyClick} onDelete={handleCompanyDeleteOpen}/> },        
     ];
 
@@ -86,7 +89,12 @@ const Company = () => {
                             Add new
                         </Button>
                     </Box>
-                    <PaginatedTable columns={columns} entities={data} />
+                    <PaginatedTable
+                        columns={columns}
+                        totalCount={totalCount}
+                        data={companies}
+                        fetchData={getAllCompanies}
+                    />
                     <Routes>
                         <Route path="new" element={<CompanyEditDialog show={companyEditOpen} onClose={onCompanyEditClose} />} />
                         <Route path=":id/edit" element={<CompanyEditDialog show={companyEditOpen} onClose={onCompanyEditClose} />} />  
@@ -102,4 +110,12 @@ const Company = () => {
     )
 }
 
-export default Company;
+const mapStateToProps=(state)=>({
+    companies:state.companies.companies,
+    totalCount:state.companies.totalCount
+})
+const actions = {
+    getAllCompanies,
+}
+
+export default connect(mapStateToProps,actions)(Company);
