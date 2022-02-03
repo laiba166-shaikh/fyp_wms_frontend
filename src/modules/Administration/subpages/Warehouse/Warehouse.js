@@ -1,10 +1,12 @@
 import React, {useState} from 'react'
 import { Typography,makeStyles,Grid,Paper,Box,Button} from '@material-ui/core';
 import { Routes,Route,useNavigate } from "react-router-dom";
-import { ActionColumnFormatter, StatusFormatter } from '../../../../utility/actionFormatters';
+import { ActionColumnFormatter} from '../../../../utility/actionFormatters';
 import PaginatedTable from '../../../../components/PaginatedTable';
 import WarehouseEditDialog from './WarehouseEditDialog';
 import DeleteModal from '../../modals/DeleteModal';
+import { getAllWarehouses } from '../../../../redux/Warehouse/WarehouseActions';
+import { connect } from 'react-redux';
 
 const useStyles=makeStyles((theme)=>({
     root:{
@@ -29,11 +31,13 @@ const useStyles=makeStyles((theme)=>({
     }
 }))
 
-const Warehouse = () => {
+const Warehouse = ({warehouses,totalCount,getAllWarehouses}) => {
     const navigate=useNavigate();
+    const classes=useStyles();
 
     const [warehouseEditOpen,setWarehouseEditOpen]=useState(true)
     const [showWarehouseDelete,setShowWarehouseDelete]=useState(false)
+
     const onWarehouseEditClose=()=>{
         setWarehouseEditOpen(false)
         navigate(`/main/admin/warehouse`)
@@ -52,25 +56,12 @@ const Warehouse = () => {
         }  
     }
 
-    const classes=useStyles();
-    const data=[
-        {id:1,address:"XYZ Road",name:"Warehouse A",city:"Karachi",businessWarehouseCode:"R-123",isActive:true},
-        {id:2,address:"ABC Street",name:"Warehouse B",city:"Karachi",businessWarehouseCode:"C-577",isActive:false},
-        {id:3,address:"XYZ Road",name:"Warehouse C",city:"Lahore",businessWarehouseCode:"R-789",isActive:true},
-        {id:4,address:"ABC Street",name:"Warehouse C",city:"Karachi",businessWarehouseCode:"X-234",isActive:true},
-        {id:5,address:"XYZ Road",name:"Warehouse C",city:"Islamabad",businessWarehouseCode:"R-021",isActive:true},
-        {id:6,address:"ABC Street",name:"Warehouse C",city:"Karachi",businessWarehouseCode:"A-104",isActive:true},
-        {id:7,address:"XYZ Road",name:"Warehouse C",city:"Lahore",businessWarehouseCode:"L-044",isActive:true},
-        {id:8,address:"ABC Street",name:"Warehouse C",city:"Karachi",businessWarehouseCode:"H-059",isActive:true},
-    ]
-
     const columns = [
-        { id: 'id', label: 'Id', align:"center"},
+        { id: 'businessWarehouseCode', label: 'Code', align: 'center' },
         { id: 'name', label: 'Name', align:"center" },
         { id: 'address', label: 'Address', align: 'center' },
-        { id: 'businessWarehouseCode', label: 'Code', align: 'center' },
         { id: 'city', label: 'City', align: 'center' },
-        { id: "isActive", label: "Status", align: "center", format:(value)=><StatusFormatter value={value}/> },
+        { id: "isActive", label: "Status", align: "center", format:(value)=><div>{value.isActive ? "Active" : "in Active"}</div> },
         { id: "action", label: "Action", align: "center", format:(value)=><ActionColumnFormatter value={value} onEdit={WarehouseUiEvents.editWarehouseClick} onDelete={handleWarehouseDeleteOpen}/> },        
     ];
 
@@ -86,7 +77,12 @@ const Warehouse = () => {
                             Add new
                         </Button>
                     </Box>
-                    <PaginatedTable columns={columns} entities={data} />
+                    <PaginatedTable
+                        columns={columns}
+                        totalCount={totalCount}
+                        data={warehouses}
+                        fetchData={getAllWarehouses}
+                    />
                     <Routes>
                         <Route path="new" element={<WarehouseEditDialog show={warehouseEditOpen} onClose={onWarehouseEditClose} />} />
                         <Route path=":id/edit" element={<WarehouseEditDialog show={warehouseEditOpen} onClose={onWarehouseEditClose} />} />  
@@ -102,4 +98,13 @@ const Warehouse = () => {
     )
 }
 
-export default Warehouse;
+const mapStateToProps=(state)=>({
+    warehouses:state.warehouses.warehouses,
+    totalCount:state.warehouses.totalCount
+})
+
+const actions = {
+    getAllWarehouses
+}
+
+export default connect(mapStateToProps,actions)(Warehouse);
