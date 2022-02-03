@@ -7,10 +7,10 @@ const client = axios.create({
 })
 
 client.interceptors.request.use(
-    async (config)=>{
+    (config)=>{
         const {auth}=store.getState();
-        if(auth.token){
-            client.defaults.headers.common['Authorization'] = `Bearer ${auth.token}`
+        if(auth){
+            config.headers.common['Authorization'] = `Bearer ${auth.token}`
         }
         return config;
     },
