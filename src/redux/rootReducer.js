@@ -5,6 +5,7 @@ import UsersReducer from "./User/UserReducer";
 import WarehouseReducer from "./Warehouse/WarehouseReducer";
 import BrandReducer from "./Brand/BrandReducer";
 import UomReducer from "./Uom/UomReducer";
+import CategoryReducer from "./Category/CategoryReducer";
 
 const rootReducer=combineReducers({
     auth:AuthReducer,
@@ -12,7 +13,8 @@ const rootReducer=combineReducers({
     companies:CompanyReducer,
     warehouses:WarehouseReducer,
     brands:BrandReducer,
-    uoms:UomReducer
+    uoms:UomReducer,
+    categories:CategoryReducer
 });
 
 export default rootReducer;

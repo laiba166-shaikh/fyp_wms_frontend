@@ -43,23 +43,23 @@ const UomEditDialog = ({show,onClose}) => {
         }
     }, [dispatch])
     //save Employee function if(id) { edit }else { create }  
-    const saveUom = (brand) => {
+    const saveUom = (uom) => {
         if (params.id) {
             setLoading(true)
-            dispatch(updateUom(brand)).then((res) => {
+            dispatch(updateUom(uom)).then((res) => {
                 setLoading(false)
                 onClose()
             }).catch((err) => {
-                console.log("error updating brand")
+                console.log("error updating uom")
                 setLoading(false)
             })
         } else {
             setLoading(true)
-            dispatch(createUom(brand)).then((res) => {
+            dispatch(createUom(uom)).then((res) => {
                 setLoading(false)
                 onClose()
             }).catch((err) => {
-                console.log("error creating brand")
+                console.log("error creating uom")
                 setLoading(false)
             })
         }

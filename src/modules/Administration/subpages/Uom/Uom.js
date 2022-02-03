@@ -55,16 +55,6 @@ const Uom = ({uoms,totalCount,getAllUoms}) => {
     }
 
     const classes=useStyles();
-    // const data=[
-    //     {id:1,name:"Uom A",isActive:true},
-    //     {id:2,name:"Uom B",isActive:false},
-    //     {id:3,name:"Uom C",isActive:true},
-    //     {id:4,name:"Uom C",isActive:true},
-    //     {id:5,name:"Uom C",isActive:true},
-    //     {id:6,name:"Uom C",isActive:true},
-    //     {id:7,name:"Uom C",isActive:true},
-    //     {id:8,name:"Uom C",isActive:true},
-    // ]
 
     const columns = [
         { id: '_id', label: 'Id', align:"center"},
