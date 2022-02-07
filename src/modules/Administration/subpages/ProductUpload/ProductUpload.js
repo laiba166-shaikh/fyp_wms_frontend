@@ -5,6 +5,8 @@ import { ActionColumnFormatter, StatusFormatter } from '../../../../utility/acti
 import PaginatedTable from '../../../../components/PaginatedTable';
 import ProductUploadEditDialog from './ProductUploadEditDialog';
 import DeleteModal from '../../modals/DeleteModal';
+import { getAllProducts } from '../../../../redux/ProductUpload/ProductUploadActions';
+import { connect } from 'react-redux';
 
 const useStyles=makeStyles((theme)=>({
     root:{
@@ -29,17 +31,24 @@ const useStyles=makeStyles((theme)=>({
     }
 }))
 
-const ProductUpload = () => {
+const ProductUpload = ({products,totalCount,getAllProducts}) => {
     const navigate=useNavigate();
+    const classes=useStyles();
 
+    const [view,setView]=useState(false)
     const [productUploadEditOpen,setProductUploadEditOpen]=useState(true)
     const [showProductUploadDelete,setShowProductUploadDelete]=useState(false)
     const onProductUploadEditClose=()=>{
         setProductUploadEditOpen(false)
+        setView(false)
         navigate(`/main/admin/product-upload`)
     }
     const handleProductUploadDeleteClose=()=>setShowProductUploadDelete(false)
     const handleProductUploadDeleteOpen=()=>setShowProductUploadDelete(true)
+    const handleViewOnly=(id)=>{
+        setView(true)
+        ProductUploadUiEvents.editProductUploadClick(id)
+    }
 
     const ProductUploadUiEvents={
         addNewProductUploadClick:()=>{
@@ -52,29 +61,14 @@ const ProductUpload = () => {
         }  
     }
 
-    const classes=useStyles();
-    const data=[
-        {id:1,volume:0,name:"Product A",description:"lorem ipsum dolor sit amet,consectetur",weight:0,category:"Category A",brand:"Brand A",uom:"UOM A",isActive:true},
-        {id:2,volume:0,name:"Product B",description:"lorem ipsum dolor sit amet,consectetur",weight:0,category:"Category A",brand:"Brand A",uom:"UOM A",isActive:false},
-        {id:3,volume:0,name:"Product C",description:"lorem ipsum dolor sit amet,consectetur",weight:0,category:"Category A",brand:"Brand A",uom:"UOM A",isActive:true},
-        {id:4,volume:0,name:"Product C",description:"lorem ipsum dolor sit amet,consectetur",weight:0,category:"Category A",brand:"Brand A",uom:"UOM A",isActive:true},
-        {id:5,volume:0,name:"Product C",description:"lorem ipsum dolor sit amet,consectetur",weight:0,category:"Category A",brand:"Brand A",uom:"UOM A",isActive:true},
-        {id:6,volume:0,name:"Product C",description:"lorem ipsum dolor sit amet,consectetur",weight:0,category:"Category A",brand:"Brand A",uom:"UOM A",isActive:true},
-        {id:7,volume:0,name:"Product C",description:"lorem ipsum dolor sit amet,consectetur",weight:0,category:"Category A",brand:"Brand A",uom:"UOM A",isActive:true},
-        {id:8,volume:0,name:"Product C",description:"lorem ipsum dolor sit amet,consectetur",weight:0,category:"Category A",brand:"Brand A",uom:"UOM A",isActive:true},
-    ]
-
     const columns = [
-        { id: 'id', label: 'Id', align:"center"},
+        { id: '_id', label: 'Id', align:"center"},
         { id: 'name', label: 'Name', align:"center" },
         { id: 'description', label: 'Description', align: 'center' },
         { id: 'volume', label: 'Volume', align: 'center' },
         { id: 'weight', label: 'Weight', align: 'center' },
-        { id: 'category', label: 'Category', align: 'center' },
-        { id: 'brand', label: 'Brand', align: 'center' },
-        { id: 'uom', label: 'UOM', align: 'center' },
-        { id: "isActive", label: "Status", align: "center", format:(value)=><StatusFormatter value={value}/> },
-        { id: "action", label: "Action", align: "center", format:(value)=><ActionColumnFormatter value={value} onEdit={ProductUploadUiEvents.editProductUploadClick} onDelete={handleProductUploadDeleteOpen}/> },        
+        { id: "isActive", label: "Status", align: "center", format:(value)=><div>{value.isActive ? "Active" : "in Active"}</div> },
+        { id: "action", label: "Action", align: "center", format:(value)=><ActionColumnFormatter value={value} onEdit={ProductUploadUiEvents.editProductUploadClick} onClickView={handleViewOnly} /> },        
     ];
 
     return (
@@ -89,10 +83,15 @@ const ProductUpload = () => {
                             Add new
                         </Button>
                     </Box>
-                    <PaginatedTable columns={columns} entities={data} />
+                    <PaginatedTable
+                        columns={columns}
+                        totalCount={totalCount}
+                        data={products}
+                        fetchData={getAllProducts}
+                    />
                     <Routes>
                         <Route path="new" element={<ProductUploadEditDialog show={productUploadEditOpen} onClose={onProductUploadEditClose} />} />
-                        <Route path=":id/edit" element={<ProductUploadEditDialog show={productUploadEditOpen} onClose={onProductUploadEditClose} />} />  
+                        <Route path=":id/edit" element={<ProductUploadEditDialog show={productUploadEditOpen} onClose={onProductUploadEditClose} view={view} />} />  
                     </Routes>
                     <DeleteModal
                         show={showProductUploadDelete}
@@ -105,4 +104,13 @@ const ProductUpload = () => {
     )
 }
 
-export default ProductUpload;
+const mapStateToProps=(state)=>({
+    products:state.products.products,
+    totalCount:state.products.totalCount
+})
+
+const actions = {
+    getAllProducts
+}
+
+export default connect(mapStateToProps,actions)(ProductUpload);
