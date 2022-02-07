@@ -1,68 +1,74 @@
-import React, {useState} from 'react'
-import { Typography,makeStyles,Grid,Paper,Box,Button} from '@material-ui/core';
-import { Routes,Route,useNavigate } from "react-router-dom";
-import { ActionColumnFormatter} from '../../../../utility/actionFormatters';
+import React, { useState } from 'react'
+import { Typography, makeStyles, Grid, Paper, Box, Button } from '@material-ui/core';
+import { Routes, Route, useNavigate } from "react-router-dom";
+import { ActionColumnFormatter } from '../../../../utility/actionFormatters';
 import PaginatedTable from '../../../../components/PaginatedTable';
 import WarehouseEditDialog from './WarehouseEditDialog';
 import DeleteModal from '../../modals/DeleteModal';
 import { getAllWarehouses } from '../../../../redux/Warehouse/WarehouseActions';
 import { connect } from 'react-redux';
 
-const useStyles=makeStyles((theme)=>({
-    root:{
-        width:"100%",
-        height:"100%",
-        overflowX:"hidden",
-        overflowY:"auto",
-        backgroundColor:theme.palette.primary.dark,
-        boxSizing:"border-box",
+const useStyles = makeStyles((theme) => ({
+    root: {
+        width: "100%",
+        height: "100%",
+        overflowX: "hidden",
+        overflowY: "auto",
+        backgroundColor: theme.palette.primary.dark,
+        boxSizing: "border-box",
     },
-    container:{
-        backgroundColor:"transparent",
-        height:"100%",
-        color:"#fff",
-        padding:theme.spacing(2)
+    container: {
+        backgroundColor: "transparent",
+        height: "100%",
+        color: "#fff",
+        padding: theme.spacing(2)
     },
-    header:{
-        display:"flex",
-        alignItems:"center",
-        justifyContent:"space-between",
-        margin:"10px 0px"
+    header: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        margin: "10px 0px"
     }
 }))
 
-const Warehouse = ({warehouses,totalCount,getAllWarehouses}) => {
-    const navigate=useNavigate();
-    const classes=useStyles();
+const Warehouse = ({ warehouses, totalCount, getAllWarehouses }) => {
+    const navigate = useNavigate();
+    const classes = useStyles();
 
-    const [warehouseEditOpen,setWarehouseEditOpen]=useState(true)
-    const [showWarehouseDelete,setShowWarehouseDelete]=useState(false)
+    const [view, setView] = useState(false)
+    const [warehouseEditOpen, setWarehouseEditOpen] = useState(true)
+    const [showWarehouseDelete, setShowWarehouseDelete] = useState(false)
 
-    const onWarehouseEditClose=()=>{
+    const onWarehouseEditClose = () => {
         setWarehouseEditOpen(false)
+        setView(false)
         navigate(`/main/admin/warehouse`)
     }
-    const handleWarehouseDeleteClose=()=>setShowWarehouseDelete(false)
-    const handleWarehouseDeleteOpen=()=>setShowWarehouseDelete(true)
+    const handleWarehouseDeleteClose = () => setShowWarehouseDelete(false)
+    const handleWarehouseDeleteOpen = () => setShowWarehouseDelete(true)
+    const handleViewOnly = (id) => {
+        setView(true)
+        WarehouseUiEvents.editWarehouseClick(id)
+    }
 
-    const WarehouseUiEvents={
-        addNewWarehouseClick:()=>{
+    const WarehouseUiEvents = {
+        addNewWarehouseClick: () => {
             navigate(`/main/admin/warehouse/new`)
             setWarehouseEditOpen(true)
         },
-        editWarehouseClick:(id)=>{
+        editWarehouseClick: (id) => {
             navigate(`/main/admin/warehouse/${id}/edit`) //id is the specific record id from api send when click on edit btn
             setWarehouseEditOpen(true)
-        }  
+        }
     }
 
     const columns = [
         { id: 'businessWarehouseCode', label: 'Code', align: 'center' },
-        { id: 'name', label: 'Name', align:"center" },
+        { id: 'name', label: 'Name', align: "center" },
         { id: 'address', label: 'Address', align: 'center' },
         { id: 'city', label: 'City', align: 'center' },
-        { id: "isActive", label: "Status", align: "center", format:(value)=><div>{value.isActive ? "Active" : "in Active"}</div> },
-        { id: "action", label: "Action", align: "center", format:(value)=><ActionColumnFormatter value={value} onEdit={WarehouseUiEvents.editWarehouseClick} onDelete={handleWarehouseDeleteOpen}/> },        
+        { id: "isActive", label: "Status", align: "center", format: (value) => <div>{value.isActive ? "Active" : "in Active"}</div> },
+        { id: "action", label: "Action", align: "center", format: (value) => <ActionColumnFormatter value={value} onEdit={WarehouseUiEvents.editWarehouseClick} onClickView={handleViewOnly} /> },
     ];
 
     return (
@@ -73,7 +79,7 @@ const Warehouse = ({warehouses,totalCount,getAllWarehouses}) => {
                         <Typography variant='h3'>
                             Warehouse
                         </Typography>
-                        <Button variant="outlined" color="secondary" onClick={()=>WarehouseUiEvents.addNewWarehouseClick()}>
+                        <Button variant="outlined" color="secondary" onClick={() => WarehouseUiEvents.addNewWarehouseClick()}>
                             Add new
                         </Button>
                     </Box>
@@ -85,7 +91,7 @@ const Warehouse = ({warehouses,totalCount,getAllWarehouses}) => {
                     />
                     <Routes>
                         <Route path="new" element={<WarehouseEditDialog show={warehouseEditOpen} onClose={onWarehouseEditClose} />} />
-                        <Route path=":id/edit" element={<WarehouseEditDialog show={warehouseEditOpen} onClose={onWarehouseEditClose} />} />  
+                        <Route path=":id/edit" element={<WarehouseEditDialog show={warehouseEditOpen} onClose={onWarehouseEditClose} view={view} />} />
                     </Routes>
                     <DeleteModal
                         show={showWarehouseDelete}
@@ -98,13 +104,13 @@ const Warehouse = ({warehouses,totalCount,getAllWarehouses}) => {
     )
 }
 
-const mapStateToProps=(state)=>({
-    warehouses:state.warehouses.warehouses,
-    totalCount:state.warehouses.totalCount
+const mapStateToProps = (state) => ({
+    warehouses: state.warehouses.warehouses,
+    totalCount: state.warehouses.totalCount
 })
 
 const actions = {
     getAllWarehouses
 }
 
-export default connect(mapStateToProps,actions)(Warehouse);
+export default connect(mapStateToProps, actions)(Warehouse);

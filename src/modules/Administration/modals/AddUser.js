@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { TextInput, Select } from '../../../controls';
-import { MenuItem, DialogContent, DialogActions, Button, Grid, FormControlLabel, Checkbox } from "@material-ui/core"
+import { MenuItem, DialogContent, DialogActions, Button, Grid, FormControlLabel, Checkbox, Typography } from "@material-ui/core"
 import { Formik, Form } from 'formik';
 import * as yup from "yup";
+import { TextInput, Select } from '../../../controls';
 import Loader from '../../../components/Loader';
+import { getRoles } from "../../../utility/functions";
 
 const validationSchema = yup.object({
     firstName: yup
@@ -32,11 +33,16 @@ const validationSchema = yup.object({
 });
 
 
-const AddUser = ({ user, onClose, id, onSave, loading }) => {
-    console.log("edit ->", user)
+const AddUser = ({ user, onClose, id, onSave, loading, readOnly }) => {
     const [status, setStatus] = useState(false)
+    const [roles, setRoles] = useState([])
 
-    useEffect(() => setStatus(user.isActive), [user])
+    useEffect(() => {
+        getRoles().then((res) => {
+            setRoles([...res])
+        }).catch((err) => console.log("err getting roles"))
+        setStatus(user.isActive)
+    }, [user])
 
     return (
         <Formik
@@ -44,9 +50,12 @@ const AddUser = ({ user, onClose, id, onSave, loading }) => {
             validationSchema={validationSchema}
             enableReinitialize={true}
             onSubmit={(values) => {
+                console.log("values - >",values)
                 if (id) {
-                    // const {role,...updatedValues}=values
                     onSave({ ...values, isActive: status })
+                }else {
+                    const {roleId,...newUser}=values
+                    onSave({...newUser,role:roleId})
                 }
             }}
         >
@@ -62,7 +71,8 @@ const AddUser = ({ user, onClose, id, onSave, loading }) => {
                                         name="firstName"
                                         id="firstName"
                                         fullWidth={true}
-                                        defaultValue=" "
+                                        InputLabelProps={{ shrink: true }}
+                                        disabled={readOnly ? true : false}
                                         // type="text"
                                         placeholder="First name"
                                     />
@@ -72,7 +82,8 @@ const AddUser = ({ user, onClose, id, onSave, loading }) => {
                                         label="Last Name"
                                         name="lastName"
                                         fullWidth={true}
-                                        defaultValue=" "
+                                        InputLabelProps={{ shrink: true }}
+                                        disabled={readOnly ? true : false}
                                         // type="text"
                                         id="lastName"
                                         placeholder="Last name"
@@ -83,29 +94,32 @@ const AddUser = ({ user, onClose, id, onSave, loading }) => {
                                         label="User Name"
                                         fullWidth={true}
                                         name="username"
-                                        defaultValue=" "
+                                        InputLabelProps={{ shrink: true }}
+                                        disabled={readOnly ? true : false}
                                         // type="text"
                                         id="username"
                                         placeholder="User name"
                                     />
                                 </Grid>
-                                <Grid item md={12} sm={12}>
-                                    <TextInput
-                                        label="Change Password"
-                                        fullWidth={true}
-                                        name="password"
-                                        defaultValue=""
-                                        type="password"
-                                        id="password"
-                                        placeholder="Change Password"
-                                    />
-                                </Grid>
+                                {
+                                    !readOnly && <Grid item md={12} sm={12}>
+                                        <TextInput
+                                            label={!id ? "Password" : "Change Password"}
+                                            fullWidth={true}
+                                            name="password"
+                                            type="password"
+                                            id="password"
+                                            placeholder="Password"
+                                        />
+                                    </Grid>
+                                }
                                 <Grid item md={12} sm={12}>
                                     <TextInput
                                         label="Email"
                                         fullWidth={true}
                                         name="email"
-                                        defaultValue=" "
+                                        InputLabelProps={{ shrink: true }}
+                                        disabled={readOnly ? true : false}
                                         // type="text"
                                         id="email"
                                         placeholder="user@gmail.com"
@@ -117,13 +131,11 @@ const AddUser = ({ user, onClose, id, onSave, loading }) => {
                                         fullWidth={true}
                                         name="roleId"
                                         id="role"
+                                        disabled={readOnly ? true : false}
                                     >
-                                        {/* <MenuItem value="">
-                                            <em>None</em>
-                                        </MenuItem> */}
-                                        <MenuItem value="61f4f16013d61b753b91f69a">Super Admin</MenuItem>
-                                        <MenuItem value="61f4f16013d61b753b91f69b">Admin</MenuItem>
-                                        <MenuItem value="61f4f16013d61b753b91f69c">Customer Super Admin</MenuItem>
+                                        {roles?.map((role) => (
+                                            <MenuItem value={role._id} key={role._id}>{role.name}</MenuItem>
+                                        ))}
                                     </Select>
                                 </Grid>
                                 <Grid item md={12} sm={12}>
@@ -131,29 +143,37 @@ const AddUser = ({ user, onClose, id, onSave, loading }) => {
                                         label="Phone Number"
                                         fullWidth={true}
                                         name="phone"
-                                        defaultValue=" "
+                                        InputLabelProps={{ shrink: true }}
                                         // type="text"
+                                        disabled={readOnly ? true : false}
                                         id="phone"
                                         placeholder="+92 1342 122"
                                     />
                                 </Grid>
-                                <Grid item md={12} sm={12}>
-                                    <FormControlLabel
-                                        label="Active"
-                                        style={{ color: "rgba(255,255,255,0.5)" }}
-                                        control={
-                                            <Checkbox
-                                                checked={status}
-                                                size="small"
-                                                color="secondary"
-                                                onChange={(ev) => {
-                                                    console.log(ev.target.checked)
-                                                    setStatus(ev.target.checked)
-                                                }}
-                                            />
-                                        }
-                                    />
-                                </Grid>
+                                {
+                                    (id && !readOnly) && <Grid item md={12} sm={12}>
+                                        <FormControlLabel
+                                            label="Active"
+                                            style={{ color: "rgba(255,255,255,0.5)" }}
+                                            control={
+                                                <Checkbox
+                                                    checked={status}
+                                                    size="small"
+                                                    color="secondary"
+                                                    onChange={(ev) => {
+                                                        console.log(ev.target.checked)
+                                                        setStatus(ev.target.checked)
+                                                    }}
+                                                />
+                                            }
+                                        />
+                                    </Grid>
+                                }
+                                {
+                                    readOnly && <Typography variant='body1' style={{ color: "rgba(255,255,255,0.5)", margin: "4px" }}>
+                                        {status ? "Active" : "In Active"}
+                                    </Typography>
+                                }
                             </Grid>
                         </Form>
                     </DialogContent>

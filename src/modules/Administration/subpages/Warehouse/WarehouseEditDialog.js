@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
         borderBottom: "1px solid rgba(255,255,255,0.5)"
     }
 }))
-const WarehouseEditDialog = ({ show, onClose }) => {
+const WarehouseEditDialog = ({ show, onClose, view = false }) => {
 
     let params = useParams();
 
@@ -73,7 +73,7 @@ const WarehouseEditDialog = ({ show, onClose }) => {
         <Dialog open={show} onClose={onClose} maxWidth="sm" className={classes.root}>
             <DialogTitle className={classes.formTitle}>
                 <Typography variant='h4' style={{ color: "#fff" }}>
-                    {params.id ? "Edit" : "Add"} Warehouse
+                    {params.id ? view ? "View" : "Edit" : "Add"} Warehouse
                 </Typography>
             </DialogTitle>
             <AddWarehouse
@@ -82,6 +82,7 @@ const WarehouseEditDialog = ({ show, onClose }) => {
                 id={params.id}
                 loading={loading}
                 onSave={saveWarehouse}
+                readOnly={view}
             />
         </Dialog>
     )

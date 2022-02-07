@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { TextInput } from '../../../controls';
-import { DialogContent, DialogActions, Button, Grid, FormControlLabel, Checkbox } from "@material-ui/core"
+import { DialogContent, DialogActions, Button, Grid, FormControlLabel, Checkbox, Typography } from "@material-ui/core"
 import { Formik, Form } from 'formik';
 import Loader from '../../../components/Loader';
 import * as yup from "yup";
@@ -25,7 +25,7 @@ const validationSchema = yup.object({
 });
 
 
-const AddWarehouse = ({ initialValues, onClose, id, loading, onSave }) => {
+const AddWarehouse = ({ initialValues, onClose, id, loading, onSave, readOnly }) => {
 
     const [status, setStatus] = useState(false)
 
@@ -43,8 +43,8 @@ const AddWarehouse = ({ initialValues, onClose, id, loading, onSave }) => {
                 console.log("values -> ", values)
                 if (!id) {
                     onSave(values)
-                }else {
-                    const formValues={...values,isActive:status}
+                } else {
+                    const formValues = { ...values, isActive: status }
                     onSave(formValues)
                 }
             }}
@@ -60,7 +60,8 @@ const AddWarehouse = ({ initialValues, onClose, id, loading, onSave }) => {
                                         label="Warehouse Name"
                                         name="name"
                                         id="warehouseName"
-                                        defaultValue=" "
+                                        InputLabelProps={{ shrink: true }}
+                                        disabled={readOnly ? true : false}
                                         fullWidth={true}
                                         type="text"
                                         placeholder="Warehouse name"
@@ -72,7 +73,8 @@ const AddWarehouse = ({ initialValues, onClose, id, loading, onSave }) => {
                                         name="address"
                                         fullWidth={true}
                                         type="text"
-                                        defaultValue=" "
+                                        InputLabelProps={{ shrink: true }}
+                                        disabled={readOnly ? true : false}
                                         id="warehouseAddress"
                                         placeholder="Warehouse Address"
                                     />
@@ -83,7 +85,8 @@ const AddWarehouse = ({ initialValues, onClose, id, loading, onSave }) => {
                                         fullWidth={true}
                                         name="city"
                                         type="text"
-                                        defaultValue=" "
+                                        InputLabelProps={{ shrink: true }}
+                                        disabled={readOnly ? true : false}
                                         id="city"
                                         placeholder="city"
                                     />
@@ -94,13 +97,14 @@ const AddWarehouse = ({ initialValues, onClose, id, loading, onSave }) => {
                                         fullWidth={true}
                                         name="businessWarehouseCode"
                                         type="text"
-                                        defaultValue=" "
+                                        InputLabelProps={{ shrink: true }}
+                                        disabled={readOnly ? true : false}
                                         id="warehouse-code"
                                         placeholder="W-001"
                                     />
                                 </Grid>
                                 {
-                                    id && <Grid item md={12} sm={12}>
+                                    (id && !readOnly) && <Grid item md={12} sm={12}>
                                         <FormControlLabel
                                             label="Active"
                                             style={{ color: "rgba(255,255,255,0.5)" }}
@@ -116,6 +120,11 @@ const AddWarehouse = ({ initialValues, onClose, id, loading, onSave }) => {
                                             }
                                         />
                                     </Grid>
+                                }
+                                {
+                                    readOnly && <Typography variant='body1' style={{ color: "rgba(255,255,255,0.5)", margin: "4px" }}>
+                                        {status ? "Active" : "In Active"}
+                                    </Typography>
                                 }
                             </Grid>
                         </Form>

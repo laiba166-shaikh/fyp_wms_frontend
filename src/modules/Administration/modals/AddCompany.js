@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { TextInput, } from '../../../controls';
 import Loader from '../../../components/Loader';
-import { DialogContent, DialogActions, Button, Grid, FormControlLabel, Checkbox } from "@material-ui/core"
+import { DialogContent, DialogActions, Button, Grid, FormControlLabel, Checkbox, Typography } from "@material-ui/core"
 import { Formik, Form } from 'formik';
 import * as yup from "yup";
 
@@ -24,7 +24,7 @@ const validationSchema = yup.object({
 });
 
 
-const AddCompany = ({ initialValues, onClose, id, onSave, loading }) => {
+const AddCompany = ({ initialValues, onClose, id, onSave, loading, readOnly }) => {
 
     const [status, setStatus] = useState(false)
 
@@ -41,10 +41,10 @@ const AddCompany = ({ initialValues, onClose, id, onSave, loading }) => {
             enableReinitialize={true}
             onSubmit={(values) => {
                 console.log("values -> ", values)
-                if(!id){
+                if (!id) {
                     onSave(values)
-                }else {
-                    const formValues={...values,isActive:status}
+                } else {
+                    const formValues = { ...values, isActive: status }
                     onSave(formValues)
                 }
             }}
@@ -60,7 +60,8 @@ const AddCompany = ({ initialValues, onClose, id, onSave, loading }) => {
                                         label="Company Name"
                                         name="name"
                                         id="companyName"
-                                        defaultValue=" "
+                                        InputLabelProps={{ shrink: true }}
+                                        disabled={readOnly ? true : false}
                                         fullWidth={true}
                                         // type="text"
                                         placeholder="Company name"
@@ -70,7 +71,8 @@ const AddCompany = ({ initialValues, onClose, id, onSave, loading }) => {
                                     <TextInput
                                         label="Company Type"
                                         name="type"
-                                        defaultValue=" "
+                                        InputLabelProps={{ shrink: true }}
+                                        disabled={readOnly ? true : false}
                                         fullWidth={true}
                                         // type="text"
                                         id="companyType"
@@ -81,7 +83,8 @@ const AddCompany = ({ initialValues, onClose, id, onSave, loading }) => {
                                     <TextInput
                                         label="Notes"
                                         fullWidth={true}
-                                        defaultValue=" "
+                                        InputLabelProps={{ shrink: true }}
+                                        disabled={readOnly ? true : false}
                                         name="notes"
                                         // type="text"
                                         id="notes"
@@ -92,7 +95,8 @@ const AddCompany = ({ initialValues, onClose, id, onSave, loading }) => {
                                     <TextInput
                                         label="Phone Number"
                                         fullWidth={true}
-                                        defaultValue=" "
+                                        InputLabelProps={{ shrink: true }}
+                                        disabled={readOnly ? true : false}
                                         name="phone"
                                         // type="text"
                                         id="phone"
@@ -100,7 +104,7 @@ const AddCompany = ({ initialValues, onClose, id, onSave, loading }) => {
                                     />
                                 </Grid>
                                 {
-                                    id && <Grid item md={12} sm={12}>
+                                    (id && !readOnly) && <Grid item md={12} sm={12}>
                                         <FormControlLabel
                                             label="Active"
                                             style={{ color: "rgba(255,255,255,0.5)" }}
@@ -117,7 +121,11 @@ const AddCompany = ({ initialValues, onClose, id, onSave, loading }) => {
                                         />
                                     </Grid>
                                 }
-
+                                {
+                                    readOnly && <Typography variant='body1' style={{ color: "rgba(255,255,255,0.5)", margin: "4px" }}>
+                                        {status ? "Active" : "In Active"}
+                                    </Typography>
+                                }
                             </Grid>
                         </Form>
                     </DialogContent>

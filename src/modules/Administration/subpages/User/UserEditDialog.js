@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Dialog, DialogTitle, makeStyles, Typography } from '@material-ui/core';
 import AddUser from '../../modals/AddUser';
 import { getUser, updateUser } from '../../../../redux/User/UserActions';
-import Loader from '../../../../components/Loader';
+import { createUser } from '../../../../redux/Auth/AuthActions';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
         borderBottom: "1px solid rgba(255,255,255,0.5)"
     }
 }))
-const UserEditDialog = ({ show, onClose }) => {
+const UserEditDialog = ({ show, onClose, view=false }) => {
 
     let params = useParams();
     const classes = useStyles()
@@ -30,18 +30,17 @@ const UserEditDialog = ({ show, onClose }) => {
         roleId: "",
         email: "",
         phone: "",
-        isActive: false
     }
 
     const [user, setUser] = useState({})
-    const [loading,setLoading]=useState(false)
+    const [loading, setLoading] = useState(false)
     //destructure redux state which is required
     //call fetchSingleRecord for data as initialValues
     useEffect(() => {
         if (params.id) {
             setLoading(true)
             dispatch(getUser(params.id)).then((res) => {
-                setUser({ ...res })
+                setUser({...res})
                 setLoading(false)
             }).catch((err) => {
                 console.log("user did not fetch")
@@ -61,6 +60,15 @@ const UserEditDialog = ({ show, onClose }) => {
                 console.log("error updating user")
                 setLoading(false)
             })
+        }else {
+            setLoading(true)
+            dispatch(createUser(user)).then((res)=>{
+                setLoading(false)
+                onClose()
+            }).catch((err) => {
+                console.log("error creating user")
+                setLoading(false)
+            })
         }
     }
 
@@ -68,15 +76,16 @@ const UserEditDialog = ({ show, onClose }) => {
         <Dialog open={show} onClose={onClose} maxWidth="sm" className={classes.root}>
             <DialogTitle className={classes.formTitle}>
                 <Typography variant='h4' style={{ color: "#fff" }}>
-                    {params.id ? "Edit" : "Add"} User
+                    {params.id ? view ? "View" : "Edit" : "Add"} User
                 </Typography>
             </DialogTitle>
             <AddUser
-                user={user || initUser}
+                user={(params.id && user._id) ? user : initUser}
                 onClose={onClose}
                 loading={loading}
                 id={params.id}
                 onSave={saveUser}
+                readOnly={view}
             />
         </Dialog>
     )

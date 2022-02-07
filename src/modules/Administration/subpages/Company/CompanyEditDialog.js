@@ -1,26 +1,26 @@
-import React, {useState,useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import {useDispatch} from "react-redux"
-import { Dialog,DialogTitle,makeStyles,Typography} from '@material-ui/core';
+import { useDispatch } from "react-redux"
+import { Dialog, DialogTitle, makeStyles, Typography } from '@material-ui/core';
 import AddCompany from '../../modals/AddCompany';
-import {getCompany,createCompany,updateCompany} from "../../../../redux/Company/CompanyActions";
+import { getCompany, createCompany, updateCompany } from "../../../../redux/Company/CompanyActions";
 
-const useStyles=makeStyles((theme)=>({
-    root:{
-        "& .MuiDialog-paper":{
-            backgroundColor:theme.palette.primary.dark,
+const useStyles = makeStyles((theme) => ({
+    root: {
+        "& .MuiDialog-paper": {
+            backgroundColor: theme.palette.primary.dark,
         },
     },
-    formTitle:{
-        borderBottom:"1px solid rgba(255,255,255,0.5)"
+    formTitle: {
+        borderBottom: "1px solid rgba(255,255,255,0.5)"
     }
 }))
-const CompanyEditDialog = ({show,onClose}) => {
+const CompanyEditDialog = ({ show, onClose, view = false }) => {
 
     let params = useParams();
-    console.log("params -> ",params,params.id);
+    console.log("params -> ", params, params.id);
 
-    const classes=useStyles()
+    const classes = useStyles()
     const dispatch = useDispatch()
 
     const initialValues = {
@@ -31,7 +31,7 @@ const CompanyEditDialog = ({show,onClose}) => {
     }
 
     const [company, setCompany] = useState({})
-    const [loading,setLoading]=useState(false)
+    const [loading, setLoading] = useState(false)
     //destructure redux state which is required
 
     //call fetchSingleRecord for data as initialValues
@@ -59,7 +59,7 @@ const CompanyEditDialog = ({show,onClose}) => {
                 console.log("error updating company")
                 setLoading(false)
             })
-        }else {
+        } else {
             setLoading(true)
             dispatch(createCompany(company)).then((res) => {
                 setLoading(false)
@@ -74,8 +74,8 @@ const CompanyEditDialog = ({show,onClose}) => {
     return (
         <Dialog open={show} onClose={onClose} maxWidth="sm" className={classes.root}>
             <DialogTitle className={classes.formTitle}>
-                <Typography variant='h4' style={{color:"#fff"}}>
-                {params.id ? "Edit" : "Add"} Company
+                <Typography variant='h4' style={{ color: "#fff" }}>
+                    {params.id ? view ? "View" : "Edit" : "Add"} Company
                 </Typography>
             </DialogTitle>
             <AddCompany
@@ -84,8 +84,9 @@ const CompanyEditDialog = ({show,onClose}) => {
                 id={params.id}
                 loading={loading}
                 onSave={saveCompany}
+                readOnly={view}
             />
-      </Dialog>
+        </Dialog>
     )
 }
 

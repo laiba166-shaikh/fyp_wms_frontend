@@ -17,9 +17,9 @@ export function ActionColumnFormatter(rowData) {
             <span onClick={() => rowData.onEdit(rowData.value._id)}>
                 <EditOutlined style={{ color: "#2e7d32" }} className={classes.icon} />
             </span>
-            <span onClick={() => rowData.onClickView(rowData.value._id)}>
+            { !rowData.dontView && <span onClick={() => rowData.onClickView(rowData.value._id)}>
                 <Visibility color="secondary" className={classes.icon} />
-            </span>
+            </span>}
             {/* <span onClick={() => rowData.onDelete(rowData.value._id)}>
                 <DeleteOutlined style={{ color: "#d32f2f" }} className={classes.icon} />
             </span> */}

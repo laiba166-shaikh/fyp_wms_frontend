@@ -14,10 +14,6 @@ export const AdministrationLinks={
             path:"/main/admin/company"    
         },
         {
-            label:"Customers",
-            path: "/main/admin/customers" 
-        },
-        {
             label:"Warehouse",
             path: "/main/admin/warehouse"
         },
@@ -37,32 +33,28 @@ export const AdministrationLinks={
             label:"Product Upload",
             path:"/main/admin/product-upload"
         },
-        {
-            label:"Activity Logs",
-            path:"/main/admin/activity-logs"
-        },
     ]
 }
 
 export const WarehouseOptLinks={
     label:"Warehouse Operations",
-    path:"#",
+    path:"/main/operations",
     icon:<ApartmentOutlined style={{color:"#fff",fontSize:18}}/>,
     sublinks:[
         {
-            path:"#",
+            path:"/main/operations/product-inward",
             label:"Product Inwards"
         },
         {
-            path:"#",
+            path:"/main/operations/dispatch-order",
             label:"Dispatch Order"
         },
         {
-            path:"#",
+            path:"/main/operations/product-outward",
             label:"Product Outward"
         },
         {
-            path:"#",
+            path:"/main/operations/inventory",
             label:"Inventory Adjustment"
         }
     ]
@@ -100,10 +92,6 @@ export const ReportingLinks={
         {
             path:"#",
             label:"Inventory"
-        },
-        {
-            path:"#",
-            label:"Ride"
         },
     ]
 }
