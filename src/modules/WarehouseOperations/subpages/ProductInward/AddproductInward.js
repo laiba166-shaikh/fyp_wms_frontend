@@ -118,7 +118,7 @@ const AddproductInward = ({ companies, warehouses, products, getAllCompanies, ge
         <Grid item className={classes.root} md={12} xs={12}>
             {loading && <Loader />}
             <PageHeader
-                title={`${params.id ? readOnly ? "View" : "Edit" : "Add"} Product Inward`}
+                title={`${(params.id && readOnly) ? "View" : "Add"} Product Inward`}
                 buttonTitle="Cancel"
                 headerAction={() => navigate("/main/operations/product-inward")}
             />
@@ -263,7 +263,7 @@ const AddproductInward = ({ companies, warehouses, products, getAllCompanies, ge
                                 </Box>
                             ))}
                             {!readOnly && <Button variant="contained" color="secondary" style={{ marginTop: 10 }} onClick={handleSubmit}>
-                               {params.id && !readOnly ? "Edit Product Inward" : "Add Product Inward"}
+                                Add Product Inward
                             </Button>}
                         </Form>
                     </>
