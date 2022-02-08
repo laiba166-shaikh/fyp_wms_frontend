@@ -30,7 +30,6 @@ const AppRoutes = () => {
                 <Route path="operations" element={<MainLayout />}>
                     <Route path="product-inward" element={<ProductInward />}/>
                     <Route path="product-inward/new" element={<AddProductInward />} />
-                    <Route path="product-inward/:id" element={<AddProductInward />} />
                     <Route path="product-inward/:id/readOnly" element={<AddProductInward />} />
                     <Route path="dispatch-order" element={<DispatchOrder/>} />
                     <Route path="dispatch-order/new" element={<AddOrder />} />
