@@ -8,6 +8,8 @@ import Brands from "../modules/Administration/subpages/Brand/Brand";
 import Uom from "../modules/Administration/subpages/Uom/Uom";
 import ProductCategory from "../modules/Administration/subpages/ProductCategory/ProductCategory";
 import ProductUpload from "../modules/Administration/subpages/ProductUpload/ProductUpload";
+import ProductInward from "../modules/WarehouseOperations/subpages/ProductInward/ProductInward";
+import AddProductInward from "../modules/WarehouseOperations/subpages/ProductInward/AddproductInward";
 
 const AppRoutes = () => {
     return (
@@ -24,7 +26,10 @@ const AppRoutes = () => {
                     <Route path="product-upload/*" element={<ProductUpload />} />
                 </Route>
                 <Route path="operations" element={<MainLayout />}>
-                    <Route path="product-inward" element={<div>Product Inwards</div>} />
+                    <Route path="product-inward" element={<ProductInward />}/>
+                    <Route path="product-inward/new" element={<AddProductInward />} />
+                    <Route path="product-inward/:id" element={<AddProductInward />} />
+                    <Route path="product-inward/:id/readOnly" element={<AddProductInward />} />
                     <Route path="dispatch-order" element={<div>Dispatch Order</div>} />
                     <Route path="product-outward" element={<div>Product Outward</div>} />
                     <Route path="inventory" element={<div>Inventory</div>} />
