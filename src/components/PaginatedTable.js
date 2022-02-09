@@ -102,6 +102,7 @@ const PaginatedTable = ({ columns, fetchData, data, totalCount, navigation }) =>
                   <TableRow hover role="checkbox" tabIndex={-1} key={row.label} onClick={() => { navigation && navigation(row._id) }}>
                     {columns.map((column) => {
                       const value = row[column.id];
+                      // console.log("*******debug 2", value, column.id, row.Product.name, row['Product.name'])
                       return (
                         <TableCell key={column.id} align={column.align}>
                           {column.format
