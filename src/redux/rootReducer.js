@@ -9,6 +9,7 @@ import CategoryReducer from "./Category/CategoryReducer";
 import ProductReducer from "./ProductUpload/ProductUploadReducer";
 import ProductInwardReducer from "./ProductInward/ProductInwardReducer";
 import DispatchOrderReducer from "./DispatchOrder/DispatchOrderReducer";
+import InventoryReducer from "./Inventory/InventoryReducer";
 
 const rootReducer=combineReducers({
     auth:AuthReducer,
@@ -20,7 +21,8 @@ const rootReducer=combineReducers({
     categories:CategoryReducer,
     products:ProductReducer,
     productInwards:ProductInwardReducer,
-    dispatchOrders:DispatchOrderReducer
+    dispatchOrders:DispatchOrderReducer,
+    inventories:InventoryReducer
 });
 
 export default rootReducer;
