@@ -1,11 +1,11 @@
 import React from 'react'
 import { makeStyles, Grid, Paper } from '@material-ui/core';
 import { useNavigate } from "react-router-dom";
-import { connect} from 'react-redux';
+import { connect } from 'react-redux';
 import { ActionColumnFormatter } from '../../../../utility/actionFormatters';
 import PageHeader from '../../../../components/PageHeader';
 import PaginatedTable from '../../../../components/PaginatedTable';
-import { getAllProductInward } from '../../../../redux/ProductInward/ProductInwardActions';
+import { getAllOrders } from '../../../../redux/DispatchOrder/DispatchOrderActions';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -24,14 +24,10 @@ const useStyles = makeStyles((theme) => ({
     },
 }))
 
-const DispatchOrder = ({}) => {
+const DispatchOrder = ({ getAllOrders, dispatchOrders, totalCount }) => {
 
     const classes = useStyles();
     const navigate = useNavigate()
-
-    const editDispatchOrderClick = (id) => {
-        navigate(`/main/operations/dispatch-order/${id}`) //id is the specific record id from api send when click on edit btn
-    }
 
     const viewDispatchOrderClick = (id) => {
         navigate(`/main/operations/dispatch-order/${id}/readOnly`)
@@ -39,12 +35,10 @@ const DispatchOrder = ({}) => {
 
     const columns = [
         { id: 'internalIdForBusiness', label: 'Id', align: "center" },
-        { id: 'vehicleType', label: 'Vehicle Type', align: "center" },
-        { id: 'vehicleName', label: 'Vehicle Name', align: 'center' },
-        { id: 'vehicleNumber', label: 'Vehicle Number', align: 'center' },
-        { id: 'driverName', label: 'Driver Name', align: 'center' },
+        { id: 'receiverName', label: 'Receiver Name', align: "center" },
+        { id: 'receiverPhone', label: 'Receiver Phone', align: 'center' },
+        { id: 'shipmentDate', label: 'Shipment Date', align: 'center' },
         { id: 'referenceId', label: 'Reference Id', align: 'center' },
-        { id: "action", label: "Action", align: "center", format: (value) => <ActionColumnFormatter value={value} onEdit={editDispatchOrderClick} onClickView={viewDispatchOrderClick} /> },
     ];
 
     return (
@@ -56,27 +50,26 @@ const DispatchOrder = ({}) => {
                         buttonTitle="Add Order"
                         headerAction={() => navigate("/main/operations/dispatch-order/new")}
                     />
-                    {/* <PaginatedTable
+                    <PaginatedTable
                         columns={columns}
                         totalCount={totalCount}
-                        data={productInwards}
-                        fetchData={getAllProductInward}
-                    /> */}
+                        data={dispatchOrders}
+                        fetchData={getAllOrders}
+                        navigation={viewDispatchOrderClick}
+                    />
                 </Paper>
             </Grid>
         </Grid>
     )
 };
 
-// const actions={
-//     getAllProductInward
-// }
+const actions = {
+    getAllOrders
+}
 
-// const mapStateToProps=(state)=>({
-//     productInwards : state.productInwards.productInwards,
-//     totalCount: state.productInwards.totalCount
-// })
+const mapStateToProps = (state) => ({
+    dispatchOrders: state.dispatchOrders.dispatchOrders,
+    totalCount: state.dispatchOrders.totalCount
+})
 
-// export default connect(mapStateToProps,actions)(ProductInward);
-
-export default DispatchOrder
+export default connect(mapStateToProps, actions)(DispatchOrder);
