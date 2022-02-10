@@ -28,10 +28,14 @@ export const getDispatchOrder=(dispatchOrderId)=> async (dispatch)=>{
         const mapReturnOrder= {
             companyId:orderGroups[0].Inventory.Company._id,
             warehouseId:orderGroups[0].Inventory.Warehouse._id,
-            products:orderGroups.map((prod)=>{
+            company:orderGroups[0].Inventory.Company,
+            warehouse:orderGroups[0].Inventory.Warehouse,
+            products:orderGroups.map(({quantity,Inventory})=>{
+                const {Product,Company,Warehouse,...inventoryData} = Inventory
                 return {
-                    product:prod.Inventory.Product,
-                    quantity:prod.quantity
+                    product:Product,
+                    inventory: inventoryData,
+                    quantity:quantity
                 }
             }),
             ...orderData

@@ -21,14 +21,14 @@ const ProductOutwardReducer = (state = initialState, action) => {
             return {
                 ...state,
                 productOutwardLoading: false,
-                productOutwards:[...state.productOutwards,{...payload.productOutward}],
+                productOutwards:[...state.productOutwards],
                 totalCount:state.totalCount+1
             }
         case GET_ALL_PRODUCT_OUTWARD:
             return {
                 ...state,
                 productOutwardLoading: false,
-                productInwards: [...payload.productOutwards],
+                productOutwards: [...payload.productOutwards],
                 totalCount: payload.totalCount
             }
         default:
