@@ -12,6 +12,8 @@ import ProductInward from "../modules/WarehouseOperations/subpages/ProductInward
 import AddProductInward from "../modules/WarehouseOperations/subpages/ProductInward/AddproductInward";
 import DispatchOrder from "../modules/WarehouseOperations/subpages/DispatchOrder/DispatchOrder";
 import AddOrder from "../modules/WarehouseOperations/subpages/DispatchOrder/AddOrder";
+import ProductOutward from "../modules/WarehouseOperations/subpages/ProductOutward/ProductOutward";
+import AddProductOutward from "../modules/WarehouseOperations/subpages/ProductOutward/AddProductOutward";
 
 const AppRoutes = () => {
     return (
@@ -33,9 +35,10 @@ const AppRoutes = () => {
                     <Route path="product-inward/:id/readOnly" element={<AddProductInward />} />
                     <Route path="dispatch-order" element={<DispatchOrder/>} />
                     <Route path="dispatch-order/new" element={<AddOrder />} />
-                    <Route path="dispatch-order/:id" element={<AddOrder />} />
                     <Route path="dispatch-order/:id/readOnly" element={<AddOrder />} />
-                    <Route path="product-outward" element={<div>Product Outward</div>} />
+                    <Route path="product-outward" element={<ProductOutward/>} />
+                    <Route path="product-outward/new" element={<AddProductOutward />} />
+                    <Route path="product-outward/:id/readOnly" element={<AddProductOutward />} />
                     <Route path="inventory" element={<div>Inventory</div>} />
                 </Route>
             </Route>
