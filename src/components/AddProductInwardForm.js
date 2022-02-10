@@ -78,9 +78,8 @@ const AddProductInwardForm = ({ addValues }) => {
             return;
         }
         addValues({
-            product: products.find((prod)=>prod._id === productId),
+            product: {...products.find((prod)=>prod._id === productId),uomId: uom},
             quantity: quantity,
-            uom: uom
         })
         setUom({})
         setProductId("")

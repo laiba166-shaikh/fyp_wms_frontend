@@ -60,7 +60,9 @@ const useStyles = makeStyles((theme) => ({
         paddingRight: theme.spacing(10)
     },
     listItem: {
-        padding: theme.spacing(1)
+        padding: theme.spacing(2),
+        margin:theme.spacing(1,0),
+        backgroundColor:theme.palette.primary.light
     }
 }))
 
@@ -84,8 +86,9 @@ const AddproductInward = ({ companies, warehouses, products, getAllCompanies, ge
     useEffect(() => {
         if (params.id) {
             setLoading(true)
-            getProductInward(params.id).then((res) => {
-                setSingleProductInward({ ...res })
+            getProductInward(params.id).then(({productInward,inwardProducts}) => {
+                setSingleProductInward({ ...productInward })
+                setInwardProducts([...inwardProducts])
                 setLoading(false)
             }).catch((err) => {
                 setLoading(false)
@@ -94,6 +97,7 @@ const AddproductInward = ({ companies, warehouses, products, getAllCompanies, ge
     }, [params])
 
     const handleAddInwardsProduct = (selectedProduct) => {
+        console.log(selectedProduct)
         if (inwardProducts.some((prod) => prod.product._id === selectedProduct.product._id)) return
         setInwardProducts([...inwardProducts, selectedProduct])
     }
@@ -249,16 +253,16 @@ const AddproductInward = ({ companies, warehouses, products, getAllCompanies, ge
                                                 {inwardProd.quantity}
                                             </Typography>
                                         </Box>
-                                        <Box gridColumn="span 3">
+                                        {!readOnly && <><Box gridColumn="span 3">
                                             <Typography variant="body1">
-                                                {inwardProd.uom.name}
+                                                {inwardProd.product.uomId?.name}
                                             </Typography>
                                         </Box>
                                         <Box gridColumn="span 3">
                                             <div onClick={() => handleFilterProducts(inwardProd.product._id)} style={{ cursor: "pointer" }}>
                                                 <DeleteOutline />
                                             </div>
-                                        </Box>
+                                        </Box></>}
                                     </Box>
                                 </Box>
                             ))}
