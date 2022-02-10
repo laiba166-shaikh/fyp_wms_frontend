@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import PageHeader from '../../../components/PageHeader';
 import PaginatedTable from '../../../components/PaginatedTable';
 import { getAllVendors } from '../../../redux/Vendor/VendorActions';
+import VendorEditDialog from './VendorEditDialog';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -39,7 +40,7 @@ function Vendor({ vendors, totalCount, getAllVendors }) {
 
     const onVendorEditClose = () => {
         setVendorEditOpen(false)
-        navigate(`/main/admin/Vendor`)
+        navigate(`/main/logistics/Vendor`)
     }
     const handleVendorDeleteClose = () => setShowVendorDelete(false)
     const handleVendorDeleteOpen = () => setShowVendorDelete(true)
@@ -85,8 +86,8 @@ function Vendor({ vendors, totalCount, getAllVendors }) {
                     />
 
                     <Routes>
-                        {/* <Route path="new" element={<BrandEditDialog show={brandEditOpen} onClose={onBrandEditClose} />} /> */}
-                        {/* <Route path=":id/edit" element={<BrandEditDialog show={brandEditOpen} onClose={onBrandEditClose} />} /> */}
+                        <Route path="new" element={<VendorEditDialog show={vendorEditOpen} onClose={onVendorEditClose} />} />
+                        <Route path=":id/edit" element={<VendorEditDialog show={vendorEditOpen} onClose={onVendorEditClose} />} />
                     </Routes>
 
                 </Paper>

@@ -47,7 +47,7 @@ const AppRoutes = () => {
                     <Route path="inventory" element={<Inventory />} />
                 </Route>
                 <Route path="logistics" element={<MainLayout />} >
-                    <Route path="vendor" element={<Vendor />} />
+                    <Route path="vendor/*" element={<Vendor />} />
                 </Route>
             </Route>
         </Routes>
