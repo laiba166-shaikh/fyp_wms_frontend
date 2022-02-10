@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles, Grid, Button, MenuItem, TextField } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
+import { getCompanyWarehouseProductInventory, getCompanyWarehouseProducts } from '../redux/DispatchOrder/DispatchOrderActions';
 import { getAllProducts } from '../redux/ProductUpload/ProductUploadActions';
 import { getAllInventories } from '../redux/Inventory/InventoryActions';
-import { getUom } from '../redux/Uom/UomActions';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-const AddOrderProductForm = ({ addValues }) => {
+const AddOrderProductForm = ({ addValues, companyId, warehouseId }) => {
 
     const dispatch = useDispatch()
     const classes = useStyles()
@@ -41,41 +41,36 @@ const AddOrderProductForm = ({ addValues }) => {
         className: classes.root
     }
 
-    const [productsInventoryData, setProductsInventoryData] = useState([])
     const [quantity, setQuantity] = useState("");
     const [productId, setProductId] = useState("")
-    const [selectedProductInventory, setSelectedProductInventory] = useState({})
+    const [warehouseProducts, setWarehouseProducts] = useState([])
+    const [selectedProductInventory, setSelectedProductInventory] = useState({ inventory: "", product: "" })
 
     useEffect(() => {
-        dispatch(getAllProducts("", ""))
-        dispatch(getAllInventories("",""))
-    }, [dispatch])
-
-    const { products, inventories } = useSelector((state) => ({
-        products: state.products.products,
-        inventories: state.inventories.inventories
-    }))
-
-    useEffect(() => {
-        if (inventories.length) {
-            const Data = inventories?.map((inventory) => ({ product: inventory.Product, availableQuantity: inventory.availableQuantity }))
-            setProductsInventoryData([...Data])
+        if (companyId && warehouseId) {
+            dispatch(getCompanyWarehouseProducts(companyId, warehouseId)).then((res) => {
+                setWarehouseProducts([...res])
+            }).catch((err) => console.log("error"))
         }
-    }, [inventories])
+    }, [dispatch, companyId, warehouseId])
+
 
     const handleProductSelect = (e) => {
-        setProductId(e.target.value)
+        const clickedProdId = e.target.value
+        setProductId(clickedProdId)
         setQuantity("")
-        const selectProd = productsInventoryData.find((pr) => pr.product._id === e.target.value)
-        setSelectedProductInventory({...selectProd})
+        dispatch(getCompanyWarehouseProductInventory(companyId, warehouseId, clickedProdId))
+            .then((res) => {
+                const selectedProduct = warehouseProducts.find((prod) => prod._id === clickedProdId)
+                setSelectedProductInventory({ inventory: { ...res }, product: selectedProduct })
+            }).catch((err) => console.log("inventory get error"))
     }
 
     const handleAddProductSubmit = () => {
-        if(!quantity || quantity >= selectedProductInventory.availableQuantity) {
+        if (!quantity || quantity >= selectedProductInventory.inventory.availableQuantity) {
             console.log("quantity should be provided with a defined value")
             return;
         }
-        console.log("dispatch order -> ",selectedProductInventory)
         addValues({
             product: selectedProductInventory.product,
             quantity: quantity,
@@ -94,12 +89,12 @@ const AddOrderProductForm = ({ addValues }) => {
                     select={true}
                     name="id"
                     {...inputProps}
-                    id="inwardProducts"
                     inputProps={{ className: classes.input }}
                     value={productId}
                     onChange={handleProductSelect}
+                    disabled={!(companyId && warehouseId) ? true : false}
                 >
-                    {products?.map((product) => (
+                    {warehouseProducts?.map((product) => (
                         <MenuItem value={product._id} key={product._id}>
                             {product.name}
                         </MenuItem>
@@ -111,7 +106,6 @@ const AddOrderProductForm = ({ addValues }) => {
                     label="Enter Quantity"
                     name="quantity"
                     type="text"
-                    id="quantity"
                     name="quantity"
                     {...inputProps}
                     disabled={productId ? false : true}
@@ -126,12 +120,11 @@ const AddOrderProductForm = ({ addValues }) => {
                     label="Available Quantity"
                     name="availableQuantity"
                     type="text"
-                    id="availableQuantity"
                     {...inputProps}
                     disabled={true}
                     inputProps={{ className: classes.input }}
                     InputLabelProps={{ shrink: productId ? true : false }}
-                    value={selectedProductInventory?.availableQuantity}
+                    value={selectedProductInventory?.inventory?.availableQuantity}
                 />
             </Grid>
             <Grid item xs={12} md={2}>
@@ -139,12 +132,11 @@ const AddOrderProductForm = ({ addValues }) => {
                     label="Uom"
                     name="uom"
                     type="text"
-                    id="uom"
                     {...inputProps}
                     disabled={true}
                     inputProps={{ className: classes.input }}
                     InputLabelProps={{ shrink: productId ? true : false }}
-                    value={selectedProductInventory?.product?.uomId.name }
+                    value={selectedProductInventory?.product?.uomId?.name}
                 />
             </Grid>
             <Grid item xs={12} md={2}>
