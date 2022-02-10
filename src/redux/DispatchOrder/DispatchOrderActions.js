@@ -22,11 +22,23 @@ export const getAllOrders = (page, limit) => async (dispatch) => {
 
 export const getDispatchOrder=(dispatchOrderId)=> async (dispatch)=>{
     try {
-        const {data,status}=await client.get(`/dispatch-orders/${dispatchOrderId}`)
-        console.log("api -> ",data);
-        // if(status === 200) {
-        //     return {...data.data.dispatchOrder}
-        // }
+        const {data:{data},status}=await client.get(`/dispatch-orders/${dispatchOrderId}`)
+        const {dispatchOrder:{userId,...orderData},orderGroups}=data
+
+        const mapReturnOrder= {
+            companyId:orderGroups[0].Inventory.Company._id,
+            warehouseId:orderGroups[0].Inventory.Warehouse._id,
+            products:orderGroups.map((prod)=>{
+                return {
+                    product:prod.Inventory.Product,
+                    quantity:prod.quantity
+                }
+            }),
+            ...orderData
+        }
+        if(status === 200) {
+            return mapReturnOrder
+        }
     } catch (error) {
         console.log(error)
         return 0;
@@ -38,15 +50,13 @@ export const createDispatchOrder = (order) => async (dispatch, getState) => {
         dispatch({ type: DISPATCH_ORDER_START_LOADING })
         const { userData } = getState().auth
         const reqBody = { ...order, userId: userData.id }
-        console.log("reqBody -> ",reqBody)
         const { data } = await client.post(`/dispatch-orders/`, { ...reqBody })
-        console.log("prod order", data)
-        // dispatch({
-        //     type: CREATE_DISPATCH_ORDER,
-        //     payload: {
-        //         order: { ...data.data.dispatchOrder[0] }
-        //     }
-        // })
+        dispatch({
+            type: CREATE_DISPATCH_ORDER,
+            payload: {
+                order: { ...data.data.dispatchOrder[0] }
+            }
+        })
     } catch (error) {
         console.log(error)
         dispatch({ type: DISPATCH_ORDER_ERROR, payload: { error: "Something went wrong" } })
