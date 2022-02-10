@@ -1,11 +1,12 @@
 
-import { INVENTORY_START_LOADING, INVENTORY_STOP_LOADING, GET_ALL_INVENTORY, INVENTORY_ERROR } from "./InventoryConstant"
+import { INVENTORY_START_LOADING, INVENTORY_STOP_LOADING, GET_ALL_INVENTORY, INVENTORY_ERROR, EXPORT_INVENTORY } from "./InventoryConstant"
 
 const initialState = {
     inventoryLoading: false,
     error: "",
     inventories: [],
-    totalCount: 0
+    totalCount: 0,
+    exportedInventories: false
 }
 
 const InventoryReducer = (state = initialState, action) => {
@@ -23,6 +24,12 @@ const InventoryReducer = (state = initialState, action) => {
                 inventoryLoading: false,
                 inventories: [...payload.inventories],
                 totalCount: payload.totalCount
+            }
+        case EXPORT_INVENTORY:
+            return {
+                ...state,
+                inventoryLoading: false,
+                exportedInventories: payload.exportedInventories
             }
         default:
             return state

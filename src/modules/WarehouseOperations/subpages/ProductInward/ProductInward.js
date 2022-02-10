@@ -2,7 +2,6 @@ import React from 'react'
 import { makeStyles, Grid, Paper } from '@material-ui/core';
 import { useNavigate } from "react-router-dom";
 import { connect} from 'react-redux';
-import { ActionColumnFormatter } from '../../../../utility/actionFormatters';
 import PageHeader from '../../../../components/PageHeader';
 import PaginatedTable from '../../../../components/PaginatedTable';
 import { getAllProductInward } from '../../../../redux/ProductInward/ProductInwardActions';
@@ -29,10 +28,6 @@ const ProductInward = ({getAllProductInward,totalCount,productInwards}) => {
     const classes = useStyles();
     const navigate = useNavigate()
 
-    const editProductInwardClick = (id) => {
-        navigate(`/main/operations/product-inward/${id}`) //id is the specific record id from api send when click on edit btn
-    }
-
     const viewProductInwardClick = (id) => {
         navigate(`/main/operations/product-inward/${id}/readOnly`)
     }
@@ -44,7 +39,6 @@ const ProductInward = ({getAllProductInward,totalCount,productInwards}) => {
         { id: 'vehicleNumber', label: 'Vehicle Number', align: 'center' },
         { id: 'driverName', label: 'Driver Name', align: 'center' },
         { id: 'referenceId', label: 'Reference Id', align: 'center' },
-        { id: "action", label: "Action", align: "center", format: (value) => <ActionColumnFormatter value={value} onEdit={editProductInwardClick} onClickView={viewProductInwardClick} /> },
     ];
 
     return (
@@ -61,6 +55,7 @@ const ProductInward = ({getAllProductInward,totalCount,productInwards}) => {
                         totalCount={totalCount}
                         data={productInwards}
                         fetchData={getAllProductInward}
+                        navigation={viewProductInwardClick}
                     />
                 </Paper>
             </Grid>

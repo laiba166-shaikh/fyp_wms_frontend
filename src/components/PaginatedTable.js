@@ -1,40 +1,40 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TablePagination,
-    TableRow,
-    makeStyles
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  makeStyles
 } from "@material-ui/core";
 import Loader from "./Loader";
 
-const useStyles=makeStyles((theme)=>({
-  root:{
-    backgroundColor:theme.palette.primary.dark,
-    overflow:"auto",
-    color:"#fff",
-    "& .MuiTableContainer-root":{
-      maxHeight:"70%",
+const useStyles = makeStyles((theme) => ({
+  root: {
+    backgroundColor: theme.palette.primary.dark,
+    overflow: "auto",
+    color: "#fff",
+    "& .MuiTableContainer-root": {
+      maxHeight: "70%",
     },
-    "& .MuiTableCell-body":{
-      color:"rgba(255,255,255,50%)"
+    "& .MuiTableCell-body": {
+      color: "rgba(255,255,255,50%)"
     },
-    "& .MuiTableCell-root":{
-      padding:"14px",
-      borderBottom:0
+    "& .MuiTableCell-root": {
+      padding: "14px",
+      borderBottom: 0
     },
-    "& .MuiTableCell-stickyHeader":{
-      backgroundColor:theme.palette.primary.dark,
-      color:"rgba(255,255,255,50%)"
+    "& .MuiTableCell-stickyHeader": {
+      backgroundColor: theme.palette.primary.dark,
+      color: "rgba(255,255,255,50%)"
     },
   },
-  pagination:{
-    "& .MuiTablePagination-toolbar":{
-      backgroundColor:theme.palette.primary.dark,
-      color:"rgba(255,255,255,50%)"
+  pagination: {
+    "& .MuiTablePagination-toolbar": {
+      backgroundColor: theme.palette.primary.dark,
+      color: "rgba(255,255,255,50%)"
     },
     "& .MuiIconButton-root.Mui-disabled": {
       color: "rgba(255,255,255,50%)",
@@ -43,13 +43,13 @@ const useStyles=makeStyles((theme)=>({
   },
 }))
 
-const PaginatedTable=({columns,fetchData,data,totalCount}) => {
+const PaginatedTable = ({ columns, fetchData, data, totalCount, navigation }) => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [loading,setLoading]=useState(false);
-  const [currentData,setCurrentData]=useState([]);
-  const [totalSize,setTotalSize]=useState(0);
-  
+  const [loading, setLoading] = useState(false);
+  const [currentData, setCurrentData] = useState([]);
+  const [totalSize, setTotalSize] = useState(0);
+
   useEffect(() => {
     setLoading(true);
     console.log("fetching params", page, rowsPerPage);
@@ -57,7 +57,7 @@ const PaginatedTable=({columns,fetchData,data,totalCount}) => {
       .then((res) => {
         console.log("get res")
         setLoading(false);
-      }) 
+      })
       .catch((err) => setLoading(false));
   }, [page, rowsPerPage]);
 
@@ -75,11 +75,11 @@ const PaginatedTable=({columns,fetchData,data,totalCount}) => {
     setPage(0);
   };
 
-  const classes=useStyles()
+  const classes = useStyles()
   return (
     <>
       <TableContainer className={classes.root}>
-        {loading && <Loader/>}
+        {loading && <Loader />}
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
@@ -87,7 +87,7 @@ const PaginatedTable=({columns,fetchData,data,totalCount}) => {
                 <TableCell
                   key={column.id}
                   align={column.align}
-                  // style={{ minWidth: column.minWidth }}
+                // style={{ minWidth: column.minWidth }}
                 >
                   {column.label}
                 </TableCell>
@@ -99,9 +99,10 @@ const PaginatedTable=({columns,fetchData,data,totalCount}) => {
               // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => {
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.label}>
+                  <TableRow hover role="checkbox" tabIndex={-1} key={row.label} onClick={() => { navigation && navigation(row._id) }}>
                     {columns.map((column) => {
                       const value = row[column.id];
+                      // console.log("*******debug 2", value, column.id, row.Product.name, row['Product.name'])
                       return (
                         <TableCell key={column.id} align={column.align}>
                           {column.format
