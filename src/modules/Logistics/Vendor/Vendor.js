@@ -6,6 +6,7 @@ import PageHeader from '../../../components/PageHeader';
 import PaginatedTable from '../../../components/PaginatedTable';
 import { getAllVendors } from '../../../redux/Vendor/VendorActions';
 import VendorEditDialog from './VendorEditDialog';
+import { ActionColumnFormatter } from '../../../utility/actionFormatters';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -35,6 +36,7 @@ function Vendor({ vendors, totalCount, getAllVendors }) {
     const classes = useStyles();
     const navigate = useNavigate()
 
+    const [view, setView] = useState(false)
     const [vendorEditOpen, setVendorEditOpen] = useState(true)
     const [showVendorDelete, setShowVendorDelete] = useState(false)
 
@@ -44,6 +46,10 @@ function Vendor({ vendors, totalCount, getAllVendors }) {
     }
     const handleVendorDeleteClose = () => setShowVendorDelete(false)
     const handleVendorDeleteOpen = () => setShowVendorDelete(true)
+    const handleViewOnly = (id) => {
+        setView(true)
+        VendorUiEvents.editCompanyClick(id)
+    }
 
     const VendorUiEvents = {
         addNewVendorClick: () => {
@@ -62,7 +68,8 @@ function Vendor({ vendors, totalCount, getAllVendors }) {
         { id: 'name', label: 'Vendor', align: "center" },
         { id: 'phone', label: 'Phone', align: 'center' },
         { id: 'contactName', label: 'Contact Name', align: 'center', format: (entity) => `${entity.User.firstName} ${entity.User.lastName}` },
-        { id: 'isActive', label: 'Status', align: 'center', format: (entity) => entity.isActive ? "Active" : "InActive" },
+        { id: 'isActive', label: 'Status', align: 'center', format: (entity) => entity.isActive ? "Active" : "in Active" },
+        { id: "action", label: "Action", align: "center", format: (value) => <ActionColumnFormatter value={value} onEdit={VendorUiEvents.editCompanyClick} onClickView={handleViewOnly} /> },
     ];
 
     return (

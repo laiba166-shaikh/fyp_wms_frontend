@@ -24,7 +24,7 @@ const validationSchema = yup.object({
 });
 
 
-const AddVendor = ({ initialValues, onClose, id, loading, onSave, categories, brands, uoms, readOnly }) => {
+const AddVendor = ({ initialValues, onClose, id, loading, onSave, readOnly }) => {
 
     const [status, setStatus] = useState(false)
 
