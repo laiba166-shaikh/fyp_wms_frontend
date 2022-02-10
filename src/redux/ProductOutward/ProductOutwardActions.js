@@ -8,7 +8,7 @@ export const getAllProductOutward = (page, limit) => async (dispatch) => {
         dispatch({
             type: GET_ALL_PRODUCT_OUTWARD,
             payload: {
-                productOutwards: data.data.productOutwards,
+                productOutwards: [...data.data.productOutwards],
                 totalCount: data.count
             }
         })
@@ -20,35 +20,47 @@ export const getAllProductOutward = (page, limit) => async (dispatch) => {
     }
 }
 
-// export const getProductOutward=(productOutwardId)=> async (dispatch)=>{
-//     try {
-//         const {data,status}=await client.get(`/product-outwards/${productOutwardId}`)
-//         console.log("api -> ",data);
-//         if(status === 200) {
-//             return {...data.data.productOutward}
-//         }
-//     } catch (error) {
-//         console.log(error)
-//         return 0;
-//     }
-// }
+export const getProductOutward=(productOutwardId)=> async (dispatch)=>{
+    try {
+        const {data,status}=await client.get(`/product-outwards/${productOutwardId}`)
+        console.log("api -> ",data);
+        if(status === 200) {
+            return {...data.data.productOutward}
+        }
+    } catch (error) {
+        console.log(error)
+        return 0;
+    }
+}
 
-// export const createProductOutward=(productOutward)=>async (dispatch,getState)=>{
-//     try {
-//         dispatch({type:PRODUCT_OUTWARD_START_LOADING})
-//         const {userData}=getState().auth
-//         const reqBody={...productOutward,userId:userData.id}
-//         const {data}=await client.post(`/product-outwards/`,{...reqBody})
-//         console.log("prod out", data)
-//         dispatch({
-//             type:CREATE_PRODUCT_OUTWARD,
-//             payload:{
-//                 productInward:{...data.data.productOutward[0]}
-//             }
-//         })
-//     } catch (error) {
-//         console.log(error)
-//         dispatch({type:PRODUCT_OUTWARD_ERROR,payload:{error:"Something went wrong"}})
-//         return 0;
-//     }
-// }
+export const getProductOutwardOrders=()=>async (dispatch)=>{
+    try {
+        const { data,status } = await client.get(`/product-outwards/relations`)
+        if(status===200){
+            return [...data.data.dispatchOrders]
+        }
+    } catch (error) {
+        console.log(error)
+        dispatch({type:PRODUCT_OUTWARD_ERROR,payload:{error:"Something went wrong"}})
+    }
+}
+
+export const createProductOutward=(productOutward)=>async (dispatch,getState)=>{
+    try {
+        dispatch({type:PRODUCT_OUTWARD_START_LOADING})
+        const {userData}=getState().auth
+        const reqBody={...productOutward,userId:userData.id}
+        const {data}=await client.post(`/product-outwards/`,{...reqBody})
+        console.log("prod out", data)
+        dispatch({
+            type:CREATE_PRODUCT_OUTWARD,
+            payload:{
+                productOutward:{...data.data.productOutward[0]}
+            }
+        })
+    } catch (error) {
+        console.log(error)
+        dispatch({type:PRODUCT_OUTWARD_ERROR,payload:{error:"Something went wrong"}})
+        return 0;
+    }
+}

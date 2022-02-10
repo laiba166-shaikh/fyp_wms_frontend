@@ -7,9 +7,9 @@ import { useLocation, useNavigate, useParams } from 'react-router';
 import { TextInput, Select } from '../../../../controls';
 import PageHeader from '../../../../components/PageHeader';
 import Loader from '../../../../components/Loader';
-// import AddProductInwardForm from '../../../../components/AddProductInwardForm';
-// import { createProductInward, getProductInward } from '../../../../redux/ProductInward/ProductInwardActions';
-import { getAllOrders } from '../../../../redux/DispatchOrder/DispatchOrderActions';
+import { getDispatchOrder } from '../../../../redux/DispatchOrder/DispatchOrderActions';
+import { createProductOutward, getProductOutward, getProductOutwardOrders } from '../../../../redux/ProductOutward/ProductOutwardActions';
+import moment from 'moment';
 
 const validationSchema = yup.object({
     dispatchOrderId: yup.string().required("Dispatch order is required"),
@@ -45,6 +45,12 @@ const useStyles = makeStyles((theme) => ({
     label: {
         color: "rgba(255,255,255,0.5)"
     },
+    companyItem: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center"
+    },
     prodList: {
         backgroundColor: theme.palette.primary.light,
     },
@@ -54,12 +60,13 @@ const useStyles = makeStyles((theme) => ({
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
+        flexWrap: "wrap",
         margin: theme.spacing(1, 0),
         padding: theme.spacing(1)
     }
 }))
 
-const AddProductOutward = ({ getAllOrders, orders }) => {
+const AddProductOutward = ({ getProductOutwardOrders, getDispatchOrder, createProductOutward, getProductOutward }) => {
 
     const classes = useStyles()
     const navigate = useNavigate()
@@ -67,64 +74,96 @@ const AddProductOutward = ({ getAllOrders, orders }) => {
     const location = useLocation()
     const readOnly = String(location.pathname).includes("readOnly")
 
+    const [orders, setOrders] = useState([])
     const [loading, setLoading] = useState(false)
-    const [transportationType,setTransportationType]=useState("false")
-    const [quantity,setQuantity]=useState(0)
+    const [transportationType, setTransportationType] = useState("false")
+    // const [quantity, setQuantity] = useState(0)
     const [outwardProducts, setOutwardProducts] = useState([])
+    const [toOutwardProducts, setToOutwardProducts] = useState([])
+    const [singleDispatchOrder, setSingleDispatchOrder] = useState({})
     const [singleProductOutward, setSingleProductOutward] = useState({})
 
     useEffect(() => {
-        getAllOrders("", "")
+        getProductOutwardOrders().then((res) => {
+            setOrders([...res])
+        }).catch((Err) => console.log("err in order get"))
     }, [])
 
-    // useEffect(() => {
-    //     if (params.id) {
-    //         setLoading(true)
-    //         getProductInward(params.id).then((res) => {
-    //             setSingleProductInward({ ...res })
-    //             setLoading(false)
-    //         }).catch((err) => {
-    //             setLoading(false)
-    //         })
-    //     }
-    // }, [params])
-    
-    const handleTransportChange=(e)=>{
+    useEffect(() => {
+        if (params.id) {
+            setLoading(true)
+            getProductOutward(params.id).then((res) => {
+                console.log("getsingleout",res)
+                setSingleProductOutward({ ...res, externalVehicle: res.externalVehicle ? "true" :"false" })
+                handleChangeOrder(res.DispatchOrder[0]._id)
+                setLoading(false)
+            }).catch((err) => {
+                setLoading(false)
+            })
+        }
+    }, [params])
+
+    const handleTransportChange = (e) => {
         setTransportationType(e.target.value)
     }
 
-    const handleProductOutwardQuantityChange=()=>{
-        //get quantity and product id
-        //update QUANTIty 
+    const handleChangeOrder = (orderId) => {
+        setLoading(true)
+        getDispatchOrder(orderId).then(({ products, ...res }) => {
+            console.log("single", res)
+            setSingleDispatchOrder({ ...res })
+            setOutwardProducts([...products])
+            setToOutwardProducts([...products])
+            setLoading(false)
+        }).catch((err) => {
+            setLoading(false)
+        })
     }
-    // const handleSubmit = (values) => {
-    //     setLoading(true)
-    //     createProductInward(values).then((res) => {
-    //         setLoading(false)
-    //     }).catch((err) => {
-    //         console.log("error creating prod inward")
-    //         setLoading(false)
-    //     })
-    //     navigate("/main/operations/product-inward")
-    // }
+
+    const handleProductOutwardQuantityChange = (currQuantity, currProduct) => {
+        const { product, inventory, quantity } = currProduct;
+        var ProductToOut = []
+        if (currQuantity > quantity) {
+            console.log("quantity can not greater than available quantity")
+            return;
+        }
+        ProductToOut = toOutwardProducts.map((prod) => {
+            if (prod.product._id === product._id) {
+                return { ...prod, quantity: currQuantity }
+            } else return prod
+        })
+        setToOutwardProducts([...ProductToOut])
+    }
+
+    const handleSubmit = (values) => {
+        setLoading(true)
+        createProductOutward(values).then((res) => {
+            setLoading(false)
+            navigate("/main/operations/product-outward")
+        }).catch((err) => {
+            console.log("error creating prod inward")
+            setLoading(false)
+        })
+    }
 
     return (
         <Grid item className={classes.root} md={12} xs={12}>
             {loading && <Loader />}
             <PageHeader
-                // title={`${(params.id && readOnly) ? "View" : "Add"} Product Inward`}
-                title="Add Product Outward"
+                title={`${(params.id && readOnly) ? "View" : "Add"} Product Outward`}
                 buttonTitle="Cancel"
                 headerAction={() => navigate("/main/operations/product-outward")}
             />
             <Formik
-                initialValues={initialValues}
+                // initialValues={initialValues}
+                initialValues={singleProductOutward?._id ? singleProductOutward : initialValues}
                 validationSchema={validationSchema}
                 enableReinitialize={true}
                 onSubmit={(values) => {
-                    values.externalVehicle=transportationType==="false" ? false : true
+                    values.externalVehicle = transportationType === "false" ? false : true
+                    values.inventories = toOutwardProducts.map((ordProd) => ({ id: ordProd.inventory._id, quantity: ordProd.quantity }))
                     console.log("values - >", values)
-                    // handleSubmit(values)
+                    handleSubmit(values)
                 }}
             >
                 {({ handleSubmit, errors, values, touched, setFieldValue }) => (
@@ -138,7 +177,7 @@ const AddProductOutward = ({ getAllOrders, orders }) => {
                                         name="dispatchOrderId"
                                         onChange={(e) => {
                                             setFieldValue("dispatchOrderId", e.target.value)
-                                            // handleCompanyChange(e.target.value)
+                                            handleChangeOrder(e.target.value)
                                         }}
                                         InputLabelProps={{ shrink: true }}
                                         disabled={readOnly ? true : false}
@@ -175,47 +214,66 @@ const AddProductOutward = ({ getAllOrders, orders }) => {
                                     </FormControl>
                                 </Grid>
                             </Grid>
-                            <Grid conatiner xs={12}>
-                                <Grid item xs={12}>
-                                    <Paper elevation={3} variant="elevation" className={classes.listItem} style={{ margin: "2rem 0" }}>
-                                        <Typography variant="body1">Pepsi-Cola INternational Limited</Typography>
-                                        <Typography variant="body1">SUNDAR 2-LHR/LHRPCI002</Typography>
-                                        <Typography variant="body1">1</Typography>
-                                        <Typography variant="body1">02/07/2022</Typography>
-                                        <Typography variant="body1">Nawaz brothers lahore 150-987678</Typography>
-                                        <Typography variant="body1">3333</Typography>
-                                    </Paper>
+                            {singleDispatchOrder._id &&
+                                <> <Grid conatiner xs={12}>
+                                    <Grid item xs={12}>
+                                        <Paper elevation={3} variant="elevation" className={classes.listItem} style={{ margin: "2rem 0" }}>
+                                            <Box className={classes.companyItem}>
+                                                <Typography variant="caption">Company</Typography>
+                                                <Typography variant="body1">{singleDispatchOrder?.company.name}</Typography>
+                                            </Box>
+                                            <Box className={classes.companyItem}>
+                                                <Typography variant='caption'>Warehouse</Typography>
+                                                <Typography variant="body1">{singleDispatchOrder?.warehouse.name}</Typography>
+                                            </Box>
+                                            <Box className={classes.companyItem}>
+                                                <Typography variant='caption'>No of Products</Typography>
+                                                <Typography variant="body1">{outwardProducts?.length}</Typography>
+                                            </Box>
+                                            <Box className={classes.companyItem}>
+                                                <Typography variant='caption'>Shipment Date</Typography>
+                                                <Typography variant="body1">{moment(singleDispatchOrder?.shipmentDate).format("DD-MM-yyyy")}</Typography>
+                                            </Box>
+                                            <Box className={classes.companyItem}>
+                                                <Typography variant='caption'>Receiver Name</Typography>
+                                                <Typography variant="body1">{singleDispatchOrder?.receiverName}</Typography>
+                                            </Box>
+                                            <Box className={classes.companyItem}>
+                                                <Typography variant='caption'>Receiver Phone</Typography>
+                                                <Typography variant="body1">{singleDispatchOrder?.receiverPhone}</Typography>
+                                            </Box>
+                                        </Paper>
+                                    </Grid>
                                 </Grid>
-                            </Grid>
-
-                            <Typography variant="h4" style={{ margin: "8px 0px" }}>
-                                Product Details
-                            </Typography>
-                            {/* {orderProducts.map((orderProd) => ( */}
-                            <Paper className={classes.prodList} elevation={3} variant="elevation">
-                                <Box className={classes.listItem}>
-                                    <Typography variant="body1">Lays 40 gm 30*23</Typography>
-                                    <Typography variant="body1">
-                                        {/* {orderProd.product.uomId.name} */}
-                                        Carton
+                                    <Typography variant="h4" style={{ margin: "8px 0px" }}>
+                                        Product Details
                                     </Typography>
-                                    <Typography variant="body1">
-                                        {/* {orderProd.quantity} */}
-                                        20
-                                    </Typography>
-                                    <TextField
-                                        variant="filled"
-                                        size="small"
-                                        margin='none'
-                                        placeholder='0'
-                                        label="Quantity"
-                                        inputProps={{ className: classes.label }}
-                                        style={{ marginRight: "5rem", color: "white" }}
-                                    />
-                                </Box>
-                            </Paper>
-                            {/* ))} */}
-                            {!readOnly && <Button variant="contained" color="secondary" style={{ marginTop: 10 }} onClick={handleSubmit}>
+                                    {outwardProducts?.map((orderProd) => (
+                                        <Paper className={classes.prodList} elevation={3} variant="elevation" key={orderProd._id} style={{width:readOnly ? "60%":"100%"}}>
+                                            <Box className={classes.listItem}>
+                                                <Typography variant="body1">{orderProd.product.name}</Typography>
+                                                <Typography variant="body1">
+                                                    {orderProd.product.uomId.name}
+                                                </Typography>
+                                                <Typography variant="body1">
+                                                    {orderProd.quantity}
+                                                </Typography>
+                                                {!readOnly && <TextField
+                                                    variant="filled"
+                                                    size="small"
+                                                    margin='none'
+                                                    placeholder='0'
+                                                    label="Quantity"
+                                                    onChange={(e) => handleProductOutwardQuantityChange(parseInt(e.target.value), orderProd)}
+                                                    inputProps={{ className: classes.label }}
+                                                    style={{ marginRight: "5rem", color: "white" }}
+                                                />}
+                                            </Box>
+                                        </Paper>
+                                    ))}
+                                </>
+                            }
+                            {(!readOnly && singleDispatchOrder._id) && <Button variant="contained" color="secondary" style={{ marginTop: 10 }} onClick={handleSubmit}>
                                 Add Product Outward
                             </Button>}
                         </Form>
@@ -227,12 +285,10 @@ const AddProductOutward = ({ getAllOrders, orders }) => {
 };
 
 const actions = {
-    // createProductInward,
-    getAllOrders
+    createProductOutward,
+    getProductOutwardOrders,
+    getDispatchOrder,
+    getProductOutward
 }
 
-const mapStateToProps = (state) => ({
-    orders: state.dispatchOrders.dispatchOrders,
-})
-
-export default connect(mapStateToProps, actions)(AddProductOutward);
+export default connect(null, actions)(AddProductOutward);

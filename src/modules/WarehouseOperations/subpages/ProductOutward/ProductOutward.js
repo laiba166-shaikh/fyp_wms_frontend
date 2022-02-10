@@ -24,7 +24,6 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const ProductOutward = ({ getAllProductOutward, productOutwards, totalCount }) => {
-
     const classes = useStyles();
     const navigate = useNavigate()
 
@@ -34,10 +33,9 @@ const ProductOutward = ({ getAllProductOutward, productOutwards, totalCount }) =
 
     const columns = [
         { id: 'internalIdForBusiness', label: 'Id', align: "center" },
-        { id: 'vehicleType', label: 'Vehicle Type', align: "center" },
-        { id: 'vehicleName', label: 'Vehicle Name', align: 'center' },
-        { id: 'vehicleNumber', label: 'Vehicle Number', align: 'center' },
-        { id: 'driverName', label: 'Driver Name', align: 'center' },
+        { label: 'Order Id', id: 'DispatchOrder.name', align: "center", format: (order) => order.DispatchOrder[0].internalIdForBusiness},
+        { id: 'quantity', label: 'Quantity', align: "center" },
+        { id: 'externalVehicle', label: 'Vehicle', align: 'center', format: (value) => <div>{value.externalVehicle ? "Customer Provided" : "Oware Provided"}</div> },
         { id: 'referenceId', label: 'Reference Id', align: 'center' },
     ];
 
