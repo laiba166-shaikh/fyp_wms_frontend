@@ -54,7 +54,7 @@ export const WarehouseOptLinks = {
             label: "Product Outward"
         },
         {
-            path: "/main/operations/inventory",
+            path: "/main/operations/inventory-adjustment",
             label: "Inventory Adjustment"
         }
     ]
@@ -62,11 +62,11 @@ export const WarehouseOptLinks = {
 
 export const LogisticsLinks = {
     label: "Logistics",
-    path: "#",
+    path: "/main",
     icon: <DirectionsBus style={{ color: "#fff", fontSize: 18 }} />,
     sublinks: [
         {
-            path: "#",
+            path: "/main/logistics/vendor",
             label: "Vendor"
         },
         {

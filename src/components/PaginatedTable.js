@@ -52,10 +52,8 @@ const PaginatedTable = ({ columns, fetchData, data, totalCount, navigation }) =>
 
   useEffect(() => {
     setLoading(true);
-    console.log("fetching params", page, rowsPerPage);
     fetchData(page, rowsPerPage)
       .then((res) => {
-        console.log("get res")
         setLoading(false);
       })
       .catch((err) => setLoading(false));

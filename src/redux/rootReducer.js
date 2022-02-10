@@ -13,6 +13,7 @@ import InventoryReducer from "./Inventory/InventoryReducer";
 import ProductOutwardReducer from "./ProductOutward/ProductOutwardReducer";
 import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
+import VendorReducer from "./Vendor/VendorReducer";
 
 const persistConfig = {
     key: 'auth',
@@ -32,7 +33,8 @@ const rootReducer = combineReducers({
     productInwards: ProductInwardReducer,
     dispatchOrders: DispatchOrderReducer,
     productOutwards: ProductOutwardReducer,
-    inventories: InventoryReducer
+    inventories: InventoryReducer,
+    vendors: VendorReducer
 });
 
 const pReducer = persistReducer(persistConfig, rootReducer)

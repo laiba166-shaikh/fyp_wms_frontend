@@ -15,6 +15,7 @@ import AddOrder from "../modules/WarehouseOperations/subpages/DispatchOrder/AddO
 import ProductOutward from "../modules/WarehouseOperations/subpages/ProductOutward/ProductOutward";
 import AddProductOutward from "../modules/WarehouseOperations/subpages/ProductOutward/AddProductOutward";
 import Inventory from "../modules/Reporting/Inventory";
+import Vendor from "../modules/Logistics/Vendor/Vendor";
 
 const AppRoutes = () => {
     return (
@@ -37,13 +38,16 @@ const AppRoutes = () => {
                     <Route path="dispatch-order" element={<DispatchOrder />} />
                     <Route path="dispatch-order/new" element={<AddOrder />} />
                     <Route path="dispatch-order/:id/readOnly" element={<AddOrder />} />
-                    <Route path="product-outward" element={<ProductOutward/>} />
+                    <Route path="product-outward" element={<ProductOutward />} />
                     <Route path="product-outward/new" element={<AddProductOutward />} />
                     <Route path="product-outward/:id/readOnly" element={<AddProductOutward />} />
-                    <Route path="inventory" element={<div>Inventory</div>} />
+                    <Route path="inventory-adjustment" element={<div>Inventory</div>} />
                 </Route>
                 <Route path="reporting" element={<MainLayout />} >
                     <Route path="inventory" element={<Inventory />} />
+                </Route>
+                <Route path="logistics" element={<MainLayout />} >
+                    <Route path="vendor/*" element={<Vendor />} />
                 </Route>
             </Route>
         </Routes>
