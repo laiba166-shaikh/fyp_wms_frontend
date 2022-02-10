@@ -14,6 +14,7 @@ import DispatchOrder from "../modules/WarehouseOperations/subpages/DispatchOrder
 import AddOrder from "../modules/WarehouseOperations/subpages/DispatchOrder/AddOrder";
 import ProductOutward from "../modules/WarehouseOperations/subpages/ProductOutward/ProductOutward";
 import AddProductOutward from "../modules/WarehouseOperations/subpages/ProductOutward/AddProductOutward";
+import Inventory from "../modules/Reporting/Inventory";
 
 const AppRoutes = () => {
     return (
@@ -30,16 +31,19 @@ const AppRoutes = () => {
                     <Route path="product-upload/*" element={<ProductUpload />} />
                 </Route>
                 <Route path="operations" element={<MainLayout />}>
-                    <Route path="product-inward" element={<ProductInward />}/>
+                    <Route path="product-inward" element={<ProductInward />} />
                     <Route path="product-inward/new" element={<AddProductInward />} />
                     <Route path="product-inward/:id/readOnly" element={<AddProductInward />} />
-                    <Route path="dispatch-order" element={<DispatchOrder/>} />
+                    <Route path="dispatch-order" element={<DispatchOrder />} />
                     <Route path="dispatch-order/new" element={<AddOrder />} />
                     <Route path="dispatch-order/:id/readOnly" element={<AddOrder />} />
                     <Route path="product-outward" element={<ProductOutward/>} />
                     <Route path="product-outward/new" element={<AddProductOutward />} />
                     <Route path="product-outward/:id/readOnly" element={<AddProductOutward />} />
                     <Route path="inventory" element={<div>Inventory</div>} />
+                </Route>
+                <Route path="reporting" element={<MainLayout />} >
+                    <Route path="inventory" element={<Inventory />} />
                 </Route>
             </Route>
         </Routes>
