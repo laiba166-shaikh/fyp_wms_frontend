@@ -2,7 +2,6 @@ import React from 'react'
 import { makeStyles, Grid, Paper } from '@material-ui/core';
 import { useNavigate } from "react-router-dom";
 import { connect } from 'react-redux';
-import { ActionColumnFormatter } from '../../../../utility/actionFormatters';
 import PageHeader from '../../../../components/PageHeader';
 import PaginatedTable from '../../../../components/PaginatedTable';
 import { getAllOrders } from '../../../../redux/DispatchOrder/DispatchOrderActions';
@@ -37,8 +36,9 @@ const DispatchOrder = ({ getAllOrders, dispatchOrders, totalCount }) => {
         { id: 'internalIdForBusiness', label: 'Id', align: "center" },
         { id: 'receiverName', label: 'Receiver Name', align: "center" },
         { id: 'receiverPhone', label: 'Receiver Phone', align: 'center' },
-        { id: 'shipmentDate', label: 'Shipment Date', align: 'center' },
+        { id: 'quantity', label: "Quantity", align: "center" },
         { id: 'referenceId', label: 'Reference Id', align: 'center' },
+        { id: 'shipmentDate', label: 'Shipment Date', align: 'center' },
     ];
 
     return (
