@@ -10,16 +10,13 @@ import { Provider } from "react-redux"
 import { store } from './redux/store';
 
 ReactDOM.render(
-
-  <React.StrictMode>
+  <Provider store={store}>
     <MuiPickersUtilsProvider utils={MomentUtils}>
-      <Provider store={store}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </Provider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
     </MuiPickersUtilsProvider>
-  </React.StrictMode>,
+  </Provider>,
   document.getElementById('root')
 );
 

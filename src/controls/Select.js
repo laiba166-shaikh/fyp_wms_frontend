@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { TextField, makeStyles } from '@material-ui/core';
 import { useField } from 'formik';
 
@@ -28,20 +28,19 @@ const useStyes=makeStyles((theme)=>({
     }
 }))
 
-const Select = (props) => {
-    const [field, meta] = useField(props);
+const Select = ({...resProps}) => {
     const classes = useStyes();
+    const [field, meta] = useField(resProps);
 
     //iNPUT lABEL id AND Select labelId should be same
     return (
         <TextField
-            {...props}
+        {...field}
+            {...resProps}
             variant="filled"
             select={true}
             size="small"
-            {...field}
             className={classes.root}
-            // color="secondary"
             margin='normal'
             sx={{ width: "130px" }}
             inputProps={{className:classes.input}}

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Typography, makeStyles, Grid, Box, Button, MenuItem, } from '@material-ui/core';
 import { DatePicker } from "@material-ui/pickers"
 import { DeleteOutline } from "@material-ui/icons"
-import { Formik, Form, } from 'formik';
+import { Formik, Form } from 'formik';
 import * as yup from "yup";
 import { connect } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router';
@@ -10,7 +10,7 @@ import { TextInput, Select } from '../../../../controls';
 import PageHeader from '../../../../components/PageHeader';
 import Loader from '../../../../components/Loader';
 import { getAllCompanies } from '../../../../redux/Company/CompanyActions';
-import { getAllWarehouses } from '../../../../redux/Warehouse/WarehouseActions';
+import { getCompanyWarehouses, createDispatchOrder, getDispatchOrder} from '../../../../redux/DispatchOrder/DispatchOrderActions';
 import AddOrderProductForm from '../../../../components/AddOrderProductForm';
 
 const validationSchema = yup.object({
@@ -19,12 +19,10 @@ const validationSchema = yup.object({
     receiverName: yup
         .string()
         .min(3, 'Receiver Name should be more than equal to 3 characters'),
+    shipmentDate: yup.string(),
     receiverPhone: yup
         .string()
         .min(3, 'Receiver Phone should be more than equal to 3 characters'),
-    shipmentDate: yup
-        .string()
-        .min(3, 'Shipment Date should be more than equal to 3 characters'),
     referenceId: yup.string().min(3, "Reference Id should be more than 3 characters"),
     orderMemo: yup.string().max(500, "Order memo should not be greater than 500 characters"),
     inventories: yup.array().required()
@@ -51,6 +49,28 @@ const useStyles = makeStyles((theme) => ({
         boxSizing: "border-box",
         color: "#fff",
         padding: theme.spacing(2, 4),
+        '& .MuiOutlinedInput-root': {
+            borderRadius: "5px",
+            '& fieldset': {
+                borderColor: 'rgba(255,255,255,0.5)',
+            },
+            '&:hover fieldset': {
+                borderColor: '#d9d9d9',
+            },
+            '&.Mui-focused fieldset': {
+                borderColor: '#d9d9d9',
+            },
+        },
+        "& .MuiInputBase-root": {
+            color: "rgba(255,255,255,0.5)",
+            width: "100%"
+        },
+        "& .MuiFormControl-root": {
+            width: "100%"
+        },
+        "& .MuiFormLabel-root": {
+            color: "rgba(255,255,255,0.5)"
+        },
     },
     prodList: {
         margin: theme.spacing(2, 0),
@@ -62,7 +82,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-const AddOrder = ({ companies, warehouses, getAllCompanies, getAllWarehouses, }) => {
+const AddOrder = ({ companies, getAllCompanies, getCompanyWarehouses, createDispatchOrder, getDispatchOrder }) => {
     const classes = useStyles()
     const navigate = useNavigate()
     const params = useParams()
@@ -70,16 +90,34 @@ const AddOrder = ({ companies, warehouses, getAllCompanies, getAllWarehouses, })
     const readOnly = String(location.pathname).includes("readOnly")
 
     const [loading, setLoading] = useState(false)
+    const [shipmentDate, setShipmentDate] = useState(new Date())
+    const [companyWarehouses, setCompanyWarehouses] = useState([])
     const [orderProducts, setOrderProducts] = useState([])
-    // const [singleProductInward, setSingleProductInward] = useState({})
+    const [singleDispatchOrder, setSingleDispatchOrder] = useState({})
 
     useEffect(() => {
         getAllCompanies("", "")
-        getAllWarehouses("", "")
     }, [])
 
+    useEffect(() => {
+        if (params.id) {
+            setLoading(true)
+            getDispatchOrder(params.id).then((res) => {
+                setSingleDispatchOrder({ ...res })
+                setLoading(false)
+            }).catch((err) => {
+                setLoading(false)
+            })
+        }
+    }, [params])
+
+    const handleCompanyChange = (companyId) => {
+        getCompanyWarehouses(companyId).then((res) => {
+            if (res?.length) setCompanyWarehouses([...res])
+        })
+    }
+
     const handleAddOrderProduct = (selectedProduct) => {
-        console.log("selectedProd", selectedProduct);
         if (orderProducts.some((prod) => prod.product._id === selectedProduct.product._id)) return
         setOrderProducts([...orderProducts, selectedProduct])
     }
@@ -89,27 +127,39 @@ const AddOrder = ({ companies, warehouses, getAllCompanies, getAllWarehouses, })
         setOrderProducts([...filteredproducts])
     }
 
+    const handleSubmit = (values) => {
+        setLoading(true)
+        createDispatchOrder(values).then((res) => {
+            setLoading(false)
+        }).catch((err) => {
+            console.log("error creating prod inward")
+            setLoading(false)
+            navigate("/main/operations/dispatch-order")
+        })
+    }
+
     return (
         <Grid item className={classes.root} md={12} xs={12}>
-            {loading && <Loader/>}
+            {loading && <Loader />}
             <PageHeader
-                // title={`${params.id ? readOnly ? "View" : "Edit" : "Add"} Product Inward`}
                 title="Add Order"
                 buttonTitle="Cancel"
                 headerAction={() => navigate("/main/operations/dispatch-order")}
             />
             <Formik
+                // initialValues={singleDispatchOrder?._id ? singleDispatchOrder : initialValues}
                 initialValues={initialValues}
                 validationSchema={validationSchema}
                 enableReinitialize={true}
                 onSubmit={(values) => {
                     const submitProd = orderProducts.map((ordProd) => ({ id: ordProd.product._id, quantity: ordProd.quantity }))
                     values.inventories = submitProd
+                    values.shipmentDate = shipmentDate.toString()
                     console.log("values - >", values)
-                    // handleSubmit(values)
+                    handleSubmit(values)
                 }}
             >
-                {({ handleSubmit, errors, values, touched }) => (
+                {({ handleSubmit, errors, values, touched, setFieldValue }) => (
                     <>
                         <Form>
                             <Grid container spacing={2} xs={12}>
@@ -118,7 +168,10 @@ const AddOrder = ({ companies, warehouses, getAllCompanies, getAllWarehouses, })
                                         label="Select Company"
                                         fullWidth={true}
                                         name="companyId"
-                                        id="companyId"
+                                        onChange={(e) => {
+                                            setFieldValue("companyId", e.target.value)
+                                            handleCompanyChange(e.target.value)
+                                        }}
                                         InputLabelProps={{ shrink: true }}
                                         disabled={readOnly ? true : false}
                                     >
@@ -134,12 +187,11 @@ const AddOrder = ({ companies, warehouses, getAllCompanies, getAllWarehouses, })
                                         label="Select Warehouse"
                                         fullWidth={true}
                                         name="warehouseId"
-                                        id="warehouseId"
                                         InputLabelProps={{ shrink: true }}
-                                        disabled={readOnly ? true : false}
+                                        disabled={readOnly || !values.companyId ? true : false}
                                     >
-                                        {warehouses?.map((warehouse) => (
-                                            <MenuItem value={warehouse._id} key={warehouse._id}>
+                                        {companyWarehouses?.map((warehouse, i) => (
+                                            <MenuItem value={warehouse._id} key={i}>
                                                 {warehouse.name}
                                             </MenuItem>
                                         ))}
@@ -156,6 +208,7 @@ const AddOrder = ({ companies, warehouses, getAllCompanies, getAllWarehouses, })
                                         disabled={readOnly ? true : false}
                                         type="text"
                                         id="receiverName"
+                                        autoComplete="off"
                                         placeholder="Receiver Name"
                                     />
                                 </Grid>
@@ -167,6 +220,7 @@ const AddOrder = ({ companies, warehouses, getAllCompanies, getAllWarehouses, })
                                         InputLabelProps={{ shrink: true }}
                                         disabled={readOnly ? true : false}
                                         type="text"
+                                        autoComplete="off"
                                         id="receiverPhone"
                                         placeholder="Receiver Phone(e.g 032*_*******)"
                                     />
@@ -174,19 +228,19 @@ const AddOrder = ({ companies, warehouses, getAllCompanies, getAllWarehouses, })
                             </Grid>
                             <Grid container spacing={2} xs={12}>
                                 <Grid item xs={12} md={6}>
-                                    {/* <DatePicker
+                                    <DatePicker
                                         format="dd/MM/yyyy"
                                         label="Shipment Date"
-                                        views={["year", "month", "date"]}
-                                        renderInput={(params) => <TextInput {...params} />}
+                                        views={["year", "date", "month"]}
+                                        autoOk
+                                        className={classes.datePicker}
+                                        value={shipmentDate}
+                                        onChange={setShipmentDate}
                                         name="shipmentDate"
                                         disablePast
                                         inputVariant="filled"
                                         variant='inline'
-                                        disabled={readOnly ? true : false}
-                                        id="shipmentDate"
-                                        fullWidth={true}
-                                    /> */}
+                                    />
                                 </Grid>
                                 <Grid item xs={12} md={6}>
                                     <TextInput
@@ -196,6 +250,7 @@ const AddOrder = ({ companies, warehouses, getAllCompanies, getAllWarehouses, })
                                         disabled={readOnly ? true : false}
                                         type="text"
                                         id="referenceId"
+                                        autoComplete="off"
                                         placeholder="Reference Id"
                                     />
                                 </Grid>
@@ -216,7 +271,7 @@ const AddOrder = ({ companies, warehouses, getAllCompanies, getAllWarehouses, })
                             <Typography variant="h4" style={{ margin: "8px 0px" }}>
                                 Product Details
                             </Typography>
-                            {!readOnly && <AddOrderProductForm addValues={handleAddOrderProduct} />}
+                            {!readOnly && <AddOrderProductForm addValues={handleAddOrderProduct} companyId={values.companyId} warehouseId={values.warehouseId} />}
                             {orderProducts.map((orderProd) => (
                                 <Box key={orderProd.product._id} className={classes.prodList}>
                                     <Box display="grid" gridTemplateColumns="repeat(12,1fr)" className={classes.listItem}>
@@ -255,14 +310,13 @@ const AddOrder = ({ companies, warehouses, getAllCompanies, getAllWarehouses, })
 
 const actions = {
     getAllCompanies,
-    getAllWarehouses,
-    // createProductInward,
-    // getProductInward
+    getCompanyWarehouses,
+    createDispatchOrder,
+    getDispatchOrder
 }
 
 const mapStateToProps = (state) => ({
     companies: state.companies.companies,
-    warehouses: state.warehouses.warehouses,
 })
 
 export default connect(mapStateToProps, actions)(AddOrder);
