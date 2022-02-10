@@ -1,4 +1,4 @@
-import {combineReducers} from "redux"
+import { combineReducers } from "redux"
 import AuthReducer from "./Auth/AuthReducer";
 import CompanyReducer from "./Company/CompanyReducer";
 import UsersReducer from "./User/UserReducer";
@@ -10,19 +10,30 @@ import ProductReducer from "./ProductUpload/ProductUploadReducer";
 import ProductInwardReducer from "./ProductInward/ProductInwardReducer";
 import DispatchOrderReducer from "./DispatchOrder/DispatchOrderReducer";
 import InventoryReducer from "./Inventory/InventoryReducer";
+import ProductOutwardReducer from "./ProductOutward/ProductOutwardReducer";
+import { persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 
-const rootReducer=combineReducers({
-    auth:AuthReducer,
-    users:UsersReducer,
-    companies:CompanyReducer,
-    warehouses:WarehouseReducer,
-    brands:BrandReducer,
-    uoms:UomReducer,
-    categories:CategoryReducer,
-    products:ProductReducer,
-    productInwards:ProductInwardReducer,
-    dispatchOrders:DispatchOrderReducer,
-    inventories:InventoryReducer
+const persistConfig = {
+    key: 'auth',
+    storage: storage,
+    whitelist: ['auth'] // which reducer want to store
+};
+
+const rootReducer = combineReducers({
+    auth: AuthReducer,
+    users: UsersReducer,
+    companies: CompanyReducer,
+    warehouses: WarehouseReducer,
+    brands: BrandReducer,
+    uoms: UomReducer,
+    categories: CategoryReducer,
+    products: ProductReducer,
+    productInwards: ProductInwardReducer,
+    dispatchOrders: DispatchOrderReducer,
+    productOutwards: ProductOutwardReducer,
+    inventories: InventoryReducer
 });
 
-export default rootReducer;
+const pReducer = persistReducer(persistConfig, rootReducer)
+export default pReducer;

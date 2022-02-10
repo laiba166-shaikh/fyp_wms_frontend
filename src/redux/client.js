@@ -7,9 +7,29 @@ const client = axios.create({
 })
 
 client.interceptors.request.use(
-    (config)=>{
-        const {auth}=store.getState();
-        if(auth){
+    (config) => {
+        const { auth } = store.getState();
+        const authToken=localStorage.getItem("authToken")
+        if (auth) {
+            config.headers.common['Authorization'] = `Bearer ${authToken}`
+        }
+        return config;
+    },
+    (err) => {
+        console.log("client error");
+        return Promise.reject(err);
+    }
+)
+
+
+export const exportClient = axios.create({
+    baseURL: "http://localhost:8001/api/v1",
+})
+
+exportClient.interceptors.request.use(
+    (config) => {
+        const { auth } = store.getState();
+        if (auth) {
             config.headers.common['Authorization'] = `Bearer ${auth.token}`
         }
         return config;

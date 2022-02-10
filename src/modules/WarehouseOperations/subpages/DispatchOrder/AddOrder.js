@@ -78,7 +78,9 @@ const useStyles = makeStyles((theme) => ({
         paddingRight: theme.spacing(10)
     },
     listItem: {
-        padding: theme.spacing(1)
+        padding: theme.spacing(1),
+        backgroundColor:theme.palette.primary.light,
+        margin:theme.spacing(1,0)
     }
 }))
 
@@ -99,11 +101,15 @@ const AddOrder = ({ companies, getAllCompanies, getCompanyWarehouses, createDisp
         getAllCompanies("", "")
     }, [])
 
+    //view
     useEffect(() => {
         if (params.id) {
             setLoading(true)
-            getDispatchOrder(params.id).then((res) => {
+            getDispatchOrder(params.id).then(({products,...res}) => {
+                console.log("single",res)
+                handleCompanyChange(res.companyId)
                 setSingleDispatchOrder({ ...res })
+                setOrderProducts([...products])
                 setLoading(false)
             }).catch((err) => {
                 setLoading(false)
@@ -111,6 +117,7 @@ const AddOrder = ({ companies, getAllCompanies, getCompanyWarehouses, createDisp
         }
     }, [params])
 
+    //add
     const handleCompanyChange = (companyId) => {
         getCompanyWarehouses(companyId).then((res) => {
             if (res?.length) setCompanyWarehouses([...res])
@@ -131,10 +138,10 @@ const AddOrder = ({ companies, getAllCompanies, getCompanyWarehouses, createDisp
         setLoading(true)
         createDispatchOrder(values).then((res) => {
             setLoading(false)
+            navigate("/main/operations/dispatch-order")
         }).catch((err) => {
             console.log("error creating prod inward")
             setLoading(false)
-            navigate("/main/operations/dispatch-order")
         })
     }
 
@@ -142,17 +149,16 @@ const AddOrder = ({ companies, getAllCompanies, getCompanyWarehouses, createDisp
         <Grid item className={classes.root} md={12} xs={12}>
             {loading && <Loader />}
             <PageHeader
-                title="Add Order"
+                title={`${(params.id && readOnly) ? "View" : "Add"} Order`}
                 buttonTitle="Cancel"
                 headerAction={() => navigate("/main/operations/dispatch-order")}
             />
             <Formik
-                // initialValues={singleDispatchOrder?._id ? singleDispatchOrder : initialValues}
-                initialValues={initialValues}
+                initialValues={singleDispatchOrder?._id ? singleDispatchOrder : initialValues}
                 validationSchema={validationSchema}
                 enableReinitialize={true}
                 onSubmit={(values) => {
-                    const submitProd = orderProducts.map((ordProd) => ({ id: ordProd.product._id, quantity: ordProd.quantity }))
+                    const submitProd = orderProducts.map((ordProd) => ({ id: ordProd.inventory._id, quantity: ordProd.quantity }))
                     values.inventories = submitProd
                     values.shipmentDate = shipmentDate.toString()
                     console.log("values - >", values)
@@ -234,7 +240,7 @@ const AddOrder = ({ companies, getAllCompanies, getCompanyWarehouses, createDisp
                                         views={["year", "date", "month"]}
                                         autoOk
                                         className={classes.datePicker}
-                                        value={shipmentDate}
+                                        value={singleDispatchOrder._id ? singleDispatchOrder.shipmentDate : shipmentDate}
                                         onChange={setShipmentDate}
                                         name="shipmentDate"
                                         disablePast
@@ -254,7 +260,7 @@ const AddOrder = ({ companies, getAllCompanies, getCompanyWarehouses, createDisp
                                         placeholder="Reference Id"
                                     />
                                 </Grid>
-                                <Grid item xs={12} md={12}>
+                                {!readOnly && <Grid item xs={12} md={12}>
                                     <TextInput
                                         label="Order Memo"
                                         name="orderMemo"
@@ -266,7 +272,7 @@ const AddOrder = ({ companies, getAllCompanies, getCompanyWarehouses, createDisp
                                         id="memo"
                                         placeholder="Order Memo (Optional)"
                                     />
-                                </Grid>
+                                </Grid>}
                             </Grid>
                             <Typography variant="h4" style={{ margin: "8px 0px" }}>
                                 Product Details
@@ -288,11 +294,11 @@ const AddOrder = ({ companies, getAllCompanies, getCompanyWarehouses, createDisp
                                                 {orderProd.product.uomId.name}
                                             </Typography>
                                         </Box>
-                                        <Box gridColumn="span 3">
+                                        {!readOnly && <Box gridColumn="span 3">
                                             <div onClick={() => handleFilterProducts(orderProd.product._id)} style={{ cursor: "pointer" }}>
                                                 <DeleteOutline />
                                             </div>
-                                        </Box>
+                                        </Box>}
                                     </Box>
                                 </Box>
                             ))}

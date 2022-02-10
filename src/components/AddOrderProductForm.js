@@ -73,6 +73,7 @@ const AddOrderProductForm = ({ addValues, companyId, warehouseId }) => {
         }
         addValues({
             product: selectedProductInventory.product,
+            inventory:selectedProductInventory.inventory,
             quantity: quantity,
         })
         setSelectedProductInventory({})
