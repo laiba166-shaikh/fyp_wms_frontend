@@ -16,6 +16,7 @@ import ProductOutward from "../modules/WarehouseOperations/subpages/ProductOutwa
 import AddProductOutward from "../modules/WarehouseOperations/subpages/ProductOutward/AddProductOutward";
 import Inventory from "../modules/Reporting/Inventory";
 import Vendor from "../modules/Logistics/Vendor/Vendor";
+import Driver from "../modules/Logistics/Driver/Driver";
 
 const AppRoutes = () => {
     return (
@@ -48,6 +49,7 @@ const AppRoutes = () => {
                 </Route>
                 <Route path="logistics" element={<MainLayout />} >
                     <Route path="vendor/*" element={<Vendor />} />
+                    <Route path="driver/*" element={<Driver />} />
                 </Route>
             </Route>
         </Routes>

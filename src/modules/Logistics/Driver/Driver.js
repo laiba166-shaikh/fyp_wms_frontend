@@ -4,9 +4,9 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import { connect } from 'react-redux';
 import PageHeader from '../../../components/PageHeader';
 import PaginatedTable from '../../../components/PaginatedTable';
-import { getAllVendors } from '../../../redux/Vendor/VendorActions';
-import VendorEditDialog from './VendorEditDialog';
+import { getAllDrivers } from '../../../redux/Driver/DriverActions';
 import { ActionColumnFormatter } from '../../../utility/actionFormatters';
+import DriverEditDialog from './DriverEditDialog';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -31,47 +31,45 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-function Vendor({ vendors, totalCount, getAllVendors }) {
+
+function Driver({ drivers, totalCount, getAllDrivers }) {
 
     const classes = useStyles();
     const navigate = useNavigate()
 
     const [view, setView] = useState(false)
-    const [vendorEditOpen, setVendorEditOpen] = useState(true)
-    const [showVendorDelete, setShowVendorDelete] = useState(false)
+    const [driverEditOpen, setDriverEditOpen] = useState(true)
+    const [showDriverDelete, setShowDriverDelete] = useState(false)
 
-    const onVendorEditClose = () => {
-        setVendorEditOpen(false)
+    const onDriverEditClose = () => {
+        setDriverEditOpen(false)
         setView(false)
-        navigate(`/main/logistics/Vendor`)
+        navigate(`/main/logistics/driver`)
     }
-    const handleVendorDeleteClose = () => setShowVendorDelete(false)
-    const handleVendorDeleteOpen = () => setShowVendorDelete(true)
+
     const handleViewOnly = (id) => {
         setView(true)
-        VendorUiEvents.editVendorClick(id)
+        DriverUiEvents.editDriverClick(id)
     }
 
-    const VendorUiEvents = {
-        addNewVendorClick: () => {
-            navigate(`/main/logistics/Vendor/new`)
-            setVendorEditOpen(true)
+    const DriverUiEvents = {
+        addNewDriverClick: () => {
+            navigate(`/main/logistics/driver/new`)
+            setDriverEditOpen(true)
         },
-        editVendorClick: (id) => {
-            navigate(`/main/logistics/Vendor/${id}/edit`) //id is the specific record id from api send when click on edit btn
-            setVendorEditOpen(true)
+        editDriverClick: (id) => {
+            navigate(`/main/logistics/driver/${id}/edit`) //id is the specific record id from api send when click on edit btn
+            setDriverEditOpen(true)
         }
     }
 
-
     const columns = [
-        { id: 'internalIdForBusiness', label: 'Id', align: "center" },
-        { id: 'name', label: 'Vendor', align: "center" },
-        { id: 'phone', label: 'Phone', align: 'center' },
-        { id: 'contactName', label: 'Contact Name', align: 'center', format: (entity) => `${entity.User.firstName} ${entity.User.lastName}` },
+        { id: 'name', label: 'Diver Name', align: "center" },
+        { id: 'Vendor.name', label: 'Vendor Name', align: "center", format: (entity) => entity.Vendor?.name },
         { id: 'isActive', label: 'Status', align: 'center', format: (entity) => entity.isActive ? "Active" : "in Active" },
-        { id: "action", label: "Action", align: "center", format: (value) => <ActionColumnFormatter value={value} onEdit={VendorUiEvents.editVendorClick} onClickView={handleViewOnly} /> },
+        { id: "action", label: "Action", align: "center", format: (value) => <ActionColumnFormatter value={value} onEdit={DriverUiEvents.editDriverClick} onClickView={handleViewOnly} /> },
     ];
+
 
     return (
         <Grid item className={classes.root} md={12} xs={12} container>
@@ -79,9 +77,9 @@ function Vendor({ vendors, totalCount, getAllVendors }) {
                 <Paper variant='outlined' elevation={1} className={classes.container}>
                     <Box className={classes.header}>
                         <Typography variant='h3'>
-                            Vendor
+                            Driver
                         </Typography>
-                        <Button variant="outlined" color="secondary" onClick={() => VendorUiEvents.addNewVendorClick()}>
+                        <Button variant="outlined" color="secondary" onClick={() => DriverUiEvents.addNewDriverClick()}>
                             Add new
                         </Button>
                     </Box>
@@ -89,13 +87,13 @@ function Vendor({ vendors, totalCount, getAllVendors }) {
                     <PaginatedTable
                         columns={columns}
                         totalCount={totalCount}
-                        data={vendors}
-                        fetchData={getAllVendors}
+                        data={drivers}
+                        fetchData={getAllDrivers}
                     />
 
                     <Routes>
-                        <Route path="new" element={<VendorEditDialog show={vendorEditOpen} onClose={onVendorEditClose} />} />
-                        <Route path=":id/edit" element={<VendorEditDialog show={vendorEditOpen} onClose={onVendorEditClose} view={view} />} />
+                        <Route path="new" element={<DriverEditDialog show={driverEditOpen} onClose={onDriverEditClose} />} />
+                        <Route path=":id/edit" element={<DriverEditDialog show={driverEditOpen} onClose={onDriverEditClose} view={view} />} />
                     </Routes>
 
                 </Paper>
@@ -105,12 +103,12 @@ function Vendor({ vendors, totalCount, getAllVendors }) {
 }
 
 const mapStateToProps = (state) => ({
-    vendors: state.vendors.vendors,
-    totalCount: state.vendors.totalCount
+    drivers: state.drivers.drivers,
+    totalCount: state.drivers.totalCount
 })
 
 const actions = {
-    getAllVendors
+    getAllDrivers
 }
 
-export default connect(mapStateToProps, actions)(Vendor)
+export default connect(mapStateToProps, actions)(Driver)
