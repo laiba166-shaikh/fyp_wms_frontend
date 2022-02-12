@@ -54,8 +54,8 @@ export const WarehouseOptLinks = {
             label: "Product Outward"
         },
         {
-            path: "/main/operations/inventory-adjustment",
-            label: "Inventory Adjustment"
+            path: "/main/operations/stock-adjustment",
+            label: "Stock Adjustment"
         }
     ]
 };
