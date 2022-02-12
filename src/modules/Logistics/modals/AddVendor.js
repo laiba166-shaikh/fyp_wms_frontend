@@ -63,7 +63,7 @@ const AddVendor = ({ initialValues, onClose, id, loading, onSave, readOnly }) =>
                                         InputLabelProps={{ shrink: true }}
                                         disabled={readOnly ? true : false}
                                         fullWidth={true}
-                                        // type="text"
+                                        type="text"
                                         placeholder="Vendor name"
                                     />
                                 </Grid>
@@ -74,7 +74,7 @@ const AddVendor = ({ initialValues, onClose, id, loading, onSave, readOnly }) =>
                                         InputLabelProps={{ shrink: true }}
                                         disabled={readOnly ? true : false}
                                         fullWidth={true}
-                                        // type="text"
+                                        type="text"
                                         id="VendorType"
                                         placeholder="VendorType"
                                     />
@@ -86,7 +86,7 @@ const AddVendor = ({ initialValues, onClose, id, loading, onSave, readOnly }) =>
                                         InputLabelProps={{ shrink: true }}
                                         disabled={readOnly ? true : false}
                                         name="notes"
-                                        // type="text"
+                                        type="text"
                                         id="notes"
                                         placeholder="Add Notes"
                                     />
@@ -98,7 +98,7 @@ const AddVendor = ({ initialValues, onClose, id, loading, onSave, readOnly }) =>
                                         InputLabelProps={{ shrink: true }}
                                         disabled={readOnly ? true : false}
                                         name="phone"
-                                        // type="text"
+                                        type="text"
                                         id="phone"
                                         placeholder="+92 1342 122"
                                     />
@@ -129,10 +129,10 @@ const AddVendor = ({ initialValues, onClose, id, loading, onSave, readOnly }) =>
                             </Grid>
                         </Form>
                     </DialogContent>
-                    <DialogActions>
+                    {!readOnly && <DialogActions>
                         <Button variant="contained" color="primary" onClick={onClose}>Cancel</Button>
                         <Button variant="contained" color="primary" onClick={handleSubmit}>Save</Button>
-                    </DialogActions>
+                    </DialogActions>}
                 </>
             )}
         </Formik>

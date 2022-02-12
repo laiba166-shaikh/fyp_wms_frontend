@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch } from "react-redux"
 import { Dialog, DialogTitle, makeStyles, Typography } from '@material-ui/core';
-import AddVendor from '../../Administration/modals/AddVendor';
-import { getVendor, createVendor, updateVendor } from "../../../redux/Vendor/VendorActions";
+import AddVendor from '../../modals/AddVendor';
+import { getVendor, createVendor, updateVendor } from "../../../../redux/Vendor/VendorActions";
 
 const useStyles = makeStyles((theme) => ({
     root: {

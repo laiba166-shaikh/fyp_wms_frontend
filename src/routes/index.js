@@ -15,7 +15,7 @@ import AddOrder from "../modules/WarehouseOperations/subpages/DispatchOrder/AddO
 import ProductOutward from "../modules/WarehouseOperations/subpages/ProductOutward/ProductOutward";
 import AddProductOutward from "../modules/WarehouseOperations/subpages/ProductOutward/AddProductOutward";
 import Inventory from "../modules/Reporting/Inventory";
-import Vendor from "../modules/Logistics/Vendor/Vendor";
+import Vendor from "../modules/Logistics/subpages/Vendor/Vendor";
 
 const AppRoutes = () => {
     return (

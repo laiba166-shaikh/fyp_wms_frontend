@@ -2,11 +2,11 @@ import React, { useState } from 'react'
 import { makeStyles, Grid, Paper, Box, Typography, Button } from '@material-ui/core';
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { connect } from 'react-redux';
-import PageHeader from '../../../components/PageHeader';
-import PaginatedTable from '../../../components/PaginatedTable';
-import { getAllVendors } from '../../../redux/Vendor/VendorActions';
+import PageHeader from '../../../../components/PageHeader';
+import PaginatedTable from '../../../../components/PaginatedTable';
+import { getAllVendors } from '../../../../redux/Vendor/VendorActions';
 import VendorEditDialog from './VendorEditDialog';
-import { ActionColumnFormatter } from '../../../utility/actionFormatters';
+import { ActionColumnFormatter } from '../../../../utility/actionFormatters';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -38,26 +38,27 @@ function Vendor({ vendors, totalCount, getAllVendors }) {
 
     const [view, setView] = useState(false)
     const [vendorEditOpen, setVendorEditOpen] = useState(true)
-    const [showVendorDelete, setShowVendorDelete] = useState(false)
+    // const [showVendorDelete, setShowVendorDelete] = useState(false)
 
     const onVendorEditClose = () => {
         setVendorEditOpen(false)
-        navigate(`/main/logistics/Vendor`)
+        setView(false)
+        navigate(`/main/logistics/vendor`)
     }
-    const handleVendorDeleteClose = () => setShowVendorDelete(false)
-    const handleVendorDeleteOpen = () => setShowVendorDelete(true)
+    // const handleVendorDeleteClose = () => setShowVendorDelete(false)
+    // const handleVendorDeleteOpen = () => setShowVendorDelete(true)
     const handleViewOnly = (id) => {
         setView(true)
-        VendorUiEvents.editCompanyClick(id)
+        VendorUiEvents.editVendorClick(id)
     }
 
     const VendorUiEvents = {
         addNewVendorClick: () => {
-            navigate(`/main/logistics/Vendor/new`)
+            navigate(`/main/logistics/vendor/new`)
             setVendorEditOpen(true)
         },
         editVendorClick: (id) => {
-            navigate(`/main/logistics/Vendor/${id}/edit`) //id is the specific record id from api send when click on edit btn
+            navigate(`/main/logistics/vendor/${id}/edit`) //id is the specific record id from api send when click on edit btn
             setVendorEditOpen(true)
         }
     }
@@ -69,7 +70,7 @@ function Vendor({ vendors, totalCount, getAllVendors }) {
         { id: 'phone', label: 'Phone', align: 'center' },
         { id: 'contactName', label: 'Contact Name', align: 'center', format: (entity) => `${entity.User.firstName} ${entity.User.lastName}` },
         { id: 'isActive', label: 'Status', align: 'center', format: (entity) => entity.isActive ? "Active" : "in Active" },
-        { id: "action", label: "Action", align: "center", format: (value) => <ActionColumnFormatter value={value} onEdit={VendorUiEvents.editCompanyClick} onClickView={handleViewOnly} /> },
+        { id: "action", label: "Action", align: "center", format: (value) => <ActionColumnFormatter value={value} onEdit={VendorUiEvents.editVendorClick} onClickView={handleViewOnly} /> },
     ];
 
     return (
@@ -94,7 +95,7 @@ function Vendor({ vendors, totalCount, getAllVendors }) {
 
                     <Routes>
                         <Route path="new" element={<VendorEditDialog show={vendorEditOpen} onClose={onVendorEditClose} />} />
-                        <Route path=":id/edit" element={<VendorEditDialog show={vendorEditOpen} onClose={onVendorEditClose} />} />
+                        <Route path=":id/edit" element={<VendorEditDialog show={vendorEditOpen} onClose={onVendorEditClose} view={view} />} />
                     </Routes>
 
                 </Paper>

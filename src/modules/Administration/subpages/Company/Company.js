@@ -94,11 +94,11 @@ const Company = ({ companies, totalCount, getAllCompanies }) => {
                         <Route path="new" element={<CompanyEditDialog show={companyEditOpen} onClose={onCompanyEditClose} />} />
                         <Route path=":id/edit" element={<CompanyEditDialog show={companyEditOpen} onClose={onCompanyEditClose} view={view} />} />
                     </Routes>
-                    <DeleteModal
+                    {/* <DeleteModal
                         show={showCompanyDelete}
                         handleClose={handleCompanyDeleteClose}
                         entityName={"Company"}
-                    />
+                    /> */}
                 </Paper>
             </Grid>
         </Grid>
