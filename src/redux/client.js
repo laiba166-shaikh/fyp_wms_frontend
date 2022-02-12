@@ -3,6 +3,7 @@ import { store } from "./store";
 
 const client = axios.create({
     baseURL: "http://localhost:8001/api/v1",
+    // baseURL: "https://warehouse-fyp.herokuapp.com/api/v1"
     // withCredentials:false
 })
 

@@ -253,16 +253,17 @@ const AddproductInward = ({ companies, warehouses, products, getAllCompanies, ge
                                                 {inwardProd.quantity}
                                             </Typography>
                                         </Box>
-                                        {!readOnly && <><Box gridColumn="span 3">
+                                        <Box gridColumn="span 3">
                                             <Typography variant="body1">
                                                 {inwardProd.product.uomId?.name}
                                             </Typography>
                                         </Box>
+                                        {!readOnly && 
                                         <Box gridColumn="span 3">
                                             <div onClick={() => handleFilterProducts(inwardProd.product._id)} style={{ cursor: "pointer" }}>
                                                 <DeleteOutline />
                                             </div>
-                                        </Box></>}
+                                        </Box>}
                                     </Box>
                                 </Box>
                             ))}

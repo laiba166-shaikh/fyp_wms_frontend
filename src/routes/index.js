@@ -16,6 +16,8 @@ import ProductOutward from "../modules/WarehouseOperations/subpages/ProductOutwa
 import AddProductOutward from "../modules/WarehouseOperations/subpages/ProductOutward/AddProductOutward";
 import Inventory from "../modules/Reporting/Inventory";
 import Vendor from "../modules/Logistics/Vendor/Vendor";
+import StockAdjustment from "../modules/WarehouseOperations/subpages/StockAdjustment/StockAdjustment";
+import AddStockAdjustment from "../modules/WarehouseOperations/subpages/StockAdjustment/AddStockAdjustment";
 
 const AppRoutes = () => {
     return (
@@ -41,7 +43,9 @@ const AppRoutes = () => {
                     <Route path="product-outward" element={<ProductOutward />} />
                     <Route path="product-outward/new" element={<AddProductOutward />} />
                     <Route path="product-outward/:id/readOnly" element={<AddProductOutward />} />
-                    <Route path="inventory-adjustment" element={<div>Inventory</div>} />
+                    <Route path="stock-adjustment" element={<StockAdjustment/>} />
+                    <Route path="stock-adjustment/new" element={<AddStockAdjustment/>} />
+                    <Route path="stock-adjustment/:id/readOnly" element={<AddStockAdjustment/>} />
                 </Route>
                 <Route path="reporting" element={<MainLayout />} >
                     <Route path="inventory" element={<Inventory />} />
