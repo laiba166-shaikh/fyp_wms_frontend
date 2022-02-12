@@ -14,6 +14,7 @@ import ProductOutwardReducer from "./ProductOutward/ProductOutwardReducer";
 import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import VendorReducer from "./Vendor/VendorReducer";
+import DriverReducer from "./Driver/DriverReducer";
 import StockAdjustmentReducer from "./StockAdjustment/StockAdjustmentReducer";
 
 const persistConfig = {
@@ -36,7 +37,8 @@ const rootReducer = combineReducers({
     productOutwards: ProductOutwardReducer,
     stockAdjustments:StockAdjustmentReducer,
     inventories: InventoryReducer,
-    vendors: VendorReducer
+    vendors: VendorReducer,
+    drivers:DriverReducer
 });
 
 const pReducer = persistReducer(persistConfig, rootReducer)

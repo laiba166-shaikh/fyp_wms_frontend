@@ -70,7 +70,7 @@ export const LogisticsLinks = {
             label: "Vendor"
         },
         {
-            path: "#",
+            path: "/main/logistics/driver",
             label: "Driver"
         },
         {
