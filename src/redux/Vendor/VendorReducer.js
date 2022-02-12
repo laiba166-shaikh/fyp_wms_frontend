@@ -35,7 +35,7 @@ const VendorReducer = (state = initialState, action) => {
                 ...state,
                 vendorLoading: false,
                 vendors: state.vendors.map((vendor) => {
-                    if (vendor._id === payload.vendor._id) return { ...payload.vendor }
+                    if (vendor._id === payload.vendor._id) return { ...payload.vendor, User:vendor.User }
                     else return vendor
                 })
             }
