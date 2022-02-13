@@ -16,6 +16,7 @@ import storage from 'redux-persist/lib/storage';
 import VendorReducer from "./Vendor/VendorReducer";
 import DriverReducer from "./Driver/DriverReducer";
 import StockAdjustmentReducer from "./StockAdjustment/StockAdjustmentReducer";
+import VehicleTypeReducer from "./VehicleType/VehicleTypeReducer";
 
 const persistConfig = {
     key: 'auth',
@@ -38,7 +39,8 @@ const rootReducer = combineReducers({
     stockAdjustments:StockAdjustmentReducer,
     inventories: InventoryReducer,
     vendors: VendorReducer,
-    drivers:DriverReducer
+    drivers:DriverReducer,
+    vehicleTypes:VehicleTypeReducer
 });
 
 const pReducer = persistReducer(persistConfig, rootReducer)

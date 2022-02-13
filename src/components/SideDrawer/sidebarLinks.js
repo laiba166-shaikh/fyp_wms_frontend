@@ -74,7 +74,11 @@ export const LogisticsLinks = {
             label: "Driver"
         },
         {
-            path: "#",
+            path: "/main/logistics/vehicle-type",
+            label: "Vehicle Types"
+        },
+        {
+            path: "/main/logistics/vehicle",
             label: "Vehicle"
         },
         {
