@@ -10,10 +10,6 @@ const validationSchema = yup.object({
         .string()
         .min(3, 'Vendor name should be greater than equal to 3 characters')
         .required('Vendor Name is required'),
-    type: yup
-        .string()
-        .min(3, 'Vendor type should be greater than equal to 3 characters')
-        .required('Comapny type is required'),
     notes: yup
         .string()
         .min(3, 'Notes should be gretaer than equal to 5 characters'),
@@ -65,18 +61,6 @@ const AddVendor = ({ initialValues, onClose, id, loading, onSave, readOnly }) =>
                                         fullWidth={true}
                                         type="text"
                                         placeholder="Vendor name"
-                                    />
-                                </Grid>
-                                <Grid item md={12} sm={12}>
-                                    <TextInput
-                                        label="Vendor Type"
-                                        name="type"
-                                        InputLabelProps={{ shrink: true }}
-                                        disabled={readOnly ? true : false}
-                                        fullWidth={true}
-                                        type="text"
-                                        id="VendorType"
-                                        placeholder="VendorType"
                                     />
                                 </Grid>
                                 <Grid item md={12} sm={12}>

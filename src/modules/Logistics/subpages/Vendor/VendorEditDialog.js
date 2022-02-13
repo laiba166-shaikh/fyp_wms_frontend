@@ -24,7 +24,6 @@ const VendorEditDialog = ({ show, onClose, view = false }) => {
 
     const initialValues = {
         name: "",
-        type: "",
         notes: "",
         phone: "",
     }
