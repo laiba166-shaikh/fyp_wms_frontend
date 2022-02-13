@@ -17,6 +17,7 @@ import VendorReducer from "./Vendor/VendorReducer";
 import DriverReducer from "./Driver/DriverReducer";
 import StockAdjustmentReducer from "./StockAdjustment/StockAdjustmentReducer";
 import VehicleTypeReducer from "./VehicleType/VehicleTypeReducer";
+import VehicleReducer from "./Vehicle/VehicleReducer";
 
 const persistConfig = {
     key: 'auth',
@@ -40,7 +41,8 @@ const rootReducer = combineReducers({
     inventories: InventoryReducer,
     vendors: VendorReducer,
     drivers:DriverReducer,
-    vehicleTypes:VehicleTypeReducer
+    vehicleTypes:VehicleTypeReducer,
+    vehicles:VehicleReducer
 });
 
 const pReducer = persistReducer(persistConfig, rootReducer)

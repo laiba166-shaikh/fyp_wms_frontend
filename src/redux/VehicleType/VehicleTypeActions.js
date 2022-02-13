@@ -9,7 +9,7 @@ export const getAllVehicleType=(page,limit)=>async (dispatch) => {
         dispatch({
             type:GET_ALL_VEHICLE_TYPE,
             payload:{
-                VEHICLE_TYPEs:data.data.vehicleTypes,
+                vehicleTypes:data.data.vehicleTypes,
                 totalCount:data.count
             }
         })
