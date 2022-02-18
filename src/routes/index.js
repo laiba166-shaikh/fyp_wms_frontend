@@ -21,6 +21,8 @@ import StockAdjustment from "../modules/WarehouseOperations/subpages/StockAdjust
 import AddStockAdjustment from "../modules/WarehouseOperations/subpages/StockAdjustment/AddStockAdjustment";
 import VehicleType from "../modules/Logistics/subpages/VehicleType/VehicleType";
 import Vehicle from "../modules/Logistics/subpages/Vehicle/Vehicle";
+import Ride from "../modules/Logistics/subpages/Ride/Ride";
+import AddRide from "../modules/Logistics/subpages/Ride/AddRide";
 
 const AppRoutes = () => {
     return (
@@ -58,6 +60,10 @@ const AppRoutes = () => {
                     <Route path="driver/*" element={<Driver/>} />
                     <Route path="vehicle-type/*" element={<VehicleType/>} />
                     <Route path="vehicle/*" element={<Vehicle/>} />
+                    <Route path="ride" element={<Ride/>} />
+                    <Route path="ride/new" element={<AddRide />} />
+                    <Route path="ride/:id/edit" element={<AddRide />} />
+                    <Route path="ride/:id/readOnly" element={<AddRide />} />
                 </Route>
             </Route>
         </Routes>
