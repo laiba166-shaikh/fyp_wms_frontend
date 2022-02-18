@@ -82,7 +82,7 @@ export const LogisticsLinks = {
             label: "Vehicle"
         },
         {
-            path: "#",
+            path: "/main/logistics/ride",
             label: "Ride"
         }
     ]
