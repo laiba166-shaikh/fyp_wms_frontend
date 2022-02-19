@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { getCompanyWarehouseProductInventory, getCompanyWarehouseProducts } from '../redux/DispatchOrder/DispatchOrderActions';
 import { getAllProducts } from '../redux/ProductUpload/ProductUploadActions';
 import { getAllInventories } from '../redux/Inventory/InventoryActions';
+import { setIn } from 'formik';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -41,10 +42,11 @@ const AddOrderProductForm = ({ addValues, companyId, warehouseId }) => {
         className: classes.root
     }
 
-    const [quantity, setQuantity] = useState("");
+    const [quantity, setQuantity] = useState();
     const [productId, setProductId] = useState("")
     const [warehouseProducts, setWarehouseProducts] = useState([])
     const [selectedProductInventory, setSelectedProductInventory] = useState({ inventory: "", product: "" })
+    const [invalidQuantity,setInvalidQuantity]=useState("")
 
     useEffect(() => {
         if (companyId && warehouseId) {
@@ -66,8 +68,20 @@ const AddOrderProductForm = ({ addValues, companyId, warehouseId }) => {
             }).catch((err) => console.log("inventory get error"))
     }
 
+    const handleChangeQuantity=(quantity)=>{
+        setQuantity(quantity)
+        if (quantity > selectedProductInventory.inventory.availableQuantity) {
+            setInvalidQuantity("Quantity should not be greater than available quantity")
+            return;
+        }else if(quantity<=0){
+            setInvalidQuantity("Invalid Quantity")
+            return;
+        }
+        setInvalidQuantity("")
+    }
+
     const handleAddProductSubmit = () => {
-        if (!quantity || quantity >= selectedProductInventory.inventory.availableQuantity) {
+        if (!quantity || quantity > selectedProductInventory.inventory.availableQuantity) {
             console.log("quantity should be provided with a defined value")
             return;
         }
@@ -82,7 +96,7 @@ const AddOrderProductForm = ({ addValues, companyId, warehouseId }) => {
     }
 
     return (
-        <Grid container spacing={2} xs={12} alignItems="center">
+        <Grid container spacing={2} xs={12}>
             <Grid item xs={12} md={3}>
                 <TextField
                     label="Select Product"
@@ -101,20 +115,24 @@ const AddOrderProductForm = ({ addValues, companyId, warehouseId }) => {
                         </MenuItem>
                     ))}
                 </TextField>
+
             </Grid>
             <Grid item xs={12} md={3}>
                 <TextField
                     label="Enter Quantity"
                     name="quantity"
-                    type="text"
+                    type="number"
                     name="quantity"
                     {...inputProps}
                     disabled={productId ? false : true}
                     inputProps={{ className: classes.input, inputMode: 'numeric', pattern: '[0-9]*' }}
                     placeholder="Quantity"
                     value={quantity}
-                    onChange={(e) => setQuantity(e.target.value)}
+                    onChange={(e) => handleChangeQuantity(parseInt(e.target.value))}
+                    error={Boolean(invalidQuantity)}
+                    helperText={invalidQuantity}
                 />
+                {/* {invalidQuantity && <div style={{fontSize:"12px",color:"#d32f2f",letterSpacing:"0.4px"}}>{invalidQuantity}</div>} */}
             </Grid>
             <Grid item xs={12} md={2}>
                 <TextField
@@ -141,7 +159,7 @@ const AddOrderProductForm = ({ addValues, companyId, warehouseId }) => {
                 />
             </Grid>
             <Grid item xs={12} md={2}>
-                <Button variant="contained" color="secondary" onClick={handleAddProductSubmit} fullWidth style={{ marginTop: 10 }}>
+                <Button variant="contained" color="secondary" onClick={handleAddProductSubmit} fullWidth style={{marginTop:"18px"}}>
                     Add Product
                 </Button>
             </Grid>

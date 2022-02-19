@@ -18,11 +18,13 @@ const validationSchema = yup.object({
     warehouseId: yup.string().required("Warehouse must be provided"),
     receiverName: yup
         .string()
-        .min(3, 'Receiver Name should be more than equal to 3 characters'),
+        .min(3, 'Receiver Name should be more than equal to 3 characters')
+        .required("Receiver name is required"),
     shipmentDate: yup.string(),
     receiverPhone: yup
         .string()
-        .min(3, 'Receiver Phone should be more than equal to 3 characters'),
+        .min(3, 'Receiver Phone should be more than equal to 3 characters')
+        .required("Receiver Phone is required"),
     referenceId: yup.string().min(3, "Reference Id should be more than 3 characters"),
     orderMemo: yup.string().max(500, "Order memo should not be greater than 500 characters"),
     inventories: yup.array().required()

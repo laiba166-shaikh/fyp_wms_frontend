@@ -1,51 +1,44 @@
 import React, { useState } from 'react'
-import { AppBar, Box, Toolbar, IconButton, Avatar, Menu, MenuItem, makeStyles } from '@material-ui/core';
+import { AppBar, Box, Toolbar, IconButton, makeStyles, Typography, Button } from '@material-ui/core';
 import { MenuOutlined } from "@material-ui/icons"
-import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from 'react-redux';
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from 'react-redux';
 import { signout } from "../redux/Auth/AuthActions";
 
 const useStyles = makeStyles((theme) => ({
-    appBar: {
-        backgroundColor: theme.palette.primary.main,
+    root: {
+        backgroundColor: theme.palette.primary.light,//main
         padding: "0px 12px",
-        border: 0
+        border: 0,
+        minWidth: "100vw",
+        height: "10vh"
+    },
+    flex: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between"
+    },
+    navButton: {
+        margin: "0 1em"
     }
 }));
 
-const NavMenu = ({ anchorE1, setAnchorE1 }) => {
+const Navbar = ({ open, showDrawer }) => {
+    const classes = useStyles();
     const navigate = useNavigate();
     const dispatch = useDispatch()
 
-    const closeMenu = () => {
-        setAnchorE1(null);
+    const handlelogout = () => {
         dispatch(signout())
-    };
-    return (
-        <Menu
-            id="simple-menu"
-            anchorEl={anchorE1}
-            keepMounted
-            open={Boolean(anchorE1)}
-            onClose={closeMenu}
-        >
-            <Link to="#">
-                <MenuItem onClick={closeMenu}>Profile</MenuItem>
-            </Link>
-            <MenuItem onClick={() => {
-                closeMenu()
-                navigate("/")
-            }}> Logout </MenuItem>
-        </Menu>
-    );
-};
+        navigate("/")
+    }
+    const { userData } = useSelector((state) => ({
+        userData: state.auth.userData
+    }))
 
-const Navbar = ({ open, showDrawer }) => {
-    const classes = useStyles();
-    const [anchorE1, setAnchorE1] = useState(false);
     return (
-        <AppBar position="static" className={classes.appBar} sx={{ zIndex: (theme) => theme.zIndex.drawer - 1 }}>
-            <Toolbar style={{ justifyContent: "space-between" }}>
+        <AppBar position="static" className={classes.root} sx={{ zIndex: (theme) => theme.zIndex.drawer - 1 }}>
+            <Toolbar className={classes.flex}>
                 <IconButton
                     edge="start"
                     aria-label="menu"
@@ -57,13 +50,12 @@ const Navbar = ({ open, showDrawer }) => {
                 </IconButton>
 
                 <Box sx={{ flexGrow: 0 }}>
-                    <IconButton onClick={(e) => setAnchorE1(e.currentTarget)} sx={{ p: 0 }}>
-                        <Avatar alt="Remy Sharp" src="" />
-                    </IconButton>
-                    <NavMenu
-                        anchorE1={anchorE1}
-                        setAnchorE1={setAnchorE1}
-                    />
+                    <Box className={classes.flex}>
+                        <Typography variant='h5'>Welcome, {userData.firstName} {userData.lastName}</Typography>
+                        <Button variant='text' color="secondary" className={classes.navButton} onClick={handlelogout}>
+                            Logout
+                        </Button>
+                    </Box>
                 </Box>
             </Toolbar>
         </AppBar>

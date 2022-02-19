@@ -14,16 +14,17 @@ import Loader from "./Loader";
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: theme.palette.primary.dark,
-    overflow: "auto",
+    overflow: "hidden",
     color: "#fff",
     "& .MuiTableContainer-root": {
-      maxHeight: "70%",
+      maxHeight: "100%",
+      // overflow: "auto",
     },
     "& .MuiTableCell-body": {
       color: "rgba(255,255,255,50%)"
     },
     "& .MuiTableCell-root": {
-      padding: "14px",
+      padding: "1em 0.6em",
       borderBottom: 0
     },
     "& .MuiTableCell-stickyHeader": {
@@ -85,7 +86,6 @@ const PaginatedTable = ({ columns, fetchData, data, totalCount, navigation }) =>
                 <TableCell
                   key={column.id}
                   align={column.align}
-                // style={{ minWidth: column.minWidth }}
                 >
                   {column.label}
                 </TableCell>
@@ -94,13 +94,11 @@ const PaginatedTable = ({ columns, fetchData, data, totalCount, navigation }) =>
           </TableHead>
           <TableBody>
             {currentData
-              // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => {
                 return (
                   <TableRow hover role="checkbox" tabIndex={-1} key={row.label} onClick={() => { navigation && navigation(row._id) }}>
                     {columns.map((column) => {
                       const value = row[column.id];
-                      // console.log("*******debug 2", value, column.id, row.Product.name, row['Product.name'])
                       return (
                         <TableCell key={column.id} align={column.align}>
                           {column.format

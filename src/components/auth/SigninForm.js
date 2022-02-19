@@ -75,6 +75,7 @@ const SigninForm = ({signin}) => {
     const [email,setEmail]=useState("");
     const [password,setPassword]=useState("");
     const [showPassword,setShowPassword]=useState(false);
+    const [showError,setShowError]=useState(false)
 
     const {authLoading,error,user}=useSelector((state)=>({
         authLoading:state.auth.authLoading,
@@ -88,8 +89,13 @@ const SigninForm = ({signin}) => {
         }
     },[user])
 
+    useEffect(()=>{
+        if(error) setShowError(true)
+    },[error])
+
     const handleShow=()=>setShowPassword(!showPassword)
-    
+    const handleErrorClose = ()=>setShowError(false);
+
     const handleSubmit=()=>{
         signin(email,password)
         setEmail("")
@@ -118,6 +124,7 @@ const SigninForm = ({signin}) => {
                             size="small"
                             // color="secondary"
                             margin="normal"
+                            onFocus={handleErrorClose}
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             fullWidth
@@ -132,16 +139,18 @@ const SigninForm = ({signin}) => {
                             placeholder="password"
                             size="small"
                             // color="secondary"
+                            onFocus={handleErrorClose}
                             margin="normal"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            type={showPassword?"text":"password"}
+                            type={!showPassword?"text":"password"}
                             fullWidth
                             inputProps={{className:classes.textField}}
                         />
                     </Grid>
-                    <Grid item md={12} xs={12} style={{marginLeft:"12px"}}>
+                    <Grid item md={12} xs={12} style={{marginLeft:"0px"}}>
                         <FormControlLabel  control={<Checkbox onClick={handleShow} />} style={{color:"rgba(255,255,255,0.5)"}} label="Show Password" />
+                        <div style={{color:"#d32f2f"}}>{showError && error}</div>
                         <Button variant='contained' color="primary" className={classes.submitButton} onClick={handleSubmit}>
                                 Sign in
                         </Button>
