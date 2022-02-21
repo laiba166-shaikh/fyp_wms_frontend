@@ -24,8 +24,21 @@ export const getProductOutward=(productOutwardId)=> async (dispatch)=>{
     try {
         const {data,status}=await client.get(`/product-outwards/${productOutwardId}`)
         console.log("api -> ",data);
+        const {productOutward,orderGroups,outwardGroups}=data.data
         if(status === 200) {
-            return {...data.data.productOutward}
+            return {
+                orderData:productOutward,
+                products:orderGroups.map(({quantity,Inventory,inventoryId})=>{
+                    //check if this product of dispatch order is in outward or not
+                    if(outwardGroups.some((outwardProduct)=>outwardProduct.inventoryId === inventoryId)){
+                        return {
+                            product:Inventory.Product,
+                            orderedQuantity:quantity,
+                            outwardQuantity:outwardGroups.find((outwardGroup)=>outwardGroup.inventoryId === inventoryId).quantity //outward quantity
+                        }
+                    }else return null
+                }),
+            }
         }
     } catch (error) {
         console.log(error)

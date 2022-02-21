@@ -126,6 +126,7 @@ const SigninForm = ({signin}) => {
                             margin="normal"
                             onFocus={handleErrorClose}
                             value={email}
+                            autoComplete={"off"}
                             onChange={(e) => setEmail(e.target.value)}
                             fullWidth
                             inputProps={{className:classes.textField}}
@@ -143,7 +144,7 @@ const SigninForm = ({signin}) => {
                             margin="normal"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            type={!showPassword?"text":"password"}
+                            type={showPassword?"text":"password"}
                             fullWidth
                             inputProps={{className:classes.textField}}
                         />

@@ -77,9 +77,9 @@ const AddProductOutward = ({ getProductOutwardOrders, getDispatchOrder, createPr
     const [orders, setOrders] = useState([])
     const [loading, setLoading] = useState(false)
     const [transportationType, setTransportationType] = useState("false")
-    // const [quantity, setQuantity] = useState(0)
-    const [outwardProducts, setOutwardProducts] = useState([])
-    const [toOutwardProducts, setToOutwardProducts] = useState([])
+    const [quantityError,setQuantityError] = useState("")
+    const [outwardProducts, setOutwardProducts] = useState([]) //dispatch order times
+    const [toOutwardProducts, setToOutwardProducts] = useState([]) //product outwards times
     const [singleDispatchOrder, setSingleDispatchOrder] = useState({})
     const [singleProductOutward, setSingleProductOutward] = useState({})
 
@@ -92,11 +92,17 @@ const AddProductOutward = ({ getProductOutwardOrders, getDispatchOrder, createPr
     useEffect(() => {
         if (params.id) {
             setLoading(true)
-            getProductOutward(params.id).then((res) => {
-                console.log("getsingleout",res)
-                setSingleProductOutward({ ...res, externalVehicle: res.externalVehicle ? "true" :"false" })
-                handleChangeOrder(res.DispatchOrder[0]._id)
-                setLoading(false)
+            getProductOutward(params.id).then(({ orderData, products }) => {
+                console.log("getsingleout", orderData, products)
+                setSingleProductOutward({ ...orderData, externalVehicle: orderData.externalVehicle ? "true" : "false" })
+                // handleChangeOrder(res.dispatchOrderId)
+                setOutwardProducts([...products])
+                setToOutwardProducts([...products])
+                getDispatchOrder(orderData.dispatchOrderId).then(({ products, ...res }) => {
+                    setSingleDispatchOrder({ ...res })
+                    setLoading(false)
+                })
+                // setLoading(false)
             }).catch((err) => {
                 setLoading(false)
             })
@@ -110,10 +116,10 @@ const AddProductOutward = ({ getProductOutwardOrders, getDispatchOrder, createPr
     const handleChangeOrder = (orderId) => {
         setLoading(true)
         getDispatchOrder(orderId).then(({ products, ...res }) => {
-            console.log("single", res)
+            console.log("single", res, products)
             setSingleDispatchOrder({ ...res })
             setOutwardProducts([...products])
-            setToOutwardProducts([...products])
+            // setToOutwardProducts([...products])
             setLoading(false)
         }).catch((err) => {
             setLoading(false)
@@ -125,14 +131,45 @@ const AddProductOutward = ({ getProductOutwardOrders, getDispatchOrder, createPr
         var ProductToOut = []
         if (currQuantity > quantity) {
             console.log("quantity can not greater than available quantity")
+            setQuantityError("quantity can not greater than available quantity")
             return;
         }
-        ProductToOut = toOutwardProducts.map((prod) => {
-            if (prod.product._id === product._id) {
-                return { ...prod, quantity: currQuantity }
-            } else return prod
-        })
-        setToOutwardProducts([...ProductToOut])
+        if (!currQuantity || currQuantity == 0) {
+            ProductToOut = toOutwardProducts.filter((prod) => prod.product._id !== product._id)
+            setToOutwardProducts([...ProductToOut])
+            return;
+        }
+        var isPresent = toOutwardProducts?.some((existProd)=>existProd?.product?._id === product._id);
+        if (isPresent) {
+            ProductToOut = toOutwardProducts.map((outProd) =>
+                outProd.product._id === product._id
+                    ? { ...outProd, quantity: currQuantity }
+                    : { ...outProd }
+            );
+            setToOutwardProducts([...ProductToOut])
+            return;
+        } else {
+            ProductToOut = [...toOutwardProducts, { ...currProduct, quantity:currQuantity }];
+            // console.log("not present", returnedProducts)
+            setToOutwardProducts([...ProductToOut])
+        }
+
+        // if(toOutwardProducts.some((existProd)=>existProd?.product._id === product._id)){
+        //     ProductToOut = outwardProducts.map((prod) => {
+        //         if (prod.product._id === product._id) {
+        //             return { ...prod, quantity: currQuantity }
+        //         }
+        //     })
+        //     ProductToOut && setToOutwardProducts([...toOutwardProducts,ProductToOut])
+        // }else {
+
+        // }
+        // ProductToOut = toOutwardProducts.map((prod) => {
+        //     if (prod.product._id === product._id) {
+        //         return { ...prod, quantity: currQuantity }
+        //     } else return prod
+        // })
+        // setToOutwardProducts([...ProductToOut])
     }
 
     const handleSubmit = (values) => {
@@ -155,7 +192,6 @@ const AddProductOutward = ({ getProductOutwardOrders, getDispatchOrder, createPr
                 headerAction={() => navigate("/main/operations/product-outward")}
             />
             <Formik
-                // initialValues={initialValues}
                 initialValues={singleProductOutward?._id ? singleProductOutward : initialValues}
                 validationSchema={validationSchema}
                 enableReinitialize={true}
@@ -249,15 +285,18 @@ const AddProductOutward = ({ getProductOutwardOrders, getDispatchOrder, createPr
                                         Product Details
                                     </Typography>
                                     {outwardProducts?.map((orderProd) => (
-                                        <Paper className={classes.prodList} elevation={3} variant="elevation" key={orderProd._id} style={{width:readOnly ? "60%":"100%"}}>
+                                        <Paper className={classes.prodList} elevation={3} variant="elevation" key={orderProd._id} style={{ width: readOnly ? "60%" : "100%" }}>
                                             <Box className={classes.listItem}>
                                                 <Typography variant="body1">{orderProd.product.name}</Typography>
                                                 <Typography variant="body1">
                                                     {orderProd.product.uomId.name}
                                                 </Typography>
-                                                <Typography variant="body1">
-                                                    {orderProd.quantity}
-                                                </Typography>
+                                                {!readOnly ? <Typography variant="body1">
+                                                    {orderProd.availableQuantity}
+                                                </Typography> :
+                                                    <Typography variant="body1">
+                                                        {orderProd.outwardQuantity}
+                                                    </Typography>}
                                                 {!readOnly && <TextField
                                                     variant="filled"
                                                     size="small"

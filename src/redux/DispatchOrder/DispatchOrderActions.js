@@ -31,11 +31,12 @@ export const getDispatchOrder=(dispatchOrderId)=> async (dispatch)=>{
             company:orderGroups[0].Inventory.Company,
             warehouse:orderGroups[0].Inventory.Warehouse,
             products:orderGroups.map(({quantity,Inventory})=>{
-                const {Product,Company,Warehouse,...inventoryData} = Inventory
+                const {Product,Company,Warehouse,availableQuantity,...inventoryData} = Inventory
                 return {
                     product:Product,
                     inventory: inventoryData,
-                    quantity:quantity
+                    quantity:quantity,
+                    availableQuantity:availableQuantity
                 }
             }),
             ...orderData
