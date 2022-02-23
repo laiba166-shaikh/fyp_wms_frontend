@@ -71,14 +71,19 @@ const ProductInward = ({ getAllProductInward, getAllCompanies, getAllWarehouses,
     }, [])
 
     useEffect(() => {
-        if(company != 'All'){
+        if (company != 'All') {
             setQueryParams({ ...queryParams, companyId: company })
+        } else {
+            setQueryParams({ ...queryParams, companyId: "" })
         }
     }, [company])
 
     useEffect(() => {
-        if(company != 'All'){
-        setQueryParams({ ...queryParams, warehouseId: warehouse })
+        if (company != 'All') {
+            setQueryParams({ ...queryParams, warehouseId: warehouse })
+        }
+        else {
+            setQueryParams({ ...queryParams, warehouseId: "" })
         }
     }, [warehouse])
 
@@ -145,7 +150,7 @@ const ProductInward = ({ getAllProductInward, getAllCompanies, getAllWarehouses,
                                             [{
                                                 name: "All",
                                                 _id: "All"
-                                            }, ...companies].map((company,idx) => (
+                                            }, ...companies].map((company, idx) => (
                                                 <option key={idx} value={company._id}>{company.name}</option>
                                             ))
                                             :
@@ -170,7 +175,7 @@ const ProductInward = ({ getAllProductInward, getAllCompanies, getAllWarehouses,
                                             [{
                                                 name: "All",
                                                 _id: "All"
-                                            }, ...warehouses].map((warehouse,idx) => (
+                                            }, ...warehouses].map((warehouse, idx) => (
                                                 <option key={idx} value={warehouse._id}>{warehouse.name}</option>
                                             ))
                                             :
@@ -187,7 +192,7 @@ const ProductInward = ({ getAllProductInward, getAllCompanies, getAllWarehouses,
                                     clearSearch={clearSearchQuery}
                                     changeSearchValue={handleSearchQueryChange}
                                 />
-                                <FormHelperText style={{ color: "white" }}>Select Company</FormHelperText>
+                                <FormHelperText style={{ color: "white" }}>Select through ID</FormHelperText>
                             </FormControl>
                         </Box>
                     </Box>

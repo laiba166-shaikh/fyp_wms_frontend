@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { makeStyles, Grid, Paper, FormControl, Select, Box } from '@material-ui/core';
+import { makeStyles, Grid, Paper, FormControl, Select, Box, FormHelperText } from '@material-ui/core';
 import { useNavigate } from "react-router-dom";
 import { connect } from 'react-redux';
 import FileDownload from 'js-file-download';
@@ -49,7 +49,7 @@ const DispatchOrder = ({ getAllOrders, dispatchOrders, totalCount, exportedOrder
     const classes = useStyles();
     const navigate = useNavigate()
 
-    const [status, setStatus] = useState("")
+    const [status, setStatus] = useState("All")
     const [searchQuery, setSearchQuery] = useState("")
     const [queryParams, setQueryParams] = useState({ status: "", search: "" })
     const [downloadFiledFlag, setDownloadFiledFlag] = useState(false)
@@ -60,16 +60,20 @@ const DispatchOrder = ({ getAllOrders, dispatchOrders, totalCount, exportedOrder
     }, [exportedOrders])
 
     useEffect(() => {
-        setQueryParams({ ...queryParams, status: status })
+        if (status != 'All') {
+            setQueryParams({ ...queryParams, status: status })
+        } else {
+            setQueryParams({ ...queryParams, status: "" })
+        }
     }, [status])
 
     useEffect(() => {
-        console.log("query ->",queryParams)
+        console.log("query ->", queryParams)
     }, [queryParams])
 
     useEffect(() => {
         if (searchQuery) {
-            setStatus("")
+            setStatus("All")
             setQueryParams({ ...queryParams, status: "", search: searchQuery })
         }
     }, [searchQuery])
@@ -123,17 +127,24 @@ const DispatchOrder = ({ getAllOrders, dispatchOrders, totalCount, exportedOrder
                                     label="Status"
                                     onChange={(e) => setStatus(e.target.value)}
                                 >
-                                    <option key="000" value="">{null}</option>
+                                    <option key="All" value="All">ALL</option>
                                     <option key="001" value={1}>PENDING</option>
                                     <option key="002" value={2}>DISPATCHED</option>
                                 </Select>
+                                <FormHelperText style={{ color: "white" }}>Select Status</FormHelperText>
                             </FormControl>
                         </Box>
-                        <SearchBar
-                            searchValue={searchQuery}
-                            clearSearch={clearSearchQuery}
-                            changeSearchValue={handleSearchQueryChange}
-                        />
+                        <Box>
+                            <FormControl>
+                                <SearchBar
+                                    searchValue={searchQuery}
+                                    clearSearch={clearSearchQuery}
+                                    changeSearchValue={handleSearchQueryChange}
+                                />
+                                <FormHelperText style={{ color: "white" }}>Select through ID</FormHelperText>
+                            </FormControl>
+                        </Box>
+
                     </Box>
                     <PaginatedTable
                         columns={columns}
