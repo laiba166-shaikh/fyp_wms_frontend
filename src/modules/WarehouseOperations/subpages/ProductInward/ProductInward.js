@@ -74,9 +74,9 @@ const ProductInward = ({ getAllProductInward, getAllCompanies, getAllWarehouses,
         setQueryParams({ ...queryParams, companyId: company })
     }, [company])
 
-    useEffect(()=>{
+    useEffect(() => {
         setQueryParams({ ...queryParams, warehouseId: warehouse })
-    },[warehouse])
+    }, [warehouse])
 
     useEffect(() => {
         if (searchQuery) {
@@ -105,6 +105,8 @@ const ProductInward = ({ getAllProductInward, getAllCompanies, getAllWarehouses,
 
     const columns = [
         { id: 'internalIdForBusiness', label: 'Id', align: "center" },
+        { id: "company", label: "Company", align: "center", format: (value) => value.Company.name },
+        { id: "warehouse", label: "Warehouse", align: "center", format: (value) => value.Warehouse.name },
         { id: 'vehicleType', label: 'Vehicle Type', align: "center" },
         { id: 'vehicleName', label: 'Vehicle Name', align: 'center' },
         { id: 'vehicleNumber', label: 'Vehicle Number', align: 'center' },

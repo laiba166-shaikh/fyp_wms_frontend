@@ -1,10 +1,11 @@
 
-import { GET_ALL_DISPATCH_ORDER, DISPATCH_ORDER_START_LOADING, DISPATCH_ORDER_ERROR, DISPATCH_ORDER_STOP_LOADING, UPDATE_DISPATCH_ORDER, CREATE_DISPATCH_ORDER } from "./DispatchOrderConstant";
+import { GET_ALL_DISPATCH_ORDER, DISPATCH_ORDER_START_LOADING, DISPATCH_ORDER_ERROR, DISPATCH_ORDER_STOP_LOADING, UPDATE_DISPATCH_ORDER, CREATE_DISPATCH_ORDER, EXPORT_ORDERS } from "./DispatchOrderConstant";
 
 const initialState = {
     dispatchOrderLoading: false,
     error: "",
     dispatchOrders: [],
+    exportedOrders:false,
     totalCount: 0
 }
 
@@ -40,6 +41,12 @@ const DispatchOrderReducer = (state = initialState, action) => {
                     else return order
                 })
             }
+            case EXPORT_ORDERS:
+                return {
+                    ...state,
+                    dispatchOrdersLoading: false,
+                    exportedOrders: payload.exportedOrders
+                }
         default:
             return state
     }

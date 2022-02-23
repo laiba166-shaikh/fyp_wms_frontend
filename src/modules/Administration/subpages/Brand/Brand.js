@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import { Typography, makeStyles, Grid, Paper, Box, Button } from '@material-ui/core';
+import { makeStyles, Grid, Paper } from '@material-ui/core';
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { ActionColumnFormatter } from '../../../../utility/actionFormatters';
 import PaginatedTable from '../../../../components/PaginatedTable';
+import PageHeader from "../../../../components/PageHeader";
 import BrandEditDialog from './BrandEditDialog';
-import DeleteModal from '../../modals/DeleteModal';
 import { getAllBrands } from '../../../../redux/Brand/BrandActions';
 import { connect } from 'react-redux';
 
@@ -36,13 +36,10 @@ const Brands = ({ brands, totalCount, getAllBrands }) => {
     const classes = useStyles();
 
     const [brandEditOpen, setBrandEditOpen] = useState(true)
-    const [showBrandDelete, setShowBrandDelete] = useState(false)
     const onBrandEditClose = () => {
         setBrandEditOpen(false)
         navigate(`/main/admin/brand`)
     }
-    const handleBrandDeleteClose = () => setShowBrandDelete(false)
-    const handleBrandDeleteOpen = () => setShowBrandDelete(true)
 
     const BrandUiEvents = {
         addNewBrandClick: () => {
@@ -67,14 +64,11 @@ const Brands = ({ brands, totalCount, getAllBrands }) => {
         <Grid item className={classes.root} md={12} xs={12} container>
             <Grid item md={12} xs={12}>
                 <Paper variant='outlined' elevation={0} className={classes.container}>
-                    <Box className={classes.header}>
-                        <Typography variant='h3'>
-                            Brand
-                        </Typography>
-                        <Button variant="outlined" color="secondary" onClick={() => BrandUiEvents.addNewBrandClick()}>
-                            Add new
-                        </Button>
-                    </Box>
+                    <PageHeader
+                        title='Brand'
+                        buttonTitle="Add New"
+                        headerAction={() => BrandUiEvents.addNewBrandClick()}
+                    />
                     <PaginatedTable
                         columns={columns}
                         totalCount={totalCount}
@@ -85,11 +79,6 @@ const Brands = ({ brands, totalCount, getAllBrands }) => {
                         <Route path="new" element={<BrandEditDialog show={brandEditOpen} onClose={onBrandEditClose} />} />
                         <Route path=":id/edit" element={<BrandEditDialog show={brandEditOpen} onClose={onBrandEditClose} />} />
                     </Routes>
-                    <DeleteModal
-                        show={showBrandDelete}
-                        handleClose={handleBrandDeleteClose}
-                        entityName={"Brand"}
-                    />
                 </Paper>
             </Grid>
         </Grid>

@@ -1,10 +1,10 @@
 import React, {useState} from 'react'
-import { Typography,makeStyles,Grid,Paper,Box,Button} from '@material-ui/core';
+import { makeStyles,Grid,Paper} from '@material-ui/core';
 import { Routes,Route,useNavigate } from "react-router-dom";
-import { ActionColumnFormatter, StatusFormatter } from '../../../../utility/actionFormatters';
+import { ActionColumnFormatter } from '../../../../utility/actionFormatters';
 import PaginatedTable from '../../../../components/PaginatedTable';
+import PageHeader from "../../../../components/PageHeader";
 import ProductUploadEditDialog from './ProductUploadEditDialog';
-import DeleteModal from '../../modals/DeleteModal';
 import { getAllProducts } from '../../../../redux/ProductUpload/ProductUploadActions';
 import { connect } from 'react-redux';
 
@@ -37,14 +37,12 @@ const ProductUpload = ({products,totalCount,getAllProducts}) => {
 
     const [view,setView]=useState(false)
     const [productUploadEditOpen,setProductUploadEditOpen]=useState(true)
-    const [showProductUploadDelete,setShowProductUploadDelete]=useState(false)
     const onProductUploadEditClose=()=>{
         setProductUploadEditOpen(false)
         setView(false)
         navigate(`/main/admin/product-upload`)
     }
-    const handleProductUploadDeleteClose=()=>setShowProductUploadDelete(false)
-    const handleProductUploadDeleteOpen=()=>setShowProductUploadDelete(true)
+  
     const handleViewOnly=(id)=>{
         setView(true)
         ProductUploadUiEvents.editProductUploadClick(id)
@@ -75,14 +73,11 @@ const ProductUpload = ({products,totalCount,getAllProducts}) => {
         <Grid item className={classes.root} md={12} xs={12} container>
             <Grid item md={12} xs={12}>
                 <Paper variant='outlined' elevation={0} className={classes.container}>
-                    <Box className={classes.header}>
-                        <Typography variant='h3'>
-                            Product Upload
-                        </Typography>
-                        <Button variant="outlined" color="secondary" onClick={()=>ProductUploadUiEvents.addNewProductUploadClick()}>
-                            Add new
-                        </Button>
-                    </Box>
+                    <PageHeader
+                        title='Product'
+                        buttonTitle="Add New"
+                        headerAction={() => ProductUploadUiEvents.addNewProductUploadClick()}
+                    />
                     <PaginatedTable
                         columns={columns}
                         totalCount={totalCount}
@@ -93,11 +88,6 @@ const ProductUpload = ({products,totalCount,getAllProducts}) => {
                         <Route path="new" element={<ProductUploadEditDialog show={productUploadEditOpen} onClose={onProductUploadEditClose} />} />
                         <Route path=":id/edit" element={<ProductUploadEditDialog show={productUploadEditOpen} onClose={onProductUploadEditClose} view={view} />} />  
                     </Routes>
-                    <DeleteModal
-                        show={showProductUploadDelete}
-                        handleClose={handleProductUploadDeleteClose}
-                        entityName={"Product Upload"}
-                    />
                 </Paper>
             </Grid>
         </Grid>

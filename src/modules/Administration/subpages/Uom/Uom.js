@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import { Typography, makeStyles, Grid, Paper, Box, Button } from '@material-ui/core';
+import { makeStyles, Grid, Paper } from '@material-ui/core';
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { ActionColumnFormatter } from '../../../../utility/actionFormatters';
 import PaginatedTable from '../../../../components/PaginatedTable';
+import PageHeader from "../../../../components/PageHeader";
 import UomEditDialog from './UomEditDialog';
-import DeleteModal from '../../modals/DeleteModal';
 import { getAllUoms } from '../../../../redux/Uom/UomActions';
 import { connect } from 'react-redux';
 
@@ -36,14 +36,10 @@ const Uom = ({ uoms, totalCount, getAllUoms }) => {
     const classes = useStyles();
 
     const [uomEditOpen, setUomEditOpen] = useState(true)
-    const [showUomDelete, setShowUomDelete] = useState(false)
     const onUomEditClose = () => {
         setUomEditOpen(false)
         navigate(`/main/admin/uom`)
     }
-    const handleUomDeleteClose = () => setShowUomDelete(false)
-    const handleUomDeleteOpen = () => setShowUomDelete(true)
-
     const UomUiEvents = {
         addNewUomClick: () => {
             navigate(`/main/admin/uom/new`)
@@ -66,14 +62,11 @@ const Uom = ({ uoms, totalCount, getAllUoms }) => {
         <Grid item className={classes.root} md={12} xs={12} container>
             <Grid item md={12} xs={12}>
                 <Paper variant='outlined' elevation={0} className={classes.container}>
-                    <Box className={classes.header}>
-                        <Typography variant='h3'>
-                            Uom
-                        </Typography>
-                        <Button variant="outlined" color="secondary" onClick={() => UomUiEvents.addNewUomClick()}>
-                            Add new
-                        </Button>
-                    </Box>
+                    <PageHeader
+                        title='Uom'
+                        buttonTitle="Add New"
+                        headerAction={() => UomUiEvents.addNewUomClick()}
+                    />
                     <PaginatedTable
                         columns={columns}
                         totalCount={totalCount}
@@ -84,11 +77,6 @@ const Uom = ({ uoms, totalCount, getAllUoms }) => {
                         <Route path="new" element={<UomEditDialog show={uomEditOpen} onClose={onUomEditClose} />} />
                         <Route path=":id/edit" element={<UomEditDialog show={uomEditOpen} onClose={onUomEditClose} />} />
                     </Routes>
-                    <DeleteModal
-                        show={showUomDelete}
-                        handleClose={handleUomDeleteClose}
-                        entityName={"Uom"}
-                    />
                 </Paper>
             </Grid>
         </Grid>

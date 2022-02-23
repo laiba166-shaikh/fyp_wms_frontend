@@ -1,10 +1,11 @@
 import client from "../client"
 import { GET_ALL_PRODUCT_OUTWARD, PRODUCT_OUTWARD_START_LOADING, PRODUCT_OUTWARD_ERROR, PRODUCT_OUTWARD_STOP_LOADING, CREATE_PRODUCT_OUTWARD } from "./ProductOutwardConstants";
 
-export const getAllProductOutward = (page, limit) => async (dispatch) => {
+export const getAllProductOutward = (page, limit,params) => async (dispatch) => {
     try {
         dispatch({ type: PRODUCT_OUTWARD_START_LOADING })
-        const { data } = await client.get(`/product-outwards?page=${page + 1}&limit=${limit}`)
+        const {companyId,warehouseId,search}=params
+        const { data } = await client.get(`/product-outwards?page=${page + 1}&limit=${limit}&companyId=${companyId}&warehouseId=${warehouseId}&search=${search}`)
         dispatch({
             type: GET_ALL_PRODUCT_OUTWARD,
             payload: {
