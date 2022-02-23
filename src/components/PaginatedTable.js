@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const PaginatedTable = ({ columns, fetchData, data, totalCount, navigation }) => {
+const PaginatedTable = ({ columns, fetchData, data, totalCount, navigation, params}) => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [loading, setLoading] = useState(false);
@@ -53,12 +53,20 @@ const PaginatedTable = ({ columns, fetchData, data, totalCount, navigation }) =>
 
   useEffect(() => {
     setLoading(true);
-    fetchData(page, rowsPerPage)
+    if(params){
+      fetchData(page, rowsPerPage,params)
       .then((res) => {
         setLoading(false);
       })
       .catch((err) => setLoading(false));
-  }, [page, rowsPerPage]);
+    }else {
+      fetchData(page, rowsPerPage)
+      .then((res) => {
+        setLoading(false);
+      })
+      .catch((err) => setLoading(false));
+    }
+  }, [page, rowsPerPage,params]);
 
   useEffect(() => {
     setCurrentData([...data]);

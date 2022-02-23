@@ -1,10 +1,11 @@
 
-import { GET_ALL_PRODUCT_INWARD, PRODUCT_INWARD_START_LOADING, PRODUCT_INWARD_ERROR, PRODUCT_INWARD_STOP_LOADING, UPDATE_PRODUCT_INWARD, CREATE_PRODUCT_INWARD } from "./ProductInwardConstants";
+import { GET_ALL_PRODUCT_INWARD, PRODUCT_INWARD_START_LOADING, PRODUCT_INWARD_ERROR, PRODUCT_INWARD_STOP_LOADING, UPDATE_PRODUCT_INWARD, CREATE_PRODUCT_INWARD, EXPORT_INWARDS } from "./ProductInwardConstants";
 
 const initialState = {
     productInwardLoading: false,
     error: "",
     productInwards: [],
+    exportedInwards:false,
     totalCount: 0
 }
 
@@ -21,8 +22,8 @@ const ProductInwardReducer = (state = initialState, action) => {
             return {
                 ...state,
                 productInwardLoading: false,
-                productInwards:[...state.productInwards,{...payload.productInward}],
-                totalCount:state.totalCount+1
+                productInwards: [...state.productInwards, { ...payload.productInward }],
+                totalCount: state.totalCount + 1
             }
         case GET_ALL_PRODUCT_INWARD:
             return {
@@ -39,6 +40,12 @@ const ProductInwardReducer = (state = initialState, action) => {
                     if (product._id === payload.product._id) return { ...payload.product }
                     else return product
                 })
+            }
+        case EXPORT_INWARDS:
+            return {
+                ...state,
+                producInwardLoading: false,
+                exportedInwards: payload.exportedInwards
             }
         default:
             return state

@@ -1,10 +1,11 @@
-import client from "../client"
-import { GET_ALL_PRODUCT_INWARD, PRODUCT_INWARD_START_LOADING, PRODUCT_INWARD_ERROR, PRODUCT_INWARD_STOP_LOADING, UPDATE_PRODUCT_INWARD, CREATE_PRODUCT_INWARD } from "./ProductInwardConstants";
+import client, {exportClient} from "../client"
+import { GET_ALL_PRODUCT_INWARD, PRODUCT_INWARD_START_LOADING, PRODUCT_INWARD_ERROR, PRODUCT_INWARD_STOP_LOADING, UPDATE_PRODUCT_INWARD, CREATE_PRODUCT_INWARD, EXPORT_INWARDS } from "./ProductInwardConstants";
 
-export const getAllProductInward=(page,limit)=>async (dispatch) => {
+export const getAllProductInward=(page,limit,params)=>async (dispatch) => {
     try {
         dispatch({type:PRODUCT_INWARD_START_LOADING})
-        const {data}=await client.get(`/product-inwards?page=${page+1}&limit=${limit}`)
+        const {companyId,warehouseId,search}=params
+        const {data}=await client.get(`/product-inwards?page=${page+1}&limit=${limit}&companyId=${companyId}&warehouseId=${warehouseId}&search=${search}`)
         dispatch({
             type:GET_ALL_PRODUCT_INWARD,
             payload:{
@@ -54,4 +55,25 @@ export const createProductInward=(productInward)=>async (dispatch,getState)=>{
         dispatch({type:PRODUCT_INWARD_ERROR,payload:{error:"Something went wrong"}})
         return 0;
     }   
+}
+
+export const exportInwards = () => async (dispatch) => {
+    try {
+        dispatch({ type: PRODUCT_INWARD_START_LOADING })
+
+        const { data } = await exportClient.get(`/product-inwards/export`, {
+            responseType: 'blob'
+        })
+
+        dispatch({
+            type: EXPORT_INWARDS,
+            payload: {
+                exportedInwards: data,
+            }
+        })
+        return 1;
+    } catch (error) {
+        dispatch({ type: PRODUCT_INWARD_ERROR, payload: { error: "Something went wrong" } })
+        return 0;
+    }
 }
