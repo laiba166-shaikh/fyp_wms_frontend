@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { makeStyles, Grid, Paper, Box, FormControl, InputLabel, Select } from '@material-ui/core';
+import { makeStyles, Grid, Paper, Box, FormControl, InputLabel, Select, FormHelperText } from '@material-ui/core';
 import { useNavigate } from "react-router-dom";
 import { connect } from 'react-redux';
 import PageHeader from '../../../../components/PageHeader';
@@ -48,8 +48,8 @@ const ProductOutward = ({ getAllProductOutward, productOutwards, totalCount, get
     const classes = useStyles();
     const navigate = useNavigate()
 
-    const [company, setCompany] = useState("");
-    const [warehouse, setWarehouse] = useState("")
+    const [company, setCompany] = useState("All");
+    const [warehouse, setWarehouse] = useState("All")
     const [searchQuery, setSearchQuery] = useState("")
     const [queryParams, setQueryParams] = useState({ companyId: "", warehouseId: "", search: "" })
 
@@ -59,17 +59,26 @@ const ProductOutward = ({ getAllProductOutward, productOutwards, totalCount, get
     }, [])
 
     useEffect(() => {
-        setQueryParams({ ...queryParams, companyId: company })
+        if (company != 'All') {
+            setQueryParams({ ...queryParams, companyId: company })
+        } else {
+            setQueryParams({ ...queryParams, companyId: "" })
+        }
     }, [company])
 
     useEffect(() => {
-        setQueryParams({ ...queryParams, warehouseId: warehouse })
+        if (company != 'All') {
+            setQueryParams({ ...queryParams, warehouseId: warehouse })
+        }
+        else {
+            setQueryParams({ ...queryParams, warehouseId: "" })
+        }
     }, [warehouse])
 
     useEffect(() => {
         if (searchQuery) {
-            setCompany("")
-            setWarehouse("")
+            setCompany("All")
+            setWarehouse("All")
             setQueryParams({ ...queryParams, companyId: "", warehouseId: "", search: searchQuery })
         }
     }, [searchQuery])
@@ -115,13 +124,19 @@ const ProductOutward = ({ getAllProductOutward, productOutwards, totalCount, get
                                     label="Company"
                                     onChange={(e) => setCompany(e.target.value)}
                                 >
-                                    <option key="000" value="">{null}</option>
                                     {
-                                        companies?.map((company) => (
-                                            <option key={company._id} value={company._id}>{company.name}</option>
-                                        ))
+                                        companies ?
+                                            [{
+                                                name: "All",
+                                                _id: "All"
+                                            }, ...companies].map((company, idx) => (
+                                                <option key={idx} value={company._id}>{company.name}</option>
+                                            ))
+                                            :
+                                            ''
                                     }
                                 </Select>
+                                <FormHelperText style={{ color: "white" }}>Select Company</FormHelperText>
                             </FormControl>
                         </Box>
                         <Box sx={{ minWidth: 120 }} className={classes.selectCont}>
@@ -134,20 +149,31 @@ const ProductOutward = ({ getAllProductOutward, productOutwards, totalCount, get
                                     label="Warehouse"
                                     onChange={(e) => setWarehouse(e.target.value)}
                                 >
-                                    <option key="111" value="">{null}</option>
                                     {
-                                        warehouses?.map((warehouse) => (
-                                            <option key={warehouse._id} value={warehouse._id}>{warehouse.name}</option>
-                                        ))
+                                        warehouses ?
+                                            [{
+                                                name: "All",
+                                                _id: "All"
+                                            }, ...warehouses].map((warehouse, idx) => (
+                                                <option key={idx} value={warehouse._id}>{warehouse.name}</option>
+                                            ))
+                                            :
+                                            ''
                                     }
                                 </Select>
+                                <FormHelperText style={{ color: "white" }}>Select Warehouses</FormHelperText>
                             </FormControl>
                         </Box>
-                        <SearchBar
-                            searchValue={searchQuery}
-                            clearSearch={clearSearchQuery}
-                            changeSearchValue={handleSearchQueryChange}
-                        />
+                        <Box>
+                            <FormControl fullWidth>
+                                <SearchBar
+                                    searchValue={searchQuery}
+                                    clearSearch={clearSearchQuery}
+                                    changeSearchValue={handleSearchQueryChange}
+                                />
+                                <FormHelperText style={{ color: "white" }}>Select through ID</FormHelperText>
+                            </FormControl>
+                        </Box>
                     </Box>
                     <PaginatedTable
                         columns={columns}
