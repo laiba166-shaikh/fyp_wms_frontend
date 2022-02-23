@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import { Typography, makeStyles, Grid, Paper, Box, Button } from '@material-ui/core';
+import { makeStyles, Grid, Paper } from '@material-ui/core';
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { ActionColumnFormatter } from '../../../../utility/actionFormatters';
 import PaginatedTable from '../../../../components/PaginatedTable';
+import PageHeader from "../../../../components/PageHeader";
 import WarehouseEditDialog from './WarehouseEditDialog';
-import DeleteModal from '../../modals/DeleteModal';
 import { getAllWarehouses } from '../../../../redux/Warehouse/WarehouseActions';
 import { connect } from 'react-redux';
 
@@ -37,15 +37,12 @@ const Warehouse = ({ warehouses, totalCount, getAllWarehouses }) => {
 
     const [view, setView] = useState(false)
     const [warehouseEditOpen, setWarehouseEditOpen] = useState(true)
-    const [showWarehouseDelete, setShowWarehouseDelete] = useState(false)
 
     const onWarehouseEditClose = () => {
         setWarehouseEditOpen(false)
         setView(false)
         navigate(`/main/admin/warehouse`)
     }
-    const handleWarehouseDeleteClose = () => setShowWarehouseDelete(false)
-    const handleWarehouseDeleteOpen = () => setShowWarehouseDelete(true)
     const handleViewOnly = (id) => {
         setView(true)
         WarehouseUiEvents.editWarehouseClick(id)
@@ -75,14 +72,11 @@ const Warehouse = ({ warehouses, totalCount, getAllWarehouses }) => {
         <Grid item className={classes.root} md={12} xs={12} container>
             <Grid item md={12} xs={12}>
                 <Paper variant='outlined' elevation={0} className={classes.container}>
-                    <Box className={classes.header}>
-                        <Typography variant='h3'>
-                            Warehouse
-                        </Typography>
-                        <Button variant="outlined" color="secondary" onClick={() => WarehouseUiEvents.addNewWarehouseClick()}>
-                            Add new
-                        </Button>
-                    </Box>
+                    <PageHeader
+                        title='Warehouse'
+                        buttonTitle="Add New"
+                        headerAction={() => WarehouseUiEvents.addNewWarehouseClick()}
+                    />
                     <PaginatedTable
                         columns={columns}
                         totalCount={totalCount}
@@ -93,11 +87,6 @@ const Warehouse = ({ warehouses, totalCount, getAllWarehouses }) => {
                         <Route path="new" element={<WarehouseEditDialog show={warehouseEditOpen} onClose={onWarehouseEditClose} />} />
                         <Route path=":id/edit" element={<WarehouseEditDialog show={warehouseEditOpen} onClose={onWarehouseEditClose} view={view} />} />
                     </Routes>
-                    <DeleteModal
-                        show={showWarehouseDelete}
-                        handleClose={handleWarehouseDeleteClose}
-                        entityName={"Warehouse"}
-                    />
                 </Paper>
             </Grid>
         </Grid>

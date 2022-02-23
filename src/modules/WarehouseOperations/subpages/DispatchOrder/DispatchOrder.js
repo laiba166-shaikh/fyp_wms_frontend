@@ -1,10 +1,13 @@
-import React from 'react'
-import { makeStyles, Grid, Paper } from '@material-ui/core';
+import React, { useState, useEffect } from 'react'
+import { makeStyles, Grid, Paper, FormControl, Select, Box } from '@material-ui/core';
 import { useNavigate } from "react-router-dom";
 import { connect } from 'react-redux';
+import FileDownload from 'js-file-download';
+import moment from 'moment';
 import PageHeader from '../../../../components/PageHeader';
 import PaginatedTable from '../../../../components/PaginatedTable';
-import { getAllOrders } from '../../../../redux/DispatchOrder/DispatchOrderActions';
+import SearchBar from '../../../../controls/SearchBar';
+import { getAllOrders, exportOrders } from '../../../../redux/DispatchOrder/DispatchOrderActions';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -14,6 +17,15 @@ const useStyles = makeStyles((theme) => ({
         overflowY: "auto",
         backgroundColor: theme.palette.primary.dark,
         boxSizing: "border-box",
+        "& .MuiFormLabel-root": {
+            color: "#fff"
+        },
+        "& .MuiInputBase-root": {
+            color: "black",
+            backgroundColor: "#fff",
+            borderRadius: "6px",
+            border: "none",
+        }
     },
     container: {
         backgroundColor: "transparent",
@@ -21,12 +33,59 @@ const useStyles = makeStyles((theme) => ({
         color: "#fff",
         padding: theme.spacing(2)
     },
+    filterBox: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "flex-end",
+        padding: theme.spacing(2, 1)
+    },
+    selectCont: {
+        margin: theme.spacing(0, 1)
+    }
 }))
 
-const DispatchOrder = ({ getAllOrders, dispatchOrders, totalCount }) => {
+const DispatchOrder = ({ getAllOrders, dispatchOrders, totalCount, exportedOrders, exportOrders }) => {
 
     const classes = useStyles();
     const navigate = useNavigate()
+
+    const [status, setStatus] = useState("")
+    const [searchQuery, setSearchQuery] = useState("")
+    const [queryParams, setQueryParams] = useState({ status: "", search: "" })
+    const [downloadFiledFlag, setDownloadFiledFlag] = useState(false)
+    useEffect(() => {
+        if (!!exportedOrders && downloadFiledFlag) {
+            FileDownload(exportedOrders, `Orders ${moment().format('DD-MM-yyyy')}.xlsx`);
+        }
+    }, [exportedOrders])
+
+    useEffect(() => {
+        setQueryParams({ ...queryParams, status: status })
+    }, [status])
+
+    useEffect(() => {
+        console.log("query ->",queryParams)
+    }, [queryParams])
+
+    useEffect(() => {
+        if (searchQuery) {
+            setStatus("")
+            setQueryParams({ ...queryParams, status: "", search: searchQuery })
+        }
+    }, [searchQuery])
+
+    const handleSearchQueryChange = (searchValue) => {
+        setSearchQuery(searchValue)
+    }
+    const clearSearchQuery = () => {
+        setSearchQuery("")
+        setQueryParams({ ...queryParams, search: "" })
+    }
+
+    const handleExportOrders = () => {
+        exportOrders()
+        setDownloadFiledFlag(true)
+    }
 
     const viewDispatchOrderClick = (id) => {
         navigate(`/main/operations/dispatch-order/${id}/readOnly`)
@@ -37,6 +96,7 @@ const DispatchOrder = ({ getAllOrders, dispatchOrders, totalCount }) => {
         { id: 'receiverName', label: 'Receiver Name', align: "center" },
         { id: 'receiverPhone', label: 'Receiver Phone', align: 'center' },
         { id: 'quantity', label: "Quantity", align: "center" },
+        { id: "status", label: "Status", align: "center", format: (value) => value.status === 1 ? `${value.status} PENDING` : `${value.status} COMPLETED` },
         { id: 'referenceId', label: 'Reference Id', align: 'center' },
         { id: 'shipmentDate', label: 'Shipment Date', align: 'center' },
     ];
@@ -49,12 +109,38 @@ const DispatchOrder = ({ getAllOrders, dispatchOrders, totalCount }) => {
                         title="Dispatch Order"
                         buttonTitle="Add Order"
                         headerAction={() => navigate("/main/operations/dispatch-order/new")}
+                        clickExportInwards={handleExportOrders}
                     />
+                    <Box className={classes.filterBox}>
+                        <Box sx={{ minWidth: 120 }} className={classes.selectCont}>
+                            <FormControl fullWidth>
+                                <Select
+                                    labelId="status-simple-select-label"
+                                    id="status-simple-select"
+                                    name="status"
+                                    placeholder='Select Status'
+                                    value={status}
+                                    label="Status"
+                                    onChange={(e) => setStatus(e.target.value)}
+                                >
+                                    <option key="000" value="">{null}</option>
+                                    <option key="001" value={1}>PENDING</option>
+                                    <option key="002" value={2}>DISPATCHED</option>
+                                </Select>
+                            </FormControl>
+                        </Box>
+                        <SearchBar
+                            searchValue={searchQuery}
+                            clearSearch={clearSearchQuery}
+                            changeSearchValue={handleSearchQueryChange}
+                        />
+                    </Box>
                     <PaginatedTable
                         columns={columns}
                         totalCount={totalCount}
                         data={dispatchOrders}
                         fetchData={getAllOrders}
+                        params={queryParams}
                         navigation={viewDispatchOrderClick}
                     />
                 </Paper>
@@ -64,12 +150,14 @@ const DispatchOrder = ({ getAllOrders, dispatchOrders, totalCount }) => {
 };
 
 const actions = {
-    getAllOrders
+    getAllOrders,
+    exportOrders
 }
 
 const mapStateToProps = (state) => ({
     dispatchOrders: state.dispatchOrders.dispatchOrders,
-    totalCount: state.dispatchOrders.totalCount
+    totalCount: state.dispatchOrders.totalCount,
+    exportedOrders: state.dispatchOrders.exportedOrders
 })
 
 export default connect(mapStateToProps, actions)(DispatchOrder);

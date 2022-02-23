@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import { Typography, makeStyles, Grid, Paper, Box, Button } from '@material-ui/core';
+import { makeStyles, Grid, Paper } from '@material-ui/core';
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { ActionColumnFormatter } from '../../../../utility/actionFormatters';
 import PaginatedTable from '../../../../components/PaginatedTable';
+import PageHeader from "../../../../components/PageHeader";
 import CompanyEditDialog from './CompanyEditDialog';
-import DeleteModal from '../../modals/DeleteModal';
 import { getAllCompanies } from '../../../../redux/Company/CompanyActions';
 import { connect } from 'react-redux';
 
@@ -37,15 +37,13 @@ const Company = ({ companies, totalCount, getAllCompanies }) => {
 
     const [view, setView] = useState(false)
     const [companyEditOpen, setCompanyEditOpen] = useState(true)
-    const [showCompanyDelete, setShowCompanyDelete] = useState(false)
 
     const onCompanyEditClose = () => {
         setCompanyEditOpen(false)
         setView(false)
         navigate(`/main/admin/company`)
     }
-    const handleCompanyDeleteClose = () => setShowCompanyDelete(false)
-    const handleCompanyDeleteOpen = () => setShowCompanyDelete(true)
+
     const handleViewOnly = (id) => {
         setView(true)
         CompanyUiEvents.editCompanyClick(id)
@@ -76,14 +74,11 @@ const Company = ({ companies, totalCount, getAllCompanies }) => {
         <Grid item className={classes.root} md={12} xs={12} container>
             <Grid item md={12} xs={12}>
                 <Paper variant='outlined' elevation={0} className={classes.container}>
-                    <Box className={classes.header}>
-                        <Typography variant='h3'>
-                            Company
-                        </Typography>
-                        <Button variant="outlined" color="secondary" onClick={() => CompanyUiEvents.addNewCompanyClick()}>
-                            Add new
-                        </Button>
-                    </Box>
+                    <PageHeader
+                        title='Company'
+                        buttonTitle="Add New"
+                        headerAction={() => CompanyUiEvents.addNewCompanyClick()}
+                    />
                     <PaginatedTable
                         columns={columns}
                         totalCount={totalCount}
@@ -94,11 +89,6 @@ const Company = ({ companies, totalCount, getAllCompanies }) => {
                         <Route path="new" element={<CompanyEditDialog show={companyEditOpen} onClose={onCompanyEditClose} />} />
                         <Route path=":id/edit" element={<CompanyEditDialog show={companyEditOpen} onClose={onCompanyEditClose} view={view} />} />
                     </Routes>
-                    {/* <DeleteModal
-                        show={showCompanyDelete}
-                        handleClose={handleCompanyDeleteClose}
-                        entityName={"Company"}
-                    /> */}
                 </Paper>
             </Grid>
         </Grid>

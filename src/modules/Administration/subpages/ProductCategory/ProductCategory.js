@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import { Typography, makeStyles, Grid, Paper, Box, Button } from '@material-ui/core';
+import { makeStyles, Grid, Paper } from '@material-ui/core';
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { ActionColumnFormatter } from '../../../../utility/actionFormatters';
 import PaginatedTable from '../../../../components/PaginatedTable';
+import PageHeader from "../../../../components/PageHeader";
 import ProductCategoryEditDialog from './ProductCategoryEditDialog';
-import DeleteModal from '../../modals/DeleteModal';
 import { getAllCategory } from '../../../../redux/Category/CategoryActions';
 import { connect } from 'react-redux';
 
@@ -37,13 +37,10 @@ const ProductCategory = ({ categories, totalCount, getAllCategory }) => {
     const classes = useStyles();
 
     const [productCategoryEditOpen, setProductCategoryEditOpen] = useState(true)
-    const [showProductCategoryDelete, setShowProductCategoryDelete] = useState(false)
     const onProductCategoryEditClose = () => {
         setProductCategoryEditOpen(false)
         navigate(`/main/admin/product-category`)
     }
-    const handleProductCategoryDeleteClose = () => setShowProductCategoryDelete(false)
-    const handleProductCategoryDeleteOpen = () => setShowProductCategoryDelete(true)
 
     const ProductCategoryUiEvents = {
         addNewProductCategoryClick: () => {
@@ -67,14 +64,11 @@ const ProductCategory = ({ categories, totalCount, getAllCategory }) => {
         <Grid item className={classes.root} md={12} xs={12} container>
             <Grid item md={12} xs={12}>
                 <Paper variant='outlined' elevation={0} className={classes.container}>
-                    <Box className={classes.header}>
-                        <Typography variant='h3'>
-                            Product Category
-                        </Typography>
-                        <Button variant="outlined" color="secondary" onClick={() => ProductCategoryUiEvents.addNewProductCategoryClick()}>
-                            Add new
-                        </Button>
-                    </Box>
+                    <PageHeader
+                        title='Product Category'
+                        buttonTitle="Add New"
+                        headerAction={() => ProductCategoryUiEvents.addNewProductCategoryClick()}
+                    />
                     <PaginatedTable
                         columns={columns}
                         totalCount={totalCount}
@@ -85,11 +79,6 @@ const ProductCategory = ({ categories, totalCount, getAllCategory }) => {
                         <Route path="new" element={<ProductCategoryEditDialog show={productCategoryEditOpen} onClose={onProductCategoryEditClose} />} />
                         <Route path=":id/edit" element={<ProductCategoryEditDialog show={productCategoryEditOpen} onClose={onProductCategoryEditClose} />} />
                     </Routes>
-                    <DeleteModal
-                        show={showProductCategoryDelete}
-                        handleClose={handleProductCategoryDeleteClose}
-                        entityName={"Product Category"}
-                    />
                 </Paper>
             </Grid>
         </Grid>

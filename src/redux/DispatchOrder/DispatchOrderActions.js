@@ -1,10 +1,11 @@
-import client from "../client"
-import { GET_ALL_DISPATCH_ORDER, DISPATCH_ORDER_START_LOADING, DISPATCH_ORDER_ERROR, DISPATCH_ORDER_STOP_LOADING, UPDATE_DISPATCH_ORDER, CREATE_DISPATCH_ORDER } from "./DispatchOrderConstant";
+import client, { exportClient } from "../client"
+import { GET_ALL_DISPATCH_ORDER, DISPATCH_ORDER_START_LOADING, DISPATCH_ORDER_ERROR, DISPATCH_ORDER_STOP_LOADING, UPDATE_DISPATCH_ORDER, CREATE_DISPATCH_ORDER, EXPORT_ORDERS } from "./DispatchOrderConstant";
 
-export const getAllOrders = (page, limit) => async (dispatch) => {
+export const getAllOrders = (page, limit, params) => async (dispatch) => {
     try {
         dispatch({ type: DISPATCH_ORDER_START_LOADING })
-        const { data } = await client.get(`/dispatch-orders?page=${page + 1}&limit=${limit}`)
+        const { status, search } = params
+        const { data } = await client.get(`/dispatch-orders?page=${page + 1}&limit=${limit}&status=${status}&search=${search}`)
         dispatch({
             type: GET_ALL_DISPATCH_ORDER,
             payload: {
@@ -20,28 +21,28 @@ export const getAllOrders = (page, limit) => async (dispatch) => {
     }
 }
 
-export const getDispatchOrder=(dispatchOrderId)=> async (dispatch)=>{
+export const getDispatchOrder = (dispatchOrderId) => async (dispatch) => {
     try {
-        const {data:{data},status}=await client.get(`/dispatch-orders/${dispatchOrderId}`)
-        const {dispatchOrder:{userId,...orderData},orderGroups}=data
+        const { data: { data }, status } = await client.get(`/dispatch-orders/${dispatchOrderId}`)
+        const { dispatchOrder: { userId, ...orderData }, orderGroups } = data
 
-        const mapReturnOrder= {
-            companyId:orderGroups[0].Inventory.Company._id,
-            warehouseId:orderGroups[0].Inventory.Warehouse._id,
-            company:orderGroups[0].Inventory.Company,
-            warehouse:orderGroups[0].Inventory.Warehouse,
-            products:orderGroups.map(({quantity,Inventory})=>{
-                const {Product,Company,Warehouse,availableQuantity,...inventoryData} = Inventory
+        const mapReturnOrder = {
+            companyId: orderGroups[0].Inventory.Company._id,
+            warehouseId: orderGroups[0].Inventory.Warehouse._id,
+            company: orderGroups[0].Inventory.Company,
+            warehouse: orderGroups[0].Inventory.Warehouse,
+            products: orderGroups.map(({ quantity, Inventory }) => {
+                const { Product, Company, Warehouse, availableQuantity, ...inventoryData } = Inventory
                 return {
-                    product:Product,
+                    product: Product,
                     inventory: inventoryData,
-                    quantity:quantity,
-                    availableQuantity:availableQuantity
+                    quantity: quantity,
+                    availableQuantity: availableQuantity
                 }
             }),
             ...orderData
         }
-        if(status === 200) {
+        if (status === 200) {
             return mapReturnOrder
         }
     } catch (error) {
@@ -71,8 +72,8 @@ export const createDispatchOrder = (order) => async (dispatch, getState) => {
 
 export const getCompanyWarehouses = (companyId) => async (dispatch) => {
     try {
-        console.log("action",companyId)
-        if(companyId){
+        console.log("action", companyId)
+        if (companyId) {
             const { data, status } = await client.get(`/dispatch-orders/warehouses/${companyId}`)
             if (status === 200) {
                 return [...data.data.warehouses]
@@ -98,16 +99,37 @@ export const getCompanyWarehouseProducts = (companyId, warehouseId) => async (di
     }
 }
 
-export const getCompanyWarehouseProductInventory = (companyId, warehouseId,productId) => async (dispatch) => {
+export const getCompanyWarehouseProductInventory = (companyId, warehouseId, productId) => async (dispatch) => {
     try {
         if (companyId && warehouseId && productId) {
             const { data, status } = await client.get(`/dispatch-orders/inventories/${companyId}/${warehouseId}/${productId}`)
             if (status === 200) {
-                return {...data.data.inventory}
+                return { ...data.data.inventory }
             }
         }
     } catch (error) {
         console.log(error)
+        return 0;
+    }
+}
+
+export const exportOrders = () => async (dispatch) => {
+    try {
+        dispatch({ type: DISPATCH_ORDER_START_LOADING })
+
+        const { data } = await exportClient.get(`/dispatch-orders/export`, {
+            responseType: 'blob'
+        })
+
+        dispatch({
+            type: EXPORT_ORDERS,
+            payload: {
+                exportedOrders: data,
+            }
+        })
+        return 1;
+    } catch (error) {
+        dispatch({ type: DISPATCH_ORDER_ERROR, payload: { error: "Something went wrong" } })
         return 0;
     }
 }

@@ -77,15 +77,11 @@ function Vendor({ vendors, totalCount, getAllVendors }) {
         <Grid item className={classes.root} md={12} xs={12} container>
             <Grid item md={12} xs={12}>
                 <Paper variant='outlined' elevation={1} className={classes.container}>
-                    <Box className={classes.header}>
-                        <Typography variant='h3'>
-                            Vendor
-                        </Typography>
-                        <Button variant="outlined" color="secondary" onClick={() => VendorUiEvents.addNewVendorClick()}>
-                            Add new
-                        </Button>
-                    </Box>
-
+                    <PageHeader
+                        title='Vendor'
+                        buttonTitle="Add New"
+                        headerAction={() => VendorUiEvents.addNewVendorClick()}
+                    />
                     <PaginatedTable
                         columns={columns}
                         totalCount={totalCount}
