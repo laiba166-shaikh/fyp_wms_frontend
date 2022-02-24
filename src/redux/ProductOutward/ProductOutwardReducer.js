@@ -1,10 +1,11 @@
 
-import { GET_ALL_PRODUCT_OUTWARD, PRODUCT_OUTWARD_START_LOADING, PRODUCT_OUTWARD_ERROR, PRODUCT_OUTWARD_STOP_LOADING, CREATE_PRODUCT_OUTWARD } from "./ProductOutwardConstants";
+import { GET_ALL_PRODUCT_OUTWARD, PRODUCT_OUTWARD_START_LOADING, PRODUCT_OUTWARD_ERROR, PRODUCT_OUTWARD_STOP_LOADING, CREATE_PRODUCT_OUTWARD, EXPORT_OUTWARDS } from "./ProductOutwardConstants";
 
 const initialState = {
     productOutwardLoading: false,
     error: "",
     productOutwards: [],
+    exportedOutwards:false,
     totalCount: 0
 }
 
@@ -31,6 +32,12 @@ const ProductOutwardReducer = (state = initialState, action) => {
                 productOutwards: [...payload.productOutwards],
                 totalCount: payload.totalCount
             }
+            case EXPORT_OUTWARDS:
+                return {
+                    ...state,
+                    productOutwardLoading: false,
+                    exportedOutwards: payload.exportedOutwards
+                }
         default:
             return state
     }

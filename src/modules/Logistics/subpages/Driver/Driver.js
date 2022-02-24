@@ -60,7 +60,7 @@ const Driver = ({ drivers, totalCount, getAllDriver }) => {
         { id: "licenseNumber", label: "License Number", align: 'center' },
         { id: "cnicNumber", label: "Cnic Number", align: 'center' },
         { id: 'phone', label: 'Phone', align: 'center' },
-        { id: 'isActive', label: 'Status', align: 'center', format: (entity) => entity.isActive ? "Active" : "in Active" },
+        { id: 'isActive', label: 'Status', align: 'center', format: (entity) => entity.isActive ? "Active" : "In-Active" },
         { id: "action", label: "Action", align: "center", format: (value) => <ActionColumnFormatter value={value} onEdit={driverUiEvents.editDriverClick} onClickView={handleViewOnly} /> },
     ];
 

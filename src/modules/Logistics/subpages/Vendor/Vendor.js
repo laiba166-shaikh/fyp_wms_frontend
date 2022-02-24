@@ -69,7 +69,7 @@ function Vendor({ vendors, totalCount, getAllVendors }) {
         { id: 'name', label: 'Vendor', align: "center" },
         { id: 'phone', label: 'Phone', align: 'center' },
         { id: 'contactName', label: 'Contact Name', align: 'center', format: (entity) => `${entity.User.firstName} ${entity.User.lastName}` },
-        { id: 'isActive', label: 'Status', align: 'center', format: (entity) => entity.isActive ? "Active" : "in Active" },
+        { id: 'isActive', label: 'Status', align: 'center', format: (entity) => entity.isActive ? "Active" : "In-Active" },
         { id: "action", label: "Action", align: "center", format: (value) => <ActionColumnFormatter value={value} onEdit={VendorUiEvents.editVendorClick} onClickView={handleViewOnly} /> },
     ];
 

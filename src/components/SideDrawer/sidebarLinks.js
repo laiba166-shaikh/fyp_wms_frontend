@@ -7,31 +7,38 @@ export const AdministrationLinks = {
     sublinks: [
         {
             label: "Users",
-            path: "/main/admin/users"
+            path: "/main/admin/users",
+            allowed: ["SUPER_ADMIN"]
         },
         {
             label: "Company",
-            path: "/main/admin/company"
+            path: "/main/admin/company",
+            allowed: ["SUPER_ADMIN","ADMIN"]
         },
         {
             label: "Warehouse",
-            path: "/main/admin/warehouse"
+            path: "/main/admin/warehouse",
+            allowed: ["SUPER_ADMIN","ADMIN"]
         },
         {
             label: "Brand",
-            path: "/main/admin/brand"
+            path: "/main/admin/brand",
+            allowed: ["SUPER_ADMIN","ADMIN"]
         },
         {
             label: "UOM",
-            path: "/main/admin/uom"
+            path: "/main/admin/uom",
+            allowed: ["SUPER_ADMIN","ADMIN"]
         },
         {
             label: "Product Category",
-            path: "/main/admin/product-category"
+            path: "/main/admin/product-category",
+            allowed: ["SUPER_ADMIN","ADMIN"]
         },
         {
             label: "Product Upload",
-            path: "/main/admin/product-upload"
+            path: "/main/admin/product-upload",
+            allowed: ["SUPER_ADMIN","ADMIN"]
         },
     ]
 }
@@ -43,19 +50,23 @@ export const WarehouseOptLinks = {
     sublinks: [
         {
             path: "/main/operations/product-inward",
-            label: "Product Inwards"
+            label: "Product Inwards",
+            allowed: ["SUPER_ADMIN","ADMIN"]
         },
         {
             path: "/main/operations/dispatch-order",
-            label: "Dispatch Order"
+            label: "Dispatch Order",
+            allowed: ["SUPER_ADMIN","ADMIN"]
         },
         {
             path: "/main/operations/product-outward",
-            label: "Product Outward"
+            label: "Product Outward",
+            allowed: ["SUPER_ADMIN","ADMIN"]
         },
         {
             path: "/main/operations/stock-adjustment",
-            label: "Stock Adjustment"
+            label: "Stock Adjustment",
+            allowed: ["SUPER_ADMIN","ADMIN"]
         }
     ]
 };
@@ -67,23 +78,28 @@ export const LogisticsLinks = {
     sublinks: [
         {
             path: "/main/logistics/vendor",
-            label: "Vendor"
+            label: "Vendor",
+            allowed: ["SUPER_ADMIN","ADMIN"]
         },
         {
             path: "/main/logistics/driver",
-            label: "Driver"
+            label: "Driver",
+            allowed: ["SUPER_ADMIN","ADMIN"]
         },
         {
             path: "/main/logistics/vehicle-type",
-            label: "Vehicle Types"
+            label: "Vehicle Types",
+            allowed: ["SUPER_ADMIN","ADMIN"]
         },
         {
             path: "/main/logistics/vehicle",
-            label: "Vehicle"
+            label: "Vehicle",
+            allowed: ["SUPER_ADMIN","ADMIN"]
         },
         {
             path: "/main/logistics/ride",
-            label: "Ride"
+            label: "Ride",
+            allowed: ["SUPER_ADMIN","ADMIN"]
         }
     ]
 };
@@ -95,7 +111,8 @@ export const ReportingLinks = {
     sublinks: [
         {
             label: "Inventory",
-            path: "/main/reporting/inventory"
+            path: "/main/reporting/inventory",
+            allowed: ["SUPER_ADMIN","ADMIN"]
         },
     ]
 }

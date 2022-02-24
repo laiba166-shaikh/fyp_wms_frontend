@@ -90,13 +90,22 @@ const DispatchOrder = ({ getAllOrders, dispatchOrders, totalCount, exportedOrder
     const viewDispatchOrderClick = (id) => {
         navigate(`/main/operations/dispatch-order/${id}/readOnly`)
     }
-
+    
+    const showStatus=(status)=>{
+        if(status===0){
+            return <div style={{color:"red"}}>PENDING</div>
+        }else if(status === 1){
+            return <div style={{color:"slategray"}}>PARTIALLY FULLFILLED</div>
+        }else if(status === 2){
+            return <div style={{color:"green"}}>FULLFILLED</div>
+        }
+    }
     const columns = [
         { id: 'internalIdForBusiness', label: 'Id', align: "center" },
         { id: 'receiverName', label: 'Receiver Name', align: "center" },
         { id: 'receiverPhone', label: 'Receiver Phone', align: 'center' },
         { id: 'quantity', label: "Quantity", align: "center" },
-        { id: "status", label: "Status", align: "center", format: (value) => value.status === 1 ? `${value.status} PENDING` : `${value.status} COMPLETED` },
+        { id: "status", label: "Status", align: "center", format: (value) => showStatus(value.status)},
         { id: 'referenceId', label: 'Reference Id', align: 'center' },
         { id: 'shipmentDate', label: 'Shipment Date', align: 'center' },
     ];
@@ -109,7 +118,7 @@ const DispatchOrder = ({ getAllOrders, dispatchOrders, totalCount, exportedOrder
                         title="Dispatch Order"
                         buttonTitle="Add Order"
                         headerAction={() => navigate("/main/operations/dispatch-order/new")}
-                        clickExportInwards={handleExportOrders}
+                        clickExport={handleExportOrders}
                     />
                     <Box className={classes.filterBox}>
                         <Box sx={{ minWidth: 120 }} className={classes.selectCont}>
@@ -124,8 +133,9 @@ const DispatchOrder = ({ getAllOrders, dispatchOrders, totalCount, exportedOrder
                                     onChange={(e) => setStatus(e.target.value)}
                                 >
                                     <option key="000" value="">{null}</option>
-                                    <option key="001" value={1}>PENDING</option>
-                                    <option key="002" value={2}>DISPATCHED</option>
+                                    <option key="001" value={0}>PENDING</option>
+                                    <option key="002" value={1}>PARTIALLY FULLFILLED</option>
+                                    <option key="002" value={2}>FULLFILLED</option>
                                 </Select>
                             </FormControl>
                         </Box>

@@ -56,7 +56,7 @@ function Inventory({ getAllInventories, totalCount, inventories, exportInventori
                 <Paper variant='outlined' elevation={1} className={classes.container}>
                     <PageHeader
                         title="Inventory"
-                        buttonTitle="Export"
+                        buttonTitle="Export As CSV"
                         headerAction={() => {
                             exportInventories()
                             setDownloadFiledFlag(true)

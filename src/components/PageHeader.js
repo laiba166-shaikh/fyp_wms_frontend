@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-const PageHeader = ({ title, buttonTitle, headerAction, clickExportInwards}) => {
+const PageHeader = ({ title, buttonTitle, headerAction, clickExport}) => {
     const classes = useStyles()
     return (
         <Box className={classes.header}>
@@ -25,8 +25,8 @@ const PageHeader = ({ title, buttonTitle, headerAction, clickExportInwards}) => 
             </Typography>
             <Box className={classes.buttonCont}>
                 {
-                    clickExportInwards && <Button variant="contained" color="secondary" onClick={clickExportInwards} style={{margin:"0 10px"}}>
-                        Export
+                    clickExport && <Button variant="contained" color="secondary" onClick={clickExport} style={{margin:"0 10px"}}>
+                        Export As CSV
                     </Button>
                 }
                 <Button variant="contained" color="secondary" onClick={headerAction}>

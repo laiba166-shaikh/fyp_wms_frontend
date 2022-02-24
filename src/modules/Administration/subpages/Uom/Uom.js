@@ -54,7 +54,7 @@ const Uom = ({ uoms, totalCount, getAllUoms }) => {
     const columns = [
         { id: '_id', label: 'Id', align: "center" },
         { id: 'name', label: 'Name', align: "center" },
-        { id: "isActive", label: "Status", align: "center", format: (value) => <div>{value.isActive ? "Active" : "in Active"}</div> },
+        { id: "isActive", label: "Status", align: "center", format: (value) => <div>{value.isActive ? "Active" : "In-Active"}</div> },
         { id: "action", label: "Action", align: "center", format: (value) => <ActionColumnFormatter value={value} onEdit={UomUiEvents.editUomClick} dontView={true} /> },
     ];
 

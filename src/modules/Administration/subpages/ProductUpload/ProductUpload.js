@@ -65,7 +65,7 @@ const ProductUpload = ({products,totalCount,getAllProducts}) => {
         { id: 'description', label: 'Description', align: 'center' },
         { id: 'volume', label: 'Volume', align: 'center' },
         { id: 'weight', label: 'Weight', align: 'center' },
-        { id: "isActive", label: "Status", align: "center", format:(value)=><div>{value.isActive ? "Active" : "in Active"}</div> },
+        { id: "isActive", label: "Status", align: "center", format:(value)=><div>{value.isActive ? "Active" : "In-Active"}</div> },
         { id: "action", label: "Action", align: "center", format:(value)=><ActionColumnFormatter value={value} onEdit={ProductUploadUiEvents.editProductUploadClick} onClickView={handleViewOnly} /> },        
     ];
 

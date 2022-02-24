@@ -39,7 +39,7 @@ const AddUser = ({ user, onClose, id, onSave, loading, readOnly }) => {
 
     useEffect(() => {
         getRoles().then((res) => {
-            setRoles([...res])
+            setRoles([...res.filter((role)=>role.type !== "SUPER_ADMIN")])
         }).catch((err) => console.log("err getting roles"))
         setStatus(user.isActive)
     }, [user])

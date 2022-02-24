@@ -49,7 +49,7 @@ const VehicleType = ({ vehicleTypes, totalCount, getAllVehicleType }) => {
     const columns = [
         { id: '_id', label: 'Id', align: "center" },
         { id: 'name', label: 'Name', align: "center" },
-        { id: "isActive", label: "Status", align: "center", format: (value) => <div>{value.isActive ? "Active" : "in Active"}</div> },
+        { id: "isActive", label: "Status", align: "center", format: (value) => <div>{value.isActive ? "Active" : "in-Active"}</div> },
         { id: "action", label: "Action", align: "center", format: (value) => <ActionColumnFormatter value={value} onEdit={vehicleTypeUiEvents.editVehicleTypeClick} dontView={true} /> },
     ];
 

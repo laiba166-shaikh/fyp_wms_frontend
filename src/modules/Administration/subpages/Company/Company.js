@@ -66,7 +66,7 @@ const Company = ({ companies, totalCount, getAllCompanies }) => {
         { id: 'type', label: 'Type', align: 'center' },
         { id: 'phone', label: 'Phone Number', align: 'center' },
         { id: 'notes', label: 'Notes', align: 'center' },
-        { id: "isActive", label: "Status", align: "center", format: (value) => <div>{value.isActive ? "Active" : "in Active"}</div> },
+        { id: "isActive", label: "Status", align: "center", format: (value) => <div>{value.isActive ? "Active" : "In-Active"}</div> },
         { id: "action", label: "Action", align: "center", format: (value) => <ActionColumnFormatter value={value} onEdit={CompanyUiEvents.editCompanyClick} onClickView={handleViewOnly} /> },
     ];
 
