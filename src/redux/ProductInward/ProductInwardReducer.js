@@ -5,7 +5,7 @@ const initialState = {
     productInwardLoading: false,
     error: "",
     productInwards: [],
-    exportedInwards:false,
+    exportedInwards: false,
     totalCount: 0
 }
 

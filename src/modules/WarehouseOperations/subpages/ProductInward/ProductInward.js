@@ -131,7 +131,7 @@ const ProductInward = ({ getAllProductInward, getAllCompanies, getAllWarehouses,
                         title="Product Inward"
                         buttonTitle="Add Product Inward"
                         headerAction={() => navigate("/main/operations/product-inward/new")}
-                        clickExportInwards={handleExportInwards}
+                        clickExport={handleExportInwards}
                     />
                     <Box className={classes.filterBox}>
                         <Box sx={{ minWidth: 120 }} className={classes.selectCont}>

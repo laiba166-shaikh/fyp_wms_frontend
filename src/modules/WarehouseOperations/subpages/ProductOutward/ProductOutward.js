@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react'
 import { makeStyles, Grid, Paper, Box, FormControl, InputLabel, Select, FormHelperText } from '@material-ui/core';
 import { useNavigate } from "react-router-dom";
 import { connect } from 'react-redux';
+import FileDownload from 'js-file-download';
+import moment from 'moment';
 import PageHeader from '../../../../components/PageHeader';
 import PaginatedTable from '../../../../components/PaginatedTable';
 import { getAllCompanies } from '../../../../redux/Company/CompanyActions';
 import { getAllWarehouses } from '../../../../redux/Warehouse/WarehouseActions';
 import SearchBar from '../../../../controls/SearchBar';
-import { getAllProductOutward } from '../../../../redux/ProductOutward/ProductOutwardActions';
+import { getAllProductOutward, exportOutwards } from '../../../../redux/ProductOutward/ProductOutwardActions';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -44,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-const ProductOutward = ({ getAllProductOutward, productOutwards, totalCount, getAllCompanies, getAllWarehouses, companies, warehouses }) => {
+const ProductOutward = ({ getAllProductOutward, productOutwards, totalCount, getAllCompanies, getAllWarehouses, companies, warehouses, exportOutwards, exportedOutwards }) => {
     const classes = useStyles();
     const navigate = useNavigate()
 
@@ -52,6 +54,12 @@ const ProductOutward = ({ getAllProductOutward, productOutwards, totalCount, get
     const [warehouse, setWarehouse] = useState("All")
     const [searchQuery, setSearchQuery] = useState("")
     const [queryParams, setQueryParams] = useState({ companyId: "", warehouseId: "", search: "" })
+    const [downloadFiledFlag, setDownloadFiledFlag] = useState(false)
+    useEffect(() => {
+        if (!!exportedOutwards && downloadFiledFlag) {
+            FileDownload(exportedOutwards, `Outwards ${moment().format('DD-MM-yyyy')}.xlsx`);
+        }
+    }, [exportedOutwards])
 
     useEffect(() => {
         getAllCompanies("", "")
@@ -91,6 +99,11 @@ const ProductOutward = ({ getAllProductOutward, productOutwards, totalCount, get
         setQueryParams({ ...queryParams, search: "" })
     }
 
+    const handleExportOutwards = () => {
+        exportOutwards()
+        setDownloadFiledFlag(true)
+    }
+
     const viewproductOutwardClick = (id) => {
         navigate(`/main/operations/product-outward/${id}/readOnly`)
     }
@@ -111,6 +124,7 @@ const ProductOutward = ({ getAllProductOutward, productOutwards, totalCount, get
                         title="Product Outward"
                         buttonTitle="Add Product Outward"
                         headerAction={() => navigate("/main/operations/product-outward/new")}
+                        clickExport={handleExportOutwards}
                     />
                     <Box className={classes.filterBox}>
                         <Box sx={{ minWidth: 120 }} className={classes.selectCont}>
@@ -191,6 +205,7 @@ const ProductOutward = ({ getAllProductOutward, productOutwards, totalCount, get
 
 const actions = {
     getAllProductOutward,
+    exportOutwards,
     getAllCompanies,
     getAllWarehouses
 }
@@ -198,6 +213,7 @@ const actions = {
 const mapStateToProps = (state) => ({
     productOutwards: state.productOutwards.productOutwards,
     totalCount: state.productOutwards.totalCount,
+    exportedOutwards: state.productOutwards.exportedOutwards,
     companies: state.companies.companies,
     warehouses: state.warehouses.warehouses
 })
