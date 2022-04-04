@@ -13,6 +13,15 @@ import { getCompanyWarehouses, createDispatchOrder, getDispatchOrder } from '../
 import AddOrderProductForm from '../../../../components/AddOrderProductForm';
 import client from "../../../../redux/client";
 
+import { useWeb3React } from '@web3-react/core';
+import { injected } from '../../../../connectors';
+import { useContract, useEagerConnect, useInactiveListener } from '../../../../hooks.js';
+import { contractAddress, ABI } from '../../../../contracts/data';
+
+const connectorsByName = {
+    Injected: injected,
+  };
+
 const validationSchema = yup.object({
     companyId: yup.string().required("Company must be provided"),
     warehouseId: yup.string().required("Warehouse must be provided"),
@@ -86,7 +95,29 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-const AddOrder = ({ getCompanyWarehouses, createDispatchOrder, getDispatchOrder }) => {
+const AddOrder = ({ getAllCompanies, getCompanyWarehouses, createDispatchOrder, getDispatchOrder }) => {
+    
+    // Blockchain below
+    const {
+        activate,setError,deactivate,    
+        connector,library,chainId,account,
+      } =useWeb3React();
+      
+    const contract = useContract(contractAddress, ABI, true);    
+    const [activatingConnector, setActivatingConnector] = useState();
+    useEffect(() => {
+      console.log('running');
+      console.log(library);
+      if (activatingConnector && activatingConnector === connector) {
+        setActivatingConnector(undefined);
+      }
+    }, [activatingConnector, connector]);
+
+    const triedEager = useEagerConnect();
+    useInactiveListener(!triedEager || !!activatingConnector);
+    console.log(contract);
+    // Blockchain above
+
     const classes = useStyles()
     const navigate = useNavigate()
     const params = useParams()
@@ -141,12 +172,31 @@ const AddOrder = ({ getCompanyWarehouses, createDispatchOrder, getDispatchOrder 
         const filteredproducts = orderProducts.filter((prod) => prod.product._id !== id)
         setOrderProducts([...filteredproducts])
     }
-
+    const callBlockchain = (transid) =>
+    {
+        Object.keys(connectorsByName).map((name) => {
+            activate(connectorsByName[name]).then((pro) => {
+                // transid string manupilation
+                var tokenid = transid.dispatchOrderId.substring(0,4);
+                transid.inventories.forEach(element => {
+                    tokenid += element.id.substring(0,4);
+                });
+                console.log(tokenid);
+                console.log(contract);
+                contract.functions.addTransaction(account,tokenid).then((response) => {
+                    alert("Succes: Transaction Minted");
+                    setLoading(false)
+                    navigate("/main/operations/dispatch-order")
+                });
+            });            
+        });
+    }
     const handleSubmit = (values) => {
-        setLoading(true)
+        setLoading(true);
+        console.log("In Handle Submit");
         createDispatchOrder(values).then((blockChainTransData) => {
             console.log("after order create -> ",blockChainTransData)            
-            // callBlockchain(blockChainTransData);            
+            callBlockchain(blockChainTransData);            
         }).catch((err) => {
             console.log("error creating prod inward")
             setLoading(false)

@@ -9,11 +9,22 @@ import MomentUtils from '@date-io/moment';
 import { Provider } from "react-redux"
 import { store } from './redux/store';
 
+import { Web3ReactProvider } from '@web3-react/core';
+import { Web3Provider } from '@ethersproject/providers';
+
+export function getLibrary(provider) {  
+  const library = new Web3Provider(provider);
+  library.pollingInterval = 8000;  
+  return library;
+}
+
 ReactDOM.render(
   <Provider store={store}>
     <MuiPickersUtilsProvider utils={MomentUtils}>
       <BrowserRouter>
-        <App />
+        <Web3ReactProvider getLibrary={getLibrary}>
+          <App />
+        </Web3ReactProvider> 
       </BrowserRouter>
     </MuiPickersUtilsProvider>
   </Provider>,
