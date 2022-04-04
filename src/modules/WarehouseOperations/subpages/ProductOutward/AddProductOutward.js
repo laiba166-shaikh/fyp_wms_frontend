@@ -11,6 +11,18 @@ import { getDispatchOrder } from '../../../../redux/DispatchOrder/DispatchOrderA
 import { createProductOutward, getProductOutward, getProductOutwardOrders } from '../../../../redux/ProductOutward/ProductOutwardActions';
 import moment from 'moment';
 
+// Blockchain Below
+import { useWeb3React , UnsupportedChainIdError } from '@web3-react/core';
+import { injected, network } from '../../../../connectors';
+import { useContract, useEagerConnect, useInactiveListener } from '../../../../hooks.js';
+import { contractAddress, ABI } from '../../../../contracts/data';
+import {fromWei} from '../../../../utils';
+
+const connectorsByName = {
+    Injected: injected,
+    Network: network,   
+  };
+// Blockchain Above
 const validationSchema = yup.object({
     dispatchOrderId: yup.string().required("Dispatch order is required"),
     referenceId: yup.string().min(3, "Reference Id should be more than 3 characters"),
@@ -67,6 +79,27 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const AddProductOutward = ({ getProductOutwardOrders, getDispatchOrder, createProductOutward, getProductOutward }) => {
+    
+    // Blockchain below
+    const context = useWeb3React();
+    const { activate, setError,deactivate,
+    
+        connector, library, chainId, account,
+        active, error,
+      } = context;
+    const contract = useContract(contractAddress, ABI, true);
+    console.log('contract > ', contract);    
+    const [activatingConnector, setActivatingConnector] = useState();
+    useEffect(() => {
+      console.log('running');
+      if (activatingConnector && activatingConnector === connector) {
+        setActivatingConnector(undefined);
+      }
+    }, [activatingConnector, connector]);
+
+    const triedEager = useEagerConnect();
+    useInactiveListener(!triedEager || !!activatingConnector);
+    // Blockchain above
 
     const classes = useStyles()
     const navigate = useNavigate()
@@ -87,8 +120,38 @@ const AddProductOutward = ({ getProductOutwardOrders, getDispatchOrder, createPr
         getProductOutwardOrders().then((res) => {
             setOrders([...res])
         }).catch((Err) => console.log("err in order get"))
-    }, [])
-    
+    }, []);
+    useEffect(async () => {
+        if (contract) {
+          const apy = await contract.apy();
+          console.log('apy > ', fromWei(apy));
+        }
+      }, [contract]);
+    const [ethBalance, setEthBalance] = useState();
+    useEffect(() => {
+        console.log('running');
+        if (library && account) {
+        let stale = false;
+
+        library
+        .getBalance(account)
+        .then((balance) => {
+            if (!stale) {
+            setEthBalance(balance);
+            }
+        })
+        .catch(() => {
+            if (!stale) {
+            setEthBalance(null);
+            }
+        });
+
+        return () => {
+        stale = true;
+        setEthBalance(undefined);
+        };
+    }
+}, [library, account, chainId]);
     useEffect(() => {
         if (params.id) {
             setLoading(true)
@@ -159,9 +222,8 @@ const AddProductOutward = ({ getProductOutwardOrders, getDispatchOrder, createPr
         }
     }
 
-   
-    // 2nd blockchain
-    const handleSubmit = (values) => {
+     // 2nd blockchain
+     const handleSubmit = (values) => {
         console.log("database out req->", values)
         setLoading(true)
         createProductOutward(values).then((res) => {
@@ -171,6 +233,32 @@ const AddProductOutward = ({ getProductOutwardOrders, getDispatchOrder, createPr
             console.log("error creating prod inward")
             setLoading(false)
         })
+    }
+    // 1st blockchain
+    const callBlockchain = (values,transid) =>
+    {        
+        var tokenid = transid.dispatchOrderId.substring(0,4);
+        transid.inventories.forEach(element => {
+            tokenid += element.id.substring(0,4);
+        });
+        // console.log("token id = " + tokenid);
+        Object.keys(connectorsByName).map((name) => {
+            const currentConnector = connectorsByName[name];
+            setActivatingConnector(currentConnector);
+            activate(connectorsByName[name]).then((pro) => {
+                // console.log('library > ', library);
+                contract.functions.confrimToken(tokenid).then((response) => {
+                    if(response[0] == true)
+                    {
+                        alert("Transaction Verified");
+                        handleSubmit(values);
+                    }                    
+                    else{
+                        alert("Failed: Transaction is false.");
+                    }
+                });
+            }).catch((Response) => { console.log(Response)});            
+        });
     }
     return (
         <Grid item className={classes.root} md={12} xs={12}>
@@ -207,9 +295,10 @@ const AddProductOutward = ({ getProductOutwardOrders, getDispatchOrder, createPr
                         inventories: blockChainInventory
                     }
                     console.log("values - >", values, blockChainVerifyData)
-                    // handleSubmit(values)
-                    // const verifyValues={...blockChainVerifyData,inventories:[...values.inventories,{id: '365day17893gs58600x', quantity:2000}]}
+                    const verifyValues={...blockChainVerifyData,inventories:[...values.inventories,{id: '365day17893gs58600x', quantity:2000}]}
                     callBlockchain(values, blockChainVerifyData)
+                    //False Test
+                    //callBlockchain(values, verifyValues) 
                 }}
             >
                 {({ handleSubmit, errors, values, touched, setFieldValue }) => (
