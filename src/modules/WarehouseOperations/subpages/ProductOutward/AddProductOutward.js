@@ -77,7 +77,7 @@ const AddProductOutward = ({ getProductOutwardOrders, getDispatchOrder, createPr
     const [orders, setOrders] = useState([])
     const [loading, setLoading] = useState(false)
     const [transportationType, setTransportationType] = useState("false")
-    const [quantityError,setQuantityError] = useState("")
+    const [quantityError, setQuantityError] = useState({ id: "", errorMessage: "" })
     const [outwardProducts, setOutwardProducts] = useState([]) //dispatch order times
     const [toOutwardProducts, setToOutwardProducts] = useState([]) //product outwards times
     const [singleDispatchOrder, setSingleDispatchOrder] = useState({})
@@ -88,7 +88,7 @@ const AddProductOutward = ({ getProductOutwardOrders, getDispatchOrder, createPr
             setOrders([...res])
         }).catch((Err) => console.log("err in order get"))
     }, [])
-
+    
     useEffect(() => {
         if (params.id) {
             setLoading(true)
@@ -97,12 +97,12 @@ const AddProductOutward = ({ getProductOutwardOrders, getDispatchOrder, createPr
                 setSingleProductOutward({ ...orderData, externalVehicle: orderData.externalVehicle ? "true" : "false" })
                 // handleChangeOrder(res.dispatchOrderId)
                 setOutwardProducts([...products])
-                setToOutwardProducts([...products])
+                // setToOutwardProducts([...products])
                 getDispatchOrder(orderData.dispatchOrderId).then(({ products, ...res }) => {
                     setSingleDispatchOrder({ ...res })
                     setLoading(false)
                 })
-                // setLoading(false)
+                setLoading(false)
             }).catch((err) => {
                 setLoading(false)
             })
@@ -113,6 +113,7 @@ const AddProductOutward = ({ getProductOutwardOrders, getDispatchOrder, createPr
         setTransportationType(e.target.value)
     }
 
+    //get order details when any order is selected
     const handleChangeOrder = (orderId) => {
         setLoading(true)
         getDispatchOrder(orderId).then(({ products, ...res }) => {
@@ -128,18 +129,21 @@ const AddProductOutward = ({ getProductOutwardOrders, getDispatchOrder, createPr
 
     const handleProductOutwardQuantityChange = (currQuantity, currProduct) => {
         const { product, inventory, quantity } = currProduct;
+        console.log("current Product - >", currProduct)
         var ProductToOut = []
         if (currQuantity > quantity) {
             console.log("quantity can not greater than available quantity")
-            setQuantityError("quantity can not greater than available quantity")
+            setQuantityError({ id: currProduct.product._id, errorMessage: "quantity can not greater than available quantity" })
             return;
         }
-        if (!currQuantity || currQuantity == 0) {
+        if (!currQuantity || currQuantity === 0) {
             ProductToOut = toOutwardProducts.filter((prod) => prod.product._id !== product._id)
             setToOutwardProducts([...ProductToOut])
+            setQuantityError({ id: "", errorMessage: "" })
             return;
         }
-        var isPresent = toOutwardProducts?.some((existProd)=>existProd?.product?._id === product._id);
+        setQuantityError({ id: "", errorMessage: "" })
+        var isPresent = toOutwardProducts?.some((existProd) => existProd?.product?._id === product._id);
         if (isPresent) {
             ProductToOut = toOutwardProducts.map((outProd) =>
                 outProd.product._id === product._id
@@ -149,30 +153,16 @@ const AddProductOutward = ({ getProductOutwardOrders, getDispatchOrder, createPr
             setToOutwardProducts([...ProductToOut])
             return;
         } else {
-            ProductToOut = [...toOutwardProducts, { ...currProduct, quantity:currQuantity }];
+            ProductToOut = [...toOutwardProducts, { ...currProduct, quantity: currQuantity }];
             // console.log("not present", returnedProducts)
             setToOutwardProducts([...ProductToOut])
         }
-
-        // if(toOutwardProducts.some((existProd)=>existProd?.product._id === product._id)){
-        //     ProductToOut = outwardProducts.map((prod) => {
-        //         if (prod.product._id === product._id) {
-        //             return { ...prod, quantity: currQuantity }
-        //         }
-        //     })
-        //     ProductToOut && setToOutwardProducts([...toOutwardProducts,ProductToOut])
-        // }else {
-
-        // }
-        // ProductToOut = toOutwardProducts.map((prod) => {
-        //     if (prod.product._id === product._id) {
-        //         return { ...prod, quantity: currQuantity }
-        //     } else return prod
-        // })
-        // setToOutwardProducts([...ProductToOut])
     }
 
+   
+    // 2nd blockchain
     const handleSubmit = (values) => {
+        console.log("database out req->", values)
         setLoading(true)
         createProductOutward(values).then((res) => {
             setLoading(false)
@@ -182,7 +172,6 @@ const AddProductOutward = ({ getProductOutwardOrders, getDispatchOrder, createPr
             setLoading(false)
         })
     }
-
     return (
         <Grid item className={classes.root} md={12} xs={12}>
             {loading && <Loader />}
@@ -196,10 +185,31 @@ const AddProductOutward = ({ getProductOutwardOrders, getDispatchOrder, createPr
                 validationSchema={validationSchema}
                 enableReinitialize={true}
                 onSubmit={(values) => {
+                    var blockChainInventory = []
                     values.externalVehicle = transportationType === "false" ? false : true
-                    values.inventories = toOutwardProducts.map((ordProd) => ({ id: ordProd.inventory._id, quantity: ordProd.quantity }))
-                    console.log("values - >", values)
-                    handleSubmit(values)
+                    if (toOutwardProducts.length >= 1) {
+                        values.inventories = toOutwardProducts.map((ordProd) => ({ id: ordProd.inventory._id, quantity: ordProd.quantity }))
+                        blockChainInventory = outwardProducts.map((outProd) => {
+                            const findInOutward = toOutwardProducts.find((toOut) => toOut.inventory._id === outProd.inventory._id)
+                            if (findInOutward) {
+                                return { id: findInOutward.inventory._id, quantity: findInOutward.quantity }
+                            } else {
+                                return { id: outProd.inventory._id, quantity: 0 }
+                            }
+                        })
+                    } else {
+                        values.inventories = outwardProducts.map((ordProd) => ({ id: ordProd.inventory._id, quantity: ordProd.quantity }))
+                        blockChainInventory = values.inventories
+                    }
+                    //block chain values
+                    const blockChainVerifyData = {
+                        dispatchOrderId: values.dispatchOrderId,
+                        inventories: blockChainInventory
+                    }
+                    console.log("values - >", values, blockChainVerifyData)
+                    // handleSubmit(values)
+                    // const verifyValues={...blockChainVerifyData,inventories:[...values.inventories,{id: '365day17893gs58600x', quantity:2000}]}
+                    callBlockchain(values, blockChainVerifyData)
                 }}
             >
                 {({ handleSubmit, errors, values, touched, setFieldValue }) => (
@@ -291,12 +301,23 @@ const AddProductOutward = ({ getProductOutwardOrders, getDispatchOrder, createPr
                                                 <Typography variant="body1">
                                                     {orderProd.product.uomId.name}
                                                 </Typography>
-                                                {!readOnly ? <Typography variant="body1">
-                                                    {orderProd.availableQuantity}
-                                                </Typography> :
-                                                    <Typography variant="body1">
-                                                        {orderProd.outwardQuantity}
-                                                    </Typography>}
+                                                {readOnly ?
+                                                    <>
+                                                        {/*Order and outward qty in view mode */}
+                                                        <Typography variant="body1">
+                                                            Order Qty: {orderProd.orderedQuantity}
+                                                        </Typography>
+                                                        <Typography variant="body1">
+                                                            Outward Qty: {orderProd.outwardQuantity}
+                                                        </Typography>
+                                                    </> :
+                                                    <>
+                                                        { /*ordered quantity in add mode*/}
+                                                        <Typography variant="body1">
+                                                            Qty Order:  {orderProd.quantity}
+                                                        </Typography>
+                                                    </>
+                                                }
                                                 {!readOnly && <TextField
                                                     variant="filled"
                                                     size="small"
@@ -306,6 +327,8 @@ const AddProductOutward = ({ getProductOutwardOrders, getDispatchOrder, createPr
                                                     onChange={(e) => handleProductOutwardQuantityChange(parseInt(e.target.value), orderProd)}
                                                     inputProps={{ className: classes.label }}
                                                     style={{ marginRight: "5rem", color: "white" }}
+                                                    error={Boolean(quantityError.id === orderProd.product._id)}
+                                                    helperText={quantityError.id === orderProd.product._id ? quantityError.errorMessage : ""}
                                                 />}
                                             </Box>
                                         </Paper>

@@ -9,9 +9,8 @@ import { TextInput, Select } from '../../../../controls';
 import PageHeader from '../../../../components/PageHeader';
 import Loader from '../../../../components/Loader';
 import AddProductInwardForm from '../../../../components/AddProductInwardForm';
-import { getAllCompanies } from '../../../../redux/Company/CompanyActions';
-import { getAllWarehouses } from '../../../../redux/Warehouse/WarehouseActions';
 import { createProductInward, getProductInward } from '../../../../redux/ProductInward/ProductInwardActions';
+import client from "../../../../redux/client";
 
 const validationSchema = yup.object({
     companyId: yup.string().required("Company must be provided"),
@@ -66,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-const AddproductInward = ({ companies, warehouses, products, getAllCompanies, getAllWarehouses, createProductInward, getProductInward }) => {
+const AddproductInward = ({products, createProductInward, getProductInward }) => {
 
     const classes = useStyles()
     const navigate = useNavigate()
@@ -75,12 +74,19 @@ const AddproductInward = ({ companies, warehouses, products, getAllCompanies, ge
     const readOnly = String(location.pathname).includes("readOnly")
 
     const [loading, setLoading] = useState(false)
+    const [companies,setCompanies]=useState([])
+    const [warehouses,setWarehouses] = useState([])
     const [inwardProducts, setInwardProducts] = useState([])
     const [singleProductInward, setSingleProductInward] = useState({})
 
     useEffect(() => {
-        getAllCompanies("", "")
-        getAllWarehouses("", "")
+        const fetchInwardOptionsData= async ()=> {
+            const {data: {data}} =await client.get(`/product-inwards/relations`)
+            console.log("data inward relation",data)
+            setCompanies([...data.companies])
+            setWarehouses([...data.warehouses])
+        }
+        fetchInwardOptionsData()
     }, [])
 
     useEffect(() => {
@@ -114,8 +120,7 @@ const AddproductInward = ({ companies, warehouses, products, getAllCompanies, ge
         }).catch((err) => {
             console.log("error creating prod inward")
             setLoading(false)
-        })
-        navigate("/main/operations/product-inward")
+        }).finally(()=>navigate("/main/operations/product-inward"))
     }
 
     return (
@@ -280,15 +285,8 @@ const AddproductInward = ({ companies, warehouses, products, getAllCompanies, ge
 };
 
 const actions = {
-    getAllCompanies,
-    getAllWarehouses,
     createProductInward,
     getProductInward
 }
 
-const mapStateToProps = (state) => ({
-    companies: state.companies.companies,
-    warehouses: state.warehouses.warehouses,
-})
-
-export default connect(mapStateToProps, actions)(AddproductInward);
+export default connect(null, actions)(AddproductInward);

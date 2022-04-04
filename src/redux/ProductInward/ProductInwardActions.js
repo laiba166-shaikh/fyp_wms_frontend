@@ -44,12 +44,12 @@ export const createProductInward=(productInward)=>async (dispatch,getState)=>{
         const reqBody={...productInward,userId:userData.id}
         const {data}=await client.post(`/product-inwards/`,{...reqBody})
         console.log("prod inw", data)
-        dispatch({
-            type:CREATE_PRODUCT_INWARD,
-            payload:{
-                productInward:{...data.data.productInward[0]}
-            }
-        })
+        // dispatch({
+        //     type:CREATE_PRODUCT_INWARD,
+        //     payload:{
+        //         productInward:{...data.data.productInward[0]}
+        //     }
+        // })
     } catch (error) {
         console.log(error)
         dispatch({type:PRODUCT_INWARD_ERROR,payload:{error:"Something went wrong"}})

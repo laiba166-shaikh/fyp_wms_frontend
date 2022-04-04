@@ -9,9 +9,9 @@ import { useLocation, useNavigate, useParams } from 'react-router';
 import { TextInput, Select } from '../../../../controls';
 import PageHeader from '../../../../components/PageHeader';
 import Loader from '../../../../components/Loader';
-import { getAllCompanies } from '../../../../redux/Company/CompanyActions';
-import { getCompanyWarehouses, createDispatchOrder, getDispatchOrder} from '../../../../redux/DispatchOrder/DispatchOrderActions';
+import { getCompanyWarehouses, createDispatchOrder, getDispatchOrder } from '../../../../redux/DispatchOrder/DispatchOrderActions';
 import AddOrderProductForm from '../../../../components/AddOrderProductForm';
+import client from "../../../../redux/client";
 
 const validationSchema = yup.object({
     companyId: yup.string().required("Company must be provided"),
@@ -81,12 +81,12 @@ const useStyles = makeStyles((theme) => ({
     },
     listItem: {
         padding: theme.spacing(1),
-        backgroundColor:theme.palette.primary.light,
-        margin:theme.spacing(1,0)
+        backgroundColor: theme.palette.primary.light,
+        margin: theme.spacing(1, 0)
     }
 }))
 
-const AddOrder = ({ companies, getAllCompanies, getCompanyWarehouses, createDispatchOrder, getDispatchOrder }) => {
+const AddOrder = ({ getCompanyWarehouses, createDispatchOrder, getDispatchOrder }) => {
     const classes = useStyles()
     const navigate = useNavigate()
     const params = useParams()
@@ -95,20 +95,26 @@ const AddOrder = ({ companies, getAllCompanies, getCompanyWarehouses, createDisp
 
     const [loading, setLoading] = useState(false)
     const [shipmentDate, setShipmentDate] = useState(new Date())
+    const [companies, setCompanies] = useState([])
     const [companyWarehouses, setCompanyWarehouses] = useState([])
     const [orderProducts, setOrderProducts] = useState([])
     const [singleDispatchOrder, setSingleDispatchOrder] = useState({})
 
     useEffect(() => {
-        getAllCompanies("", "")
+        const fetchOrderRelation = async () => {
+            const { data: { data } } = await client.get(`/dispatch-orders/relations/`)
+            console.log("order relation", data)
+            setCompanies([...data.companies])
+        }
+        fetchOrderRelation()
     }, [])
 
     //view
     useEffect(() => {
         if (params.id) {
             setLoading(true)
-            getDispatchOrder(params.id).then(({products,...res}) => {
-                console.log("single",res)
+            getDispatchOrder(params.id).then(({ products, ...res }) => {
+                console.log("single", res)
                 handleCompanyChange(res.companyId)
                 setSingleDispatchOrder({ ...res })
                 setOrderProducts([...products])
@@ -138,9 +144,9 @@ const AddOrder = ({ companies, getAllCompanies, getCompanyWarehouses, createDisp
 
     const handleSubmit = (values) => {
         setLoading(true)
-        createDispatchOrder(values).then((res) => {
-            setLoading(false)
-            navigate("/main/operations/dispatch-order")
+        createDispatchOrder(values).then((blockChainTransData) => {
+            console.log("after order create -> ",blockChainTransData)            
+            // callBlockchain(blockChainTransData);            
         }).catch((err) => {
             console.log("error creating prod inward")
             setLoading(false)
@@ -317,14 +323,9 @@ const AddOrder = ({ companies, getAllCompanies, getCompanyWarehouses, createDisp
 };
 
 const actions = {
-    getAllCompanies,
     getCompanyWarehouses,
     createDispatchOrder,
     getDispatchOrder
 }
 
-const mapStateToProps = (state) => ({
-    companies: state.companies.companies,
-})
-
-export default connect(mapStateToProps, actions)(AddOrder);
+export default connect(null, actions)(AddOrder);

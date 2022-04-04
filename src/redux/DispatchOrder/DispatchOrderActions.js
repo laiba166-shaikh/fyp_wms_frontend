@@ -32,12 +32,11 @@ export const getDispatchOrder = (dispatchOrderId) => async (dispatch) => {
             company: orderGroups[0].Inventory.Company,
             warehouse: orderGroups[0].Inventory.Warehouse,
             products: orderGroups.map(({ quantity, Inventory }) => {
-                const { Product, Company, Warehouse, availableQuantity, ...inventoryData } = Inventory
+                const { Product, Company, Warehouse, ...inventoryData } = Inventory
                 return {
                     product: Product,
                     inventory: inventoryData,
                     quantity: quantity,
-                    availableQuantity: availableQuantity
                 }
             }),
             ...orderData
@@ -56,13 +55,22 @@ export const createDispatchOrder = (order) => async (dispatch, getState) => {
         dispatch({ type: DISPATCH_ORDER_START_LOADING })
         const { userData } = getState().auth
         const reqBody = { ...order, userId: userData.id }
-        const { data } = await client.post(`/dispatch-orders/`, { ...reqBody })
+        const { data:{data} } = await client.post(`/dispatch-orders/`, { ...reqBody })
         dispatch({
             type: CREATE_DISPATCH_ORDER,
             payload: {
-                order: { ...data.data.dispatchOrder[0] }
+                order: { ...data.dispatchOrder[0] }
             }
         })
+        return {
+            dispatchOrderId:data.dispatchOrder[0]._id,
+            inventories:data.orderGroups.map((orderProduct)=>{
+                return {
+                    id:orderProduct.inventoryId,
+                    quantity:orderProduct.quantity
+                }
+            })
+        }
     } catch (error) {
         console.log(error)
         dispatch({ type: DISPATCH_ORDER_ERROR, payload: { error: "Something went wrong" } })
